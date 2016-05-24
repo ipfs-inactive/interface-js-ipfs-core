@@ -55,6 +55,85 @@ test.all(common)
 
 A valid (read: that follows this interface) IPFS core implementation, must expose the following API.
 
+## Group Files
+
+### `Add`
+
+> Store a Unixfs file or directory of files .
+
+##### `Go` **WIP**
+
+##### `JavaScript` - ipfs.add(path, [options, callback])
+
+`path` The path to a file to be added to IPFS. Can be of type:
+
+- Callback, If no first argument is supplied a callback will return a duplex stream.
+- Path, String format path to a file to be added to IPFS
+- Stream
+- Object, with format `{ path: </foo/bar>, stream: <readable stream> }`
+- Array, an [array] of objects with the above format. 
+
+`options` is a optional argument of type object, that can contain the following properties:
+
+- `Recursive`. Add directory paths recursively.
+
+`callback` must follow `function (err, object) {}` signature, where `err` is an error if the operation was not successful and `object` is an ndjson return with properties { Name (string), Hash (multihash) } 
+
+If no `callback` is passed, a promise is returned.
+
+
+
+
+
+### `Cat` 
+
+> Displays the data contained by an IPFS object(s) at the given path..
+
+##### `Go` **WIP**
+
+##### `JavaScript` - ipfs.cat(multihash, [callback])
+
+`multihash` is a [multihash]() which can be passed as:
+
+- Buffer, the raw Buffer of the multihash (or of and encoded version)
+- String, the toString version of the multihash (or of an encoded version)
+
+`callback` must follow `function (err, stream) {}` signature, where `err` is an error if the operation was not successful and `stream` is a readable stream.
+
+If no `callback` is passed, a promise is returned.
+
+
+
+
+
+### `Get` 
+
+> Download IPFS UnixFS files and directories with tar archiving and gzip compression options.
+
+##### `Go` **WIP**
+
+##### `JavaScript` - ipfs.get(multihash, [options, callback])
+
+`multihash` is a [multihash]() which can be passed as:
+
+- Buffer, the raw Buffer of the multihash (or of and encoded version)
+- String, the toString version of the multihash (or of an encoded version)
+
+`options` is a optional argument of type object, that can contain the following properties:
+
+- `output`, string - The path where output should be stored.
+- `archive`, bool   - Output a TAR archive.
+- `compress`, bool   - Compress the output with GZIP compression.
+- `compression-level` int    - The level of compression (1-9).
+
+`callback` must follow `function (err, ee) {}` signature, where `err` is an error if the operation was not successful and `ee` is an event emitter containing an object of {stream, path, dir} where dir is a boolean flag for a directory path. [ee](https://github.com/ipfs/js-ipfs-unixfs-engine/blob/master/src/exporter.js) // This should be upgraded to duplex object stream.
+
+If no `callback` is passed, a promise is returned.
+
+
+
+
+
 ## Object
 
 ### `object.new`
