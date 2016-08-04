@@ -103,15 +103,15 @@ test.files(common)
 Then, using `mocha` (for Node.js) or a test runner with compatible API, do:
 
 ```sh
-mocha test.js
+> mocha test.js
 ```
 
 To test this yourself, you can clone this repo and run a test on [test.js](examples/test.js):
 
 ```sh
-npm install
-npm install -g mocha ipfs
-mocha test.js
+> npm install
+> npm install -g mocha ipfs
+> mocha test.js
 ```
 
 ### Go
