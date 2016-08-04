@@ -97,7 +97,7 @@ const common = {
   }
 }
 
-test.files(common)
+test.files(common) // This only tests files. More are available: see src/index.js
 ```
 
 Then, using `mocha` (for Node.js) or a test runner with compatible API, do:
