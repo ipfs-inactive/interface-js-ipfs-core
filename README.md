@@ -9,7 +9,6 @@
 
 ## Table of Contents
 
-- [Table of Contents](#table-of-contents)
 - [Background](#background)
   - [Modules that implement the interface](#modules-that-implement-the-interface)
   - [Badge](#badge)
