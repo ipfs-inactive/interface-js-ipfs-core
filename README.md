@@ -80,7 +80,6 @@ In Go land:
 Install `interface-ipfs-core` as one of the dependencies of your project. Install the following test file:
 
 ```js
-/* eslint-env mocha */
 'use strict'
 
 const test = require('interface-ipfs-core')
