@@ -82,14 +82,11 @@ Install `interface-ipfs-core` as one of the dependencies of your project. Instal
 'use strict'
 
 const test = require('interface-ipfs-core')
-const IPFS = require('ipfs') // This should be your own instance, not the package ipfs.
+const yourIPFSInstance = require('ipfs')
 
 const common = {
   setup: function (cb) {
     const ipfs = new IPFS()
-    ipfs.load(() => {
-      cb(null, ipfs)
-    })
   },
   teardown: function (cb) {
     cb()
