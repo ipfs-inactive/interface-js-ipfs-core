@@ -4,6 +4,7 @@
 'use strict'
 
 const expect = require('chai').expect
+const pull = require('pull-stream')
 
 module.exports = (common) => {
   describe('.block', () => {
@@ -54,15 +55,8 @@ module.exports = (common) => {
 
         ipfs.block.get(hash, (err, res) => {
           expect(err).to.not.exist
-
-          // TODO review this
-          let buf = ''
-          res
-            .on('data', function (data) { buf += data })
-            .on('end', function () {
-              expect(buf).to.be.equal('blorb')
-              done()
-            })
+          expect(res.data).to.be.eql(Buffer('blorb'))
+          done()
         })
       })
 
@@ -79,6 +73,56 @@ module.exports = (common) => {
     })
 
     describe('promise API', () => {
+    })
+
+    describe('stream API', () => {
+      it('.putStream', (done) => {
+        const expectedHash = 'QmPv52ekjS75L4JmHpXVeuJ5uX2ecSfSZo88NSyxwA3rAQ'
+        const blob = Buffer('blorb')
+
+        pull(
+          pull.values([blob]),
+          ipfs.block.putStream(),
+          pull.collect((err, res) => {
+            expect(err).to.not.exist
+
+            expect(res).to.have.length(1)
+            expect(res[0]).to.have.a.property('Key', expectedHash)
+            done()
+          })
+        )
+      })
+
+      it('.putStream multiple blocks', (done) => {
+        const blobs = [
+          Buffer('blorb'),
+          Buffer('borb'),
+          Buffer('barb')
+        ]
+
+        pull(
+          pull.values(blobs),
+          ipfs.block.putStream(),
+          pull.collect((err, res) => {
+            expect(err).to.not.exist
+            expect(res).to.have.length(3)
+            done()
+          })
+        )
+      })
+
+      it('.getStream', (done) => {
+        const hash = 'QmPv52ekjS75L4JmHpXVeuJ5uX2ecSfSZo88NSyxwA3rAQ'
+
+        pull(
+          ipfs.block.getStream(hash),
+          pull.collect((err, res) => {
+            expect(err).to.not.exist
+            expect(res[0].data).to.be.eql(Buffer('blorb'))
+            done()
+          })
+        )
+      })
     })
   })
 }
