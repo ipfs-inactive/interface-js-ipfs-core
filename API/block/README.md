@@ -11,7 +11,7 @@ block API
 
 `multihash` is a [multihash][multihash] which can be passed as:
 
-- Buffer, the raw Buffer of the multihash 
+- Buffer, the raw Buffer of the multihash
 - String, the base58 encoded version of the multihash
 
 `callback` must follow `function (err, block) {}` signature, where `err` is an error if the operation was not successful and `block` is a [Block][block] type object, containing both the data and the hash of the block.
@@ -26,6 +26,29 @@ ipfs.block.get(multihash, function (err, block) {
 ```
 
 If no `callback` is passed, a promise is returned.
+
+
+#### `getStream`
+
+> Get a raw IPFS block as a stream.
+
+##### `Go` **WIP**
+
+##### `JavaScript` - ipfs.block.getStream(multihash, [options])
+
+`multihash` is a [multihash][multihash] which can be passed as:
+
+- Buffer, the raw Buffer of the multihash
+- String, the base58 encoded version of the multihash
+
+Returns a readable [pull-stream](pull-stream) of [Block][block]s
+
+```js
+pull(
+  ipfs.block.get(multihash)
+  pull.log()
+)
+```
 
 #### `put`
 
@@ -43,6 +66,27 @@ Where `block` can be:
 `callback` has the signature `function (err, block) {}`, where `err` is an error if the operation was not successful and `block` is a [Block][block] type object, containing both the data and the hash of the block.
 
 If no `callback` is passed, a promise is returned.
+
+
+#### `putStream`
+
+> Stores input as an IPFS block.
+
+##### `Go` **WIP**
+
+##### `JavaScript` - ipfs.block.putStream()
+
+Returns a duplex [pull-stream](pull-stream).
+
+```js
+const b1 = new Block('hello')
+const b2 = new Block('world')
+
+pull(
+  pull.values([b1, bw]),
+  ipfs.block.putStream()
+)
+```
 
 #### `stat`
 
@@ -70,3 +114,4 @@ If no `callback` is passed, a promise is returned.
 
 [block](https://github.com/ipfs/js-ipfs-block)
 [multihash](https://github.com/multiformats/multihash)
+[pull-stream](https://pull-stream.github.io)
