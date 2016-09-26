@@ -1,3 +1,3 @@
-mfs, Mutable File System API
+Files, the Mutable File System API
 ============================
 
