@@ -46,13 +46,14 @@ module.exports = (common) => {
 
       it('.put a block', (done) => {
         const expectedHash = 'QmPv52ekjS75L4JmHpXVeuJ5uX2ecSfSZo88NSyxwA3rAQ'
-        const blob = new Block(new Buffer('blorb'))
-
-        ipfs.block.put(blob, (err, block) => {
+        Block.create(new Buffer('blorb'), (err, blob) => {
           expect(err).to.not.exist
-          expect(block.key).to.eql(multihash.fromB58String(expectedHash))
-          expect(block.data).to.eql(new Buffer('blorb'))
-          done()
+          ipfs.block.put(blob, (err, block) => {
+            expect(err).to.not.exist
+            expect(block.key).to.eql(multihash.fromB58String(expectedHash))
+            expect(block.data).to.eql(new Buffer('blorb'))
+            done()
+          })
         })
       })
 
