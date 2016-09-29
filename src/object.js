@@ -24,7 +24,7 @@ const checkMultihash = (n1, n2, cb) => {
 const sameMultihash = promisify((n1, n2, cb) => {
   checkMultihash(n1, n2, (err, h1, h2) => {
     expect(err).to.not.exist
-    expect(h2).to.be.eql(h2)
+    expect(h1).to.be.eql(h2)
     cb()
   })
 })
@@ -32,7 +32,7 @@ const sameMultihash = promisify((n1, n2, cb) => {
 const differentMultihash = promisify((n1, n2, cb) => {
   checkMultihash(n1, n2, (err, h1, h2) => {
     expect(err).to.not.exist
-    expect(h2).to.not.be.eql(h2)
+    expect(h1).to.not.be.eql(h2)
     cb()
   })
 })
@@ -79,7 +79,7 @@ module.exports = (common) => {
           }
         ], (err, res) => {
           expect(err).to.not.exist
-          assertions(node, res[1], cb)
+          assertions(node, res, cb)
         })
       ], done)
     })
@@ -602,7 +602,7 @@ module.exports = (common) => {
 
           waterfall([
             (cb) => ipfs.object.put(dNode2, cb),
-            (cb) => dNode1.addNodeLink('link-to-node', dNode2, cb),
+            (n, cb) => dNode1.addNodeLink('link-to-node', dNode2, cb),
             (cb) => testNode.multihash(cb),
             (digest, cb) => ipfs.object.patch.addLink(digest, dNode1.links[0], cb),
             (node3, cb) => {
@@ -642,7 +642,7 @@ module.exports = (common) => {
     describe('promise API', () => {
       it('object.new', () => {
         return ipfs.object.new()
-          .then((node) => promisify(node.toJSON)())
+          .then((node) => promisify(node.toJSON, {context: node})())
           .then((json) => {
             expect(json.Hash).to.equal('QmdfTbBqBPQ7VNxZEYEj14VmRuZBkqFbiwReogJgS1zR1n')
           })
@@ -655,7 +655,7 @@ module.exports = (common) => {
         }
 
         return ipfs.object.put(obj)
-          .then((node) => promisify(node.toJSON)())
+          .then((node) => promisify(node.toJSON, {context: node})())
           .then((nodeJSON) => {
             expect(obj.Data).to.deep.equal(nodeJSON.Data)
             expect(obj.Links).to.deep.equal(nodeJSON.Links)
@@ -671,7 +671,7 @@ module.exports = (common) => {
 
         return ipfs.object.put(testObj)
           .then((node1) => {
-            return promisify(node1.multihash)()
+            return promisify(node1.multihash, {context: node1})()
               .then((digest) => ipfs.object.get(digest))
               .then((node2) => {
                 // because js-ipfs-api can't infer if the returned Data is Buffer
@@ -695,7 +695,7 @@ module.exports = (common) => {
 
         return ipfs.object.put(testObj)
           .then((node) => {
-            return promisify(node.multihash)()
+            return promisify(node.multihash, {context: node})()
               .then((digest) => ipfs.object.data(digest))
               .then((data) => {
                 // because js-ipfs-api can't infer
@@ -715,7 +715,7 @@ module.exports = (common) => {
         }
 
         return ipfs.object.put(testObj)
-          .then((node) => promisify(node.multihash)())
+          .then((node) => promisify(node.multihash, {context: node})())
           .then((digest) => ipfs.object.stat(digest))
           .then((stats) => {
             const expected = {
@@ -738,7 +738,7 @@ module.exports = (common) => {
 
         return ipfs.object.put(testObj)
           .then((node) => {
-            return promisify(node.multihash)()
+            return promisify(node.multihash, {context: node})()
             .then((digest) => ipfs.object.links(digest))
             .then((links) => {
               expect(node.links).to.deep.equal(links)
@@ -761,7 +761,7 @@ module.exports = (common) => {
           return ipfs.object.put(obj)
             .then((node) => {
               testNode = node
-              return promisify(testNode.multihash)()
+              return promisify(testNode.multihash, {context: testNode})()
             }).then((digest) => {
               testNodeHash = digest
             })
@@ -787,7 +787,7 @@ module.exports = (common) => {
         })
 
         it('.rmLink', () => {
-          return promisify(testNodeWithLink.multihash)()
+          return promisify(testNodeWithLink.multihash, {context: testNodeWithLink})()
             .then((digest) => ipfs.object.patch.rmLink(digest, testLink))
             .then((node) => sameMultihash(node, testNode))
         })
@@ -795,13 +795,13 @@ module.exports = (common) => {
         it('.appendData', () => {
           return ipfs.object.patch
             .appendData(testNodeHash, new Buffer('append'))
-            .then((node) => sameMultihash(node, testNode))
+            .then((node) => differentMultihash(node, testNode))
         })
 
         it('.setData', () => {
           return ipfs.object.patch
             .appendData(testNodeHash, new Buffer('set'))
-            .then((node) => sameMultihash(node, testNode))
+            .then((node) => differentMultihash(node, testNode))
         })
       })
     })
