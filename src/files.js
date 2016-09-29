@@ -436,10 +436,9 @@ module.exports = (common) => {
             })
         })
 
-        it('errors on invalid key', (done) => {
+        it('errors on invalid key', () => {
           const hash = 'somethingNotMultihash'
-          ipfs.files.get(hash)
-            .then((stream) => {})
+          return ipfs.files.get(hash)
             .catch((err) => {
               expect(err).to.exist
               const errString = err.toString()
@@ -449,7 +448,6 @@ module.exports = (common) => {
               if (errString === 'Error: Invalid Key') {
                 expect(err.toString()).to.contain('Error: Invalid Key')
               }
-              done()
             })
         })
       })
