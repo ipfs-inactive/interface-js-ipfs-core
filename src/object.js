@@ -239,23 +239,25 @@ module.exports = (common) => {
         it('with multihash (+ links)', (done) => {
           const dNode1 = new DAGNode(new Buffer('Some data 1'))
           const dNode2 = new DAGNode(new Buffer('Some data 2'))
-          dNode1.addNodeLink('some-link', dNode2)
+          dNode1.addNodeLink('some-link', dNode2, (err) => {
+            expect(err).to.not.exist
 
-          putAndGet(
-            'put', dNode1,
-            'get', (n, cb) => n.multihash(cb),
-            (node1, node2, cb) => {
-              // because js-ipfs-api can't infer if the returned Data is Buffer
-              // or String
-              if (typeof node2.data === 'string') {
-                node2.data = new Buffer(node2.data)
-              }
+            putAndGet(
+              'put', dNode1,
+              'get', (n, cb) => n.multihash(cb),
+              (node1, node2, cb) => {
+                // because js-ipfs-api can't infer if the returned Data is Buffer
+                // or String
+                if (typeof node2.data === 'string') {
+                  node2.data = new Buffer(node2.data)
+                }
 
-              expect(node1.data).to.deep.equal(node2.data)
-              sameMultihash(node1, node2, cb)
-            },
-            done
-          )
+                expect(node1.data).to.deep.equal(node2.data)
+                sameMultihash(node1, node2, cb)
+              },
+              done
+            )
+          })
         })
 
         it('with multihash base58 encoded', (done) => {
@@ -412,17 +414,19 @@ module.exports = (common) => {
         it('with multihash (+ links)', (done) => {
           const dNode1 = new DAGNode(new Buffer('Some data 1'))
           const dNode2 = new DAGNode(new Buffer('Some data 2'))
-          dNode1.addNodeLink('some-link', dNode2)
+          dNode1.addNodeLink('some-link', dNode2, (err) => {
+            expect(err).to.not.exist
 
-          putAndGet(
-            'put', dNode1,
-            'links', (n, cb) => n.multihash(cb),
-            (node, links, cb) => {
-              expect(node.links[0].toJSON()).to.deep.equal(links[0].toJSON())
-              cb()
-            },
-            done
-          )
+            putAndGet(
+              'put', dNode1,
+              'links', (n, cb) => n.multihash(cb),
+              (node, links, cb) => {
+                expect(node.links[0].toJSON()).to.deep.equal(links[0].toJSON())
+                cb()
+              },
+              done
+            )
+          })
         })
 
         it('with multihash base58 encoded', (done) => {
@@ -497,25 +501,26 @@ module.exports = (common) => {
         it('with multihash (+ Links)', (done) => {
           const dNode1 = new DAGNode(new Buffer('Some data 1'))
           const dNode2 = new DAGNode(new Buffer('Some data 2'))
-          dNode1.addNodeLink('some-link', dNode2)
-
-          putAndGet(
-            'put', dNode1,
-            'stat', (n, cb) => n.multihash(cb),
-            (node, stats, cb) => {
-              const expected = {
-                Hash: 'QmPR7W4kaADkAo4GKEVVPQN81EDUFCHJtqejQZ5dEG7pBC',
-                NumLinks: 1,
-                BlockSize: 64,
-                LinksSize: 53,
-                DataSize: 11,
-                CumulativeSize: 77
-              }
-              expect(expected).to.deep.equal(stats)
-              cb()
-            },
-            done
-          )
+          dNode1.addNodeLink('some-link', dNode2, (err) => {
+            expect(err).to.not.exist
+            putAndGet(
+              'put', dNode1,
+              'stat', (n, cb) => n.multihash(cb),
+              (node, stats, cb) => {
+                const expected = {
+                  Hash: 'QmPR7W4kaADkAo4GKEVVPQN81EDUFCHJtqejQZ5dEG7pBC',
+                  NumLinks: 1,
+                  BlockSize: 64,
+                  LinksSize: 53,
+                  DataSize: 11,
+                  CumulativeSize: 77
+                }
+                expect(expected).to.deep.equal(stats)
+                cb()
+              },
+              done
+            )
+          })
         })
 
         it('with multihash base58 encoded', (done) => {
@@ -773,9 +778,8 @@ module.exports = (common) => {
           // note: we need to put the linked obj, otherwise IPFS won't timeout
           // cause it needs the node to get its size
           return ipfs.object.put(dNode2)
+            .then(() => promisify(dNode1.addNodeLink, {context: dNode1})('link-to-node', dNode2))
             .then(() => {
-              dNode1.addNodeLink('link-to-node', dNode2)
-
               return ipfs.object.patch
                 .addLink(testNodeHash, dNode1.links[0])
                 .then((node3) => {
