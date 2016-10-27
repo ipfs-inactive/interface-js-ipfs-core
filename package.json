@@ -40,7 +40,7 @@
     "run-series": "^1.1.4"
   },
   "devDependencies": {
-    "aegir": "^8.0.0"
+    "aegir": "^9.0.0"
   },
   "contributors": [
     "David Dias <daviddias.p@gmail.com>",
