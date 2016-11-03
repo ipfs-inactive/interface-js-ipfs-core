@@ -65,7 +65,6 @@ module.exports = (common) => {
           expect(err).to.not.exist
           expect(multiaddrs).to.not.be.empty
           expect(multiaddrs).to.be.an('array')
-          console.log(multiaddrs)
           expect(multiaddrs[0].constructor.name).to.be.eql('PeerInfo')
           done()
         })
