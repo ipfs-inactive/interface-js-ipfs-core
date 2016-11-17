@@ -5,9 +5,10 @@
 
 const expect = require('chai').expect
 const series = require('async/series')
+const multiaddr = require('multiaddr')
 
 module.exports = (common) => {
-  describe('.swarm', () => {
+  describe.only('.swarm', () => {
     let ipfsA
     let ipfsB
 
@@ -52,11 +53,47 @@ module.exports = (common) => {
         })
       })
 
-      it('.peers', (done) => {
-        ipfsA.swarm.peers((err, multiaddrs) => {
-          expect(err).to.not.exist
-          expect(multiaddrs).to.have.length.above(0)
-          done()
+      describe('.peers', () => {
+        it('default', (done) => {
+          ipfsA.swarm.peers((err, peers) => {
+            expect(err).to.not.exist
+            expect(peers).to.have.length.above(0)
+
+            const peer = peers[0]
+            // go-ipfs <= 0.4.4
+            expect(multiaddr.isMultiaddr(peer)).to.be.true
+
+            // go-ipfs >= 0.4.5
+            // expect(peer).to.have.a.property('addr')
+            // expect(peer).to.have.a.property('peer')
+            // expect(peer).to.have.a.property('muxer')
+
+            // expect(peer).to.not.have.a.property('streams')
+            // expect(peer).to.not.have.a.property('latency')
+
+            done()
+          })
+        })
+
+        it('verbose', (done) => {
+          ipfsA.swarm.peers({verbose: true}, (err, peers) => {
+            expect(err).to.not.exist
+            expect(peers).to.have.length.above(0)
+
+            const peer = peers[0]
+            // go-ipfs <= 0.4.4
+            expect(multiaddr.isMultiaddr(peer)).to.be.true
+
+            // go-ipfs >= 0.4.5
+            // expect(peer).to.have.a.property('addr')
+            // expect(peer).to.have.a.property('peer')
+            // expect(peer).to.have.a.property('muxer')
+
+            // expect(peer).to.have.a.property('streams')
+            // expect(peer).to.have.a.property('latency')
+
+            done()
+          })
         })
       })
 
