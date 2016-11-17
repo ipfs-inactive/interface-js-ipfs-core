@@ -43,25 +43,33 @@ module.exports = (common) => {
       common.teardown(done)
     })
 
+    let ipfsBId
+
     describe('callback API', () => {
       it('.connect', (done) => {
         ipfsB.id((err, id) => {
           expect(err).to.not.exist
-
+          ipfsBId = id
           const ipfsBAddr = id.addresses[0]
           ipfsA.swarm.connect(ipfsBAddr, done)
         })
       })
 
       describe('.peers', () => {
+        beforeEach((done) => {
+          const ipfsBAddr = ipfsBId.addresses[0]
+          ipfsA.swarm.connect(ipfsBAddr, done)
+        })
+
         it('default', (done) => {
-          ipfsA.swarm.peers((err, peers) => {
+          ipfsB.swarm.peers((err, peers) => {
             expect(err).to.not.exist
             expect(peers).to.have.length.above(0)
 
             const peer = peers[0]
 
             expect(peer).to.have.a.property('addr')
+            expect(multiaddr.isMultiaddr(peer.addr)).to.be.true
             expect(peer).to.have.a.property('peer')
             expect(peer).to.not.have.a.property('latency')
 
@@ -80,6 +88,7 @@ module.exports = (common) => {
 
             const peer = peers[0]
             expect(peer).to.have.a.property('addr')
+            expect(multiaddr.isMultiaddr(peer.addr)).to.be.true
             expect(peer).to.have.a.property('peer')
             expect(peer).to.have.a.property('latency')
 
