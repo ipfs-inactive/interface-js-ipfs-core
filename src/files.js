@@ -52,7 +52,7 @@ module.exports = (common) => {
       describe('.add', () => {
         it('stream', (done) => {
           const buffered = new Buffer('some data')
-          const expectedMultihash = 'QmVv4Wz46JaZJeH5PMV4LGbRiiMKEmszPYY3g6fjGnVXBS'
+          const expectedMultihash = 'QmQymZionCot18LL6AG6b4nTyP7bEudr7SywcKB7gPyJmY'
 
           const rs = new Readable()
           rs.push(buffered)
@@ -72,7 +72,7 @@ module.exports = (common) => {
             const file = res[0]
             expect(file).to.exist
             expect(file.path).to.equal('data.txt')
-            expect(file.size).to.equal(17)
+            expect(file.size).to.equal(67)
             expect(file.hash).to.equal(expectedMultihash)
             done()
           })
@@ -83,7 +83,7 @@ module.exports = (common) => {
             path: 'testfile.txt',
             content: smallFile
           }
-          const expectedMultihash = 'Qma4hjFTnCasJ8PVp3mZbZK5g2vGDT4LByLJ7m8ciyRFZP'
+          const expectedMultihash = 'QmdPe8QN3SUMcYjiqvTTcZQ6DNfkxjB2dkoAJktyik5R9C'
 
           ipfs.files.add([file], (err, res) => {
             expect(err).to.not.exist
@@ -96,7 +96,7 @@ module.exports = (common) => {
         })
 
         it('buffer', (done) => {
-          const expectedMultihash = 'Qma4hjFTnCasJ8PVp3mZbZK5g2vGDT4LByLJ7m8ciyRFZP'
+          const expectedMultihash = 'QmdPe8QN3SUMcYjiqvTTcZQ6DNfkxjB2dkoAJktyik5R9C'
 
           ipfs.files.add(smallFile, (err, res) => {
             expect(err).to.not.exist
@@ -167,7 +167,7 @@ module.exports = (common) => {
               path: `test-folder/${name}`
             })
 
-            const expectedRootMultihash = 'QmVvjDy7yF7hdnqE8Hrf4MHo5ABDtb5AbX6hWbD3Y42bXP'
+            const expectedRootMultihash = 'QmcVyBeMQzcHQbG1DtspQ1GikrDg9bGJcGuzyZFVMnUEAu'
 
             const files = [
               content('pp.txt'),
@@ -242,7 +242,7 @@ module.exports = (common) => {
 
     describe('promise API', () => {
       describe('.add', () => {
-        const expectedMultihash = 'Qma4hjFTnCasJ8PVp3mZbZK5g2vGDT4LByLJ7m8ciyRFZP'
+        const expectedMultihash = 'QmdPe8QN3SUMcYjiqvTTcZQ6DNfkxjB2dkoAJktyik5R9C'
 
         it('buffer', () => {
           return ipfs.files.add(smallFile)
