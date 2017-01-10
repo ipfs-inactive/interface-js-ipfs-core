@@ -55,10 +55,8 @@ module.exports = (common) => {
         })
       })
 
-      // for Identify to finish
-      it('time', (done) => {
-        setTimeout(done, 1500)
-      })
+      // for Identify and all the other protocol handshakes to finish
+      it('time', (done) => { setTimeout(done, 500) })
 
       describe('.peers', () => {
         beforeEach((done) => {
@@ -142,10 +140,8 @@ module.exports = (common) => {
           })
       })
 
-      // for Identify to finish
-      it('time', (done) => {
-        setTimeout(done, 1500)
-      })
+      // for Identify and all the other protocol handshakes to finish
+      it('time', (done) => { setTimeout(done, 500) })
 
       it('.peers', () => {
         return ipfsA.swarm.peers().then((multiaddrs) => {
