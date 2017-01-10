@@ -55,6 +55,9 @@ module.exports = (common) => {
         })
       })
 
+      // for Identify and all the other protocol handshakes to finish
+      it('time', (done) => { setTimeout(done, 500) })
+
       describe('.peers', () => {
         beforeEach((done) => {
           const ipfsBAddr = ipfsBId.addresses[0]
@@ -136,6 +139,9 @@ module.exports = (common) => {
             return ipfsA.swarm.connect(ipfsBAddr)
           })
       })
+
+      // for Identify and all the other protocol handshakes to finish
+      it('time', (done) => { setTimeout(done, 500) })
 
       it('.peers', () => {
         return ipfsA.swarm.peers().then((multiaddrs) => {
