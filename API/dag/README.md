@@ -27,6 +27,8 @@ If no `callback` is passed, a [promise][] is returned.
 ```JavaScript
 ```
 
+[A great source of examples can be found in the tests for this API.][examples]
+
 #### `dag.get`
 
 > Retrieve an IPLD format node
@@ -54,3 +56,7 @@ If no `callback` is passed, a [promise][] is returned.
 
 ```JavaScript
 ```
+
+[A great source of examples can be found in the tests for this API.][examples]
+
+[examples](../../src/dag.js)
