@@ -35,7 +35,10 @@ If no `callback` is passed, a [promise][] is returned.
 
 ##### `JavaScript` - ipfs.dag.get(cid [, path, options], callback)
 
-- `cid` - a [CID][https://github.com/ipfs/js-cid] instance.
+- `cid` - can be one of the following:
+  - a [CID](https://github.com/ipfs/js-cid) instance.
+  - a CID in its String format (i.e: zdpuAkxd9KzGwJFGhymCZRkPCXtBmBW7mB2tTuEH11HLbES9Y)
+  - a CID in its String format concatenated with the path to be resolved
 - `path` - the path to be resolved. Optional.
 - `options` - a object that might contain the following values:
   - `localResolve` - bool - if set to true, it will avoid resolving through different objects.
