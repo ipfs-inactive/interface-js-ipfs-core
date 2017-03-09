@@ -13,13 +13,19 @@ dag API
 
 - `dagNode` - a DAG node that follows one of the supported IPLD formats.
 - `options` - a object that might contain the follwing values:
-  - `format` - The IPLD format multicodec.
-  - `hashAlg` - The hash algorithm to be used over the serialized dagNode.
-  - `cid` - the CID of the node passed.
+    - `format` - The IPLD format multicodec.
+    - `hashAlg` - The hash algorithm to be used over the serialized dagNode.
+  - or
+    - `cid` - the CID of the node passed.
   - **Note** - You should only pass the CID or the format + hashAlg pair and not both
-- `callback` must follow `function (err) {}` signature, where `err` is an error if the operation was not successful.
+- `callback` must follow `function (err, cid) {}` signature, where `err` is an error if the operation was not successful and CID is the CID generated through the process or the one that was passed
 
 If no `callback` is passed, a [promise][] is returned.
+
+**Example:**
+
+```JavaScript
+```
 
 #### `dag.get`
 
@@ -38,3 +44,10 @@ If no `callback` is passed, a [promise][] is returned.
 
 - `value` - the value or node that was fetched during the get operation.
 - `remainderPath` - The remainder of the Path that the node was unable to resolve or what was left in a localResolve scenario.
+
+If no `callback` is passed, a [promise][] is returned.
+
+**Example:**
+
+```JavaScript
+```
