@@ -59,4 +59,61 @@ If no `callback` is passed, a [promise][] is returned.
 
 [A great source of examples can be found in the tests for this API.][examples]
 
+#### `dag.ls`
+
+> Enumerate all the first level link names
+
+##### `Go` **WIP**
+
+##### `JavaScript` - ipfs.dag.ls(cid [, options], callback)
+
+- `cid` - can be one of the following:
+  - a [CID](https://github.com/ipfs/js-cid) instance.
+  - a CID in its String format (i.e: zdpuAkxd9KzGwJFGhymCZRkPCXtBmBW7mB2tTuEH11HLbES9Y)
+  - a CID in its String format concatenated with the path to be resolved
+- `options` - a object that might contain the following values:
+  - `stream` - bool - if set to true, it will return a Node.js Readable Stream.
+  - `pull` - bool - if set to true, it will return a pull-stream.
+
+`callback` must follow `function (err, result) {}` signature, where `err` is an error if the operation was not successful and `result` is an Array or a Node.js Stream or a pull-stream, depending on the option passed.
+
+If no `callback` is passed, a [promise][] is returned.
+
+**Example:**
+
+```JavaScript
+```
+
+[A great source of examples can be found in the tests for this API.][examples]
+
+#### `dag.tree`
+
+> Enumerate all the entries in a graph
+
+##### `Go` **WIP**
+
+##### `JavaScript` - ipfs.dag.tree(cid[, options], callback)
+
+- `cid` - can be one of the following:
+  - a [CID](https://github.com/ipfs/js-cid) instance.
+  - a CID in its String format (i.e: zdpuAkxd9KzGwJFGhymCZRkPCXtBmBW7mB2tTuEH11HLbES9Y)
+  - a CID in its String format concatenated with the path to be resolved
+- `options` - a object that might contain the following values:
+  - `stream` - bool - if set to true, it will return a Node.js Readable Stream.
+  - `pull` - bool - if set to true, it will return a pull-stream.
+  - `localResolve` - bool - if set to true, it will avoid resolving through different objects.
+
+`callback` must follow `function (err, result) {}` signature, where `err` is an error if the operation was not successful and `result` is an Array or a Node.js Stream or a pull-stream, depending on the option passed.
+
+If no `callback` is passed, a [promise][] is returned.
+
+**Example:**
+
+```JavaScript
+```
+
+[A great source of examples can be found in the tests for this API.][examples]
+
+
+
 [examples](../../src/dag.js)
