@@ -33,7 +33,7 @@ ipfs.dag.put(obj, { format: 'dag-cbor', hashAlg: 'sha3-512' }, (err, cid) => {
 })
 ```
 
-[A great source of examples can be found in the tests for this API.][examples]
+A great source of [examples][] can be found in the tests for this API.
 
 #### `dag.get`
 
@@ -104,7 +104,7 @@ ipfs.dag.get('zdpuAmtur968yprkhG9N5Zxn6MFVoqAWBbhUAkNLJs2UtkTq5/c/ca/1', errOrLo
 // 6
 ```
 
-[A great source of examples can be found in the tests for this API.][examples]
+A great source of [examples][] can be found in the tests for this API.
 
 #### `dag.tree`
 
@@ -131,6 +131,7 @@ If no `callback` is passed, a [promise][] is returned.
 ```JavaScript
 ```
 
-[A great source of examples can be found in the tests for this API.][examples]
+A great source of [examples][] can be found in the tests for this API.
 
-[examples](../../src/dag.js)
+
+[examples]: https://github.com/ipfs/interface-ipfs-core/blob/master/src/dag.js
