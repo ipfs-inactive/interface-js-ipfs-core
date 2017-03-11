@@ -51,7 +51,7 @@ module.exports = (common) => {
         }
       })
 
-      describe('.put', () => {
+      describe.only('.put', () => {
         it('dag-pb with default hash func (sha2-256)', (done) => {
           ipfs.dag.put(pbNode, {
             format: 'dag-pb',
@@ -309,8 +309,13 @@ module.exports = (common) => {
         })
       })
 
-      describe('.tree', () => {})
-      describe('.ls', () => {})
+      describe('.tree', () => {
+        it.skip('.tree with CID', (done) => {})
+        it.skip('.tree with CID and path', (done) => {})
+        it.skip('.tree with CID and path as String', (done) => {})
+        it.skip('.tree with CID recursive', (done) => {})
+        it.skip('.tree with CID and path recursive', (done) => {})
+      })
     })
 
     describe('promise API', () => {

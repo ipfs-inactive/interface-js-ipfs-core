@@ -92,18 +92,18 @@ If no `callback` is passed, a [promise][] is returned.
 
 ##### `Go` **WIP**
 
-##### `JavaScript` - ipfs.dag.tree(cid[, options], callback)
+##### `JavaScript` - ipfs.dag.tree(cid [, path, options], callback)
 
 - `cid` - can be one of the following:
   - a [CID](https://github.com/ipfs/js-cid) instance.
   - a CID in its String format (i.e: zdpuAkxd9KzGwJFGhymCZRkPCXtBmBW7mB2tTuEH11HLbES9Y)
   - a CID in its String format concatenated with the path to be resolved
+- `path` - the path to be resolved. Optional.
 - `options` - a object that might contain the following values:
-  - `stream` - bool - if set to true, it will return a Node.js Readable Stream.
-  - `pull` - bool - if set to true, it will return a pull-stream.
-  - `localResolve` - bool - if set to true, it will avoid resolving through different objects.
+  - `recursive` - bool - if set to true, it will follow the links and continuously run tree on them, returning all the paths in the graph.
+  - `level`- Number - the level of nestness we want to fetch paths. A level is an hop from one node to another node.
 
-`callback` must follow `function (err, result) {}` signature, where `err` is an error if the operation was not successful and `result` is an Array or a Node.js Stream or a pull-stream, depending on the option passed.
+`callback` must follow `function (err, result) {}` signature, where `err` is an error if the operation was not successful and `result` is an Array with the paths passed.
 
 If no `callback` is passed, a [promise][] is returned.
 
@@ -113,7 +113,6 @@ If no `callback` is passed, a [promise][] is returned.
 ```
 
 [A great source of examples can be found in the tests for this API.][examples]
-
 
 
 [examples](../../src/dag.js)
