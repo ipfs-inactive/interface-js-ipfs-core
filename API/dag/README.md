@@ -25,6 +25,12 @@ If no `callback` is passed, a [promise][] is returned.
 **Example:**
 
 ```JavaScript
+const obj = { simple: 'object' }
+
+ipfs.dag.put(obj, { format: 'dag-cbor', hashAlg: 'sha3-512' }, (err, cid) => {
+  console.log(cid.toBaseEncodedString())
+  // zdpuAzE1oAAMpsfdoexcJv6PmL9UhE8nddUYGU32R98tzV5fv
+})
 ```
 
 [A great source of examples can be found in the tests for this API.][examples]
@@ -55,33 +61,47 @@ If no `callback` is passed, a [promise][] is returned.
 **Example:**
 
 ```JavaScript
-```
+// example obj
+const obj = {
+  a: 1,
+  b: [1, 2, 3],
+  c: {
+    ca: [5, 6, 7],
+    cb: 'foo"'
+  }
+}
 
-[A great source of examples can be found in the tests for this API.][examples]
+ipfs.dag.put(obj, { format: 'dag-cbor', hashAlg: 'sha2-256' }, (err, cid) => {
+  console.log(cid.toBaseEncodedString())
+  // zdpuAmtur968yprkhG9N5Zxn6MFVoqAWBbhUAkNLJs2UtkTq5
+})
 
-#### `dag.ls`
+function errOrLog(err, result) {
+  if (err) {
+    console.error('error: ' + err)
+  } else {
+    console.log(result.value)
+  }
+}
 
-> Enumerate all the first level link names
+ipfs.dag.get('zdpuAmtur968yprkhG9N5Zxn6MFVoqAWBbhUAkNLJs2UtkTq5/a', errOrLog)
+// Returns:
+// 1
 
-##### `Go` **WIP**
+ipfs.dag.get('zdpuAmtur968yprkhG9N5Zxn6MFVoqAWBbhUAkNLJs2UtkTq5/b', errOrLog)
+// Returns:
+// [1, 2, 3]
 
-##### `JavaScript` - ipfs.dag.ls(cid [, options], callback)
+ipfs.dag.get('zdpuAmtur968yprkhG9N5Zxn6MFVoqAWBbhUAkNLJs2UtkTq5/c', errOrLog)
+// Returns:
+// {
+//   ca: [5, 6, 7],
+//   cb: 'foo'
+// }
 
-- `cid` - can be one of the following:
-  - a [CID](https://github.com/ipfs/js-cid) instance.
-  - a CID in its String format (i.e: zdpuAkxd9KzGwJFGhymCZRkPCXtBmBW7mB2tTuEH11HLbES9Y)
-  - a CID in its String format concatenated with the path to be resolved
-- `options` - a object that might contain the following values:
-  - `stream` - bool - if set to true, it will return a Node.js Readable Stream.
-  - `pull` - bool - if set to true, it will return a pull-stream.
-
-`callback` must follow `function (err, result) {}` signature, where `err` is an error if the operation was not successful and `result` is an Array or a Node.js Stream or a pull-stream, depending on the option passed.
-
-If no `callback` is passed, a [promise][] is returned.
-
-**Example:**
-
-```JavaScript
+ipfs.dag.get('zdpuAmtur968yprkhG9N5Zxn6MFVoqAWBbhUAkNLJs2UtkTq5/c/ca/1', errOrLog)
+// Returns:
+// 6
 ```
 
 [A great source of examples can be found in the tests for this API.][examples]
@@ -101,7 +121,6 @@ If no `callback` is passed, a [promise][] is returned.
 - `path` - the path to be resolved. Optional.
 - `options` - a object that might contain the following values:
   - `recursive` - bool - if set to true, it will follow the links and continuously run tree on them, returning all the paths in the graph.
-  - `level`- Number - the level of nestness we want to fetch paths. A level is an hop from one node to another node.
 
 `callback` must follow `function (err, result) {}` signature, where `err` is an error if the operation was not successful and `result` is an Array with the paths passed.
 
@@ -113,6 +132,5 @@ If no `callback` is passed, a [promise][] is returned.
 ```
 
 [A great source of examples can be found in the tests for this API.][examples]
-
 
 [examples](../../src/dag.js)

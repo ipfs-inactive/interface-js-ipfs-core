@@ -29,9 +29,7 @@ module.exports = (common) => {
       })
     })
 
-    after((done) => {
-      common.teardown(done)
-    })
+    after((done) => common.teardown(done))
 
     describe('callback API', () => {
       let pbNode
@@ -51,7 +49,7 @@ module.exports = (common) => {
         }
       })
 
-      describe.only('.put', () => {
+      describe('.put', () => {
         it('dag-pb with default hash func (sha2-256)', (done) => {
           ipfs.dag.put(pbNode, {
             format: 'dag-pb',
