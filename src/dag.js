@@ -235,7 +235,7 @@ module.exports = (common) => {
           })
 
           it('dag-pb local scope', (done) => {
-            ipfs.dag.get(cidPb, 'data', (err, result) => {
+            ipfs.dag.get(cidPb, 'Data', (err, result) => {
               expect(err).to.not.exist
               expect(result.value).to.eql(new Buffer('I am inside a Protobuf'))
               done()
@@ -272,7 +272,7 @@ module.exports = (common) => {
           it.skip('from dag-pb to dag-cbor', (done) => {})
 
           it('from dag-cbor to dag-pb', (done) => {
-            ipfs.dag.get(cidCbor, 'pb/data', (err, result) => {
+            ipfs.dag.get(cidCbor, 'pb/Data', (err, result) => {
               expect(err).to.not.exist
               expect(result.value).to.eql(new Buffer('I am inside a Protobuf'))
               done()
@@ -298,7 +298,7 @@ module.exports = (common) => {
           it('CID String + path', (done) => {
             const cidCborStr = cidCbor.toBaseEncodedString()
 
-            ipfs.dag.get(cidCborStr + '/pb/data', (err, result) => {
+            ipfs.dag.get(cidCborStr + '/pb/Data', (err, result) => {
               expect(err).to.not.exist
               expect(result.value).to.eql(new Buffer('I am inside a Protobuf'))
               done()
@@ -308,11 +308,110 @@ module.exports = (common) => {
       })
 
       describe('.tree', () => {
-        it.skip('.tree with CID', (done) => {})
-        it.skip('.tree with CID and path', (done) => {})
-        it.skip('.tree with CID and path as String', (done) => {})
-        it.skip('.tree with CID recursive', (done) => {})
-        it.skip('.tree with CID and path recursive', (done) => {})
+        let nodePb
+        let nodeCbor
+        let cidPb
+        let cidCbor
+
+        before((done) => {
+          series([
+            (cb) => {
+              dagPB.DAGNode.create(new Buffer('I am inside a Protobuf'), (err, node) => {
+                expect(err).to.not.exist
+                nodePb = node
+                cb()
+              })
+            },
+            (cb) => {
+              dagPB.util.cid(nodePb, (err, cid) => {
+                expect(err).to.not.exist
+                cidPb = cid
+                cb()
+              })
+            },
+            (cb) => {
+              nodeCbor = {
+                someData: 'I am inside a Cbor object',
+                pb: { '/': cidPb.toBaseEncodedString() }
+              }
+
+              dagCBOR.util.cid(nodeCbor, (err, cid) => {
+                expect(err).to.not.exist
+                cidCbor = cid
+                cb()
+              })
+            }
+          ], store)
+
+          function store () {
+            pull(
+              pull.values([
+                { node: nodePb, multicodec: 'dag-pb', hashAlg: 'sha2-256' },
+                { node: nodeCbor, multicodec: 'dag-cbor', hashAlg: 'sha2-256' }
+              ]),
+              pull.asyncMap((el, cb) => {
+                ipfs.dag.put(el.node, {
+                  format: el.multicodec,
+                  hashAlg: el.hashAlg
+                }, cb)
+              }),
+              pull.onEnd(done)
+            )
+          }
+        })
+
+        it('.tree with CID', (done) => {
+          ipfs.dag.tree(cidCbor, (err, paths) => {
+            expect(err).to.not.exist
+            expect(paths).to.eql([
+              'pb',
+              'someData'
+            ])
+            done()
+          })
+        })
+
+        it('.tree with CID and path', (done) => {
+          ipfs.dag.tree(cidCbor, 'someData', (err, paths) => {
+            expect(err).to.not.exist
+            expect(paths).to.eql([])
+            done()
+          })
+        })
+
+        it('.tree with CID and path as String', (done) => {
+          const cidCborStr = cidCbor.toBaseEncodedString()
+
+          ipfs.dag.tree(cidCborStr + '/someData', (err, paths) => {
+            expect(err).to.not.exist
+            expect(paths).to.eql([])
+            done()
+          })
+        })
+
+        it('.tree with CID recursive (accross different formats)', (done) => {
+          ipfs.dag.tree(cidCbor, { recursive: true }, (err, paths) => {
+            expect(err).to.not.exist
+            expect(paths).to.eql([
+              'pb',
+              'pb/Data',
+              'pb/Links',
+              'someData'
+            ])
+            done()
+          })
+        })
+
+        it('.tree with CID and path recursive', (done) => {
+          ipfs.dag.tree(cidCbor, 'pb', { recursive: true }, (err, paths) => {
+            expect(err).to.not.exist
+            expect(paths).to.eql([
+              'Data',
+              'Links'
+            ])
+            done()
+          })
+        })
       })
     })
 
