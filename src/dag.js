@@ -12,7 +12,7 @@ const dagCBOR = require('ipld-dag-cbor')
 const CID = require('cids')
 
 module.exports = (common) => {
-  describe.only('.dag', () => {
+  describe('.dag', () => {
     let ipfs
 
     before(function (done) {
