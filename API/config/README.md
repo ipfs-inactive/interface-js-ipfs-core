@@ -18,6 +18,12 @@ If no callback is passed, a [promise][] is returned
 **Example:**
 
 ```JavaScript
+ipfs.config.get((err, config) => {
+  if (err) {
+    throw err
+  }
+  console.log(config)
+})
 ```
 
 A great source of [examples][] can be found in the tests for this API.
@@ -43,6 +49,12 @@ Note that this operation will **not** spark the restart of any service, i.e: if 
 **Example:**
 
 ```JavaScript
+ipfs.config.set('Discovery.MDNS.Enabled', false, (err) => {
+  if (err) {
+    throw err
+  }
+  // MDNS Discovery was set to false
+})
 ```
 
 A great source of [examples][] can be found in the tests for this API.
@@ -66,6 +78,12 @@ Note that this operation will **not** spark the restart of any service, i.e: if 
 **Example:**
 
 ```JavaScript
+ipfs.config.replace(newConfig, (err) => {
+  if (err) {
+    throw err
+  }
+  // config has been replaced
+})
 ```
 
 A great source of [examples][] can be found in the tests for this API.
