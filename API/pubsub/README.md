@@ -22,6 +22,13 @@ If no `callback` is passed, a [promise][] is returned.
 **Example:**
 
 ```JavaScript
+const topic = 'fruit-of-the-day'
+
+const receiveMsg = (msg) => {
+  console.log(msg.toString()
+}
+
+ipfs.pubsub.subscribe(topic, receiveMsg)
 ```
 
 A great source of [examples][] can be found in the tests for this API.
@@ -42,6 +49,18 @@ This works like `EventEmitter.removeListener`, as that only the `handler` passed
 **Example:**
 
 ```JavaScript
+const topic = 'fruit-of-the-day'
+
+const receiveMsg = (msg) => {
+  console.log(msg.toString()
+}
+
+ipfs.pubsub.subscribe(topic, receiveMsg)
+
+setTimeout(() => {
+  // unsubscribe a second later
+  ipfs.pubsub.unsubscribe(topic, receiveMsg)
+}, 1000)
 ```
 
 A great source of [examples][] can be found in the tests for this API.
@@ -63,6 +82,15 @@ If no `callback` is passed, a promise is returned.
 **Example:**
 
 ```JavaScript
+const topic = 'fruit-of-the-day'
+const msg = new Buffer('banana')
+
+ipfs.pubsub.publish(topic, msg, (err) => {
+  if (err) {
+    throw err
+  }
+  // msg was broadcasted
+})
 ```
 
 A great source of [examples][] can be found in the tests for this API.
@@ -83,6 +111,12 @@ If no `callback` is passed, a promise is returned.
 **Example:**
 
 ```JavaScript
+ipfs.pubsub.ls((err, topics) => {
+  if (err) {
+    throw err
+  }
+  console.log(topics)
+})
 ```
 
 A great source of [examples][] can be found in the tests for this API.
@@ -103,6 +137,12 @@ If no `callback` is passed, a promise is returned.
 **Example:**
 
 ```JavaScript
+ipfs.pubsub.peers(topic, (err, peerIds) => {
+  if (err) {
+    throw err
+  }
+  console.log(peerIds)
+})
 ```
 
 A great source of [examples][] can be found in the tests for this API.
