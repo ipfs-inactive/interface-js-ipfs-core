@@ -15,9 +15,12 @@ object API
 
 If no `callback` is passed, a [promise][] is returned.
 
+**Example:**
 
+```JavaScript
+```
 
-
+A great source of [examples][] can be found in the tests for this API.
 
 #### `object.put`
 
@@ -41,9 +44,12 @@ If no `callback` is passed, a [promise][] is returned.
 
 If no `callback` is passed, a [promise][] is returned.
 
+**Example:**
 
+```JavaScript
+```
 
-
+A great source of [examples][] can be found in the tests for this API.
 
 #### `object.get`
 
@@ -66,6 +72,13 @@ If no `callback` is passed, a [promise][] is returned.
 
 If no `callback` is passed, a [promise][] is returned.
 
+**Example:**
+
+```JavaScript
+```
+
+A great source of [examples][] can be found in the tests for this API.
+
 #### `object.data`
 
 > Returns the Data field of an object
@@ -85,6 +98,13 @@ If no `callback` is passed, a [promise][] is returned.
 `callback` must follow `function (err, data) {}` signature, where `err` is an error if the operation was not successful and `data` is a Buffer with the data that the MerkleDAG node contained.
 
 If no `callback` is passed, a [promise][] is returned.
+
+**Example:**
+
+```JavaScript
+```
+
+A great source of [examples][] can be found in the tests for this API.
 
 #### `object.links`
 
@@ -107,9 +127,12 @@ If no `callback` is passed, a [promise][] is returned.
 
 If no `callback` is passed, a [promise][] is returned.
 
+**Example:**
 
+```JavaScript
+```
 
-
+A great source of [examples][] can be found in the tests for this API.
 
 #### `object.stat`
 
@@ -143,9 +166,12 @@ If no `callback` is passed, a [promise][] is returned.
 
 If no `callback` is passed, a [promise][] is returned.
 
+**Example:**
 
+```JavaScript
+```
 
-
+A great source of [examples][] can be found in the tests for this API.
 
 #### `object.patch`
 
@@ -174,9 +200,12 @@ If no `callback` is passed, a [promise][] is returned.
 
 If no `callback` is passed, a [promise][] is returned.
 
+**Example:**
 
+```JavaScript
+```
 
-
+A great source of [examples][] can be found in the tests for this API.
 
 ##### `object.patch.rmLink`
 
@@ -201,9 +230,12 @@ If no `callback` is passed, a [promise][] is returned.
 
 If no `callback` is passed, a [promise][] is returned.
 
+**Example:**
 
+```JavaScript
+```
 
-
+A great source of [examples][] can be found in the tests for this API.
 
 ##### `object.patch.appendData`
 
@@ -228,9 +260,12 @@ If no `callback` is passed, a [promise][] is returned.
 
 If no `callback` is passed, a [promise][] is returned.
 
+**Example:**
 
+```JavaScript
+```
 
-
+A great source of [examples][] can be found in the tests for this API.
 
 ##### `object.patch.setData`
 
@@ -255,6 +290,14 @@ If no `callback` is passed, a [promise][] is returned.
 
 If no `callback` is passed, a [promise][] is returned.
 
-[DAGNode]: https://github.com/vijayee/js-ipfs-merkle-dag
-[multihash]: http://github.com/jbenet/multihash
+**Example:**
+
+```JavaScript
+```
+
+A great source of [examples][] can be found in the tests for this API.
+
+[DAGNode]: https://github.com/ipld/js-ipld-dag-pb
+[multihash]: http://github.com/multiformats/multihash
 [promise]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise
+[examples]: https://github.com/ipfs/interface-ipfs-core/blob/master/src/object.js
