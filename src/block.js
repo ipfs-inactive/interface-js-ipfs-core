@@ -9,13 +9,8 @@ const multihash = require('multihashes')
 const CID = require('cids')
 
 function expectKey (block, expected, callback) {
-  block.key((err, key) => {
-    if (err) {
-      return callback(err)
-    }
-    expect(key).to.be.eql(expected)
-    callback()
-  })
+  expect(block.cid.multihash).to.be.eql(expected)
+  callback()
 }
 
 module.exports = (common) => {
@@ -44,11 +39,11 @@ module.exports = (common) => {
       it('.put a buffer', (done) => {
         const expectedHash = 'QmPv52ekjS75L4JmHpXVeuJ5uX2ecSfSZo88NSyxwA3rAQ'
         const cid = new CID(expectedHash)
-        const blob = Buffer('blorb')
+        const blob = new Buffer('blorb')
 
-        ipfs.block.put(blob, cid, (err, block) => {
+        ipfs.block.put(blob, (err, block) => {
           expect(err).to.not.exist
-          expect(block).to.have.a.property('data', blob)
+          expect(block.data).to.be.eql(blob)
           expectKey(block, multihash.fromB58String(expectedHash), done)
         })
       })
@@ -56,9 +51,9 @@ module.exports = (common) => {
       it('.put a block', (done) => {
         const expectedHash = 'QmPv52ekjS75L4JmHpXVeuJ5uX2ecSfSZo88NSyxwA3rAQ'
         const cid = new CID(expectedHash)
-        const blob = new Block(new Buffer('blorb'))
+        const blob = new Block(new Buffer('blorb'), cid)
 
-        ipfs.block.put(blob, cid, (err, block) => {
+        ipfs.block.put(blob, (err, block) => {
           expect(err).to.not.exist
           expect(block.data).to.eql(new Buffer('blorb'))
           expectKey(block, multihash.fromB58String(expectedHash), done)
@@ -67,7 +62,7 @@ module.exports = (common) => {
 
       it('.put a block (without using CID, legacy mode)', (done) => {
         const expectedHash = 'QmPv52ekjS75L4JmHpXVeuJ5uX2ecSfSZo88NSyxwA3rAQ'
-        const blob = new Block(new Buffer('blorb'))
+        const blob = new Block(new Buffer('blorb'), new CID(expectedHash))
 
         ipfs.block.put(blob, (err, block) => {
           expect(err).to.not.exist
@@ -79,7 +74,7 @@ module.exports = (common) => {
       it('.put error with array of blocks', (done) => {
         const blob = Buffer('blorb')
 
-        ipfs.block.put([blob, blob], 'fake cids', (err) => {
+        ipfs.block.put([blob, blob], (err) => {
           expect(err).to.be.an.instanceof(Error)
           done()
         })
