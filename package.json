@@ -42,7 +42,8 @@
     "readable-stream": "2.2.6"
   },
   "devDependencies": {
-    "aegir": "^11.0.1"
+    "aegir": "^11.0.1",
+    "dirty-chai": "^1.2.2"
   },
   "contributors": [
     "David Dias <daviddias.p@gmail.com>",
