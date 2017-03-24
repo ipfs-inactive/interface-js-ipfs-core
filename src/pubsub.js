@@ -461,12 +461,21 @@ module.exports = (common) => {
 
             const sub1 = (msg) => {
               // console.log(msg.seqno, msg.seqno > prevSeqno)
-              expect(msg.seqno > prevSeqno).to.be.eql(true)
+              // expect(msg.seqno > prevSeqno).to.be.eql(true)
 
               const expectedMsg = msgBase + receivedCount
               const receivedMsg = msg.data.toString()
 
+              if (msg.seqno <= prevSeqno) {
+                console.log("wrong seqno")
+                console.log(msg.seqno, prevSeqno, msg.seqno > prevSeqno)
+                console.log(receivedCount, count)
+                console.log(msg.data.toString())
+                console.log(JSON.stringify(msg, null, 2))
+              }
+
               if (receivedMsg !== expectedMsg) {
+                console.log("wrong payload")
                 console.log(msg.seqno, prevSeqno, msg.seqno > prevSeqno)
                 console.log(receivedCount, count)
                 console.log(msg.data.toString())
