@@ -462,12 +462,20 @@ module.exports = (common) => {
             const sub1 = (msg) => {
               // console.log(msg.seqno, msg.seqno > prevSeqno)
               expect(msg.seqno > prevSeqno).to.be.eql(true)
-              prevSeqno = msg.seqno
 
               const expectedMsg = msgBase + receivedCount
               const receivedMsg = msg.data.toString()
+
+              if (receivedMsg !== expectedMsg) {
+                console.log(msg.seqno, prevSeqno, msg.seqno > prevSeqno)
+                console.log(receivedCount, count)
+                console.log(msg.data.toString())
+                console.log(JSON.stringify(msg, null, 2))
+              }
+
               expect(receivedMsg).to.eql(expectedMsg)
 
+              prevSeqno = msg.seqno
               receivedCount++
 
               if (receivedCount >= count) {
