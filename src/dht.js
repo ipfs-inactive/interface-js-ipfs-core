@@ -13,7 +13,7 @@ const CID = require('cids')
 const PeerId = require('peer-id')
 
 module.exports = (common) => {
-  describe.only('.dht', () => {
+  describe.skip('.dht', () => {
     let nodeA
     let nodeB
     let nodeC
