@@ -27,7 +27,7 @@ function spawnWithId (factory, callback) {
 }
 
 module.exports = (common) => {
-  describe.only('.dht', () => {
+  describe('.dht', () => {
     let nodeA
     let nodeB
     let nodeC
