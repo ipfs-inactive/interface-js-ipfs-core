@@ -89,7 +89,6 @@ module.exports = (common) => {
 
       describe('.findpeer', () => {
         it('finds other peers', (done) => {
-          console.log(nodeC.peerId.id)
           nodeA.dht.findpeer(nodeC.peerId.id, (err, peer) => {
             expect(err).to.not.exist()
             // TODO upgrade the answer, format is weird
@@ -104,25 +103,17 @@ module.exports = (common) => {
         it.skip('fails to find other peer, if peer doesnt exist()s', (done) => {
           nodeA.dht.findpeer('Qmd7qZS4T7xXtsNFdRoK1trfMs5zU94EpokQ9WFtxdPxsZ', (err, peer) => {
             expect(err).to.not.exist()
-            console.log(peer)
             expect(peer).to.be.equal(null)
             done()
           })
         })
       })
 
-      describe.skip('.provide', () => {
+      describe('.provide', () => {
         it('regular', (done) => {
-          const val = new Buffer('hello large file')
+          const cid = new CID('Qmd7qZS4T7xXtsNFdRoK1trfMs5zU94EpokQ9WFtxdPxsZ')
 
-          waterfall([
-            (cb) => multihashing(val, 'sha2-256', cb),
-            (digest, cb) => {
-              const cid = new CID(digest)
-
-              nodeC.dht.provide(cid, cb)
-            }
-          ], done)
+          nodeC.dht.provide(cid, done)
         })
 
         it.skip('recursive', () => {})
@@ -130,54 +121,30 @@ module.exports = (common) => {
 
       describe.skip('findprovs', () => {
         it('basic', (done) => {
-          const val = new Buffer('hello findprovs')
+          const cid = new CID('Qmd7qZS4T7xXtsNFdRoK1trfMs5zU94EpokQ9WFtxdPxxx')
 
           waterfall([
-            (cb) => multihashing(val, 'sha2-256', cb),
-            (digest, cb) => {
-              const cid = new CID(digest)
-
-              waterfall([
-                (cb) => nodeB.dht.provide(cid, cb),
-                (cb) => nodeA.dht.findprovs(cid, cb),
-                (provs, cb) => {
-                  expect(provs.map((p) => p.toB58String()))
-                    .to.eql([nodeB.id().id])
-                  cb()
-                }
-              ], cb)
+            (cb) => nodeB.dht.provide(cid, cb),
+            (cb) => nodeC.dht.findprovs(cid, cb),
+            (provs, cb) => {
+              expect(provs.map((p) => p.toB58String()))
+                .to.eql([nodeB.peerId.id])
+              cb()
             }
           ], done)
         })
       })
 
-      describe.skip('.query', () => {
-        let ids
-
-        before((done) => {
-          times(2, (i, cb) => {
-            map(others, (other, cb) => {
-              other.id(cb)
-            }, (err, res) => {
-              expect(err).to.not.exist()
-              ids = res
-              nodeC.swarm.connect(ids[i].addresses[0], cb)
-            })
-          }, done)
-        })
-
-        it('returns the other node', (done) => {
-          nodeA.dht.query(new PeerId(ids[1].id), (err, peers) => {
+      describe('.query', () => {
+        it('returns the other node in the query', (done) => {
+          nodeA.dht.query(nodeC.peerId.id, (err, peers) => {
             expect(err).to.not.exist()
-            expect(
-              peers.map((p) => p.toB58String())
-            ).to.include(ids[2].id)
-
+            expect(peers.map((p) => p.ID))
+              .to.include(nodeC.peerId.id)
             done()
           })
         })
       })
-
     })
 
     describe('promise API', () => {
