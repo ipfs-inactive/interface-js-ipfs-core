@@ -231,6 +231,14 @@ module.exports = (common) => {
               })
             },
             (cb) => {
+              // get object from ipfs multihash string
+              ipfs.object.get(node1.toJSON().multihash, (err, node) => {
+                expect(err).to.not.exist()
+                expect(node).to.exist()
+                cb()
+              })
+            },
+            (cb) => {
               expect(node1.data).to.eql(node2.data)
               expect(node1.links).to.eql(node2.links)
               expect(node1.multihash).to.eql(node2.multihash)
@@ -781,14 +789,14 @@ module.exports = (common) => {
           })
       })
 
-      it('object.get', (done) => {
+      it('object.get', () => {
         const testObj = {
           Data: new Buffer('get test object'),
           Links: []
         }
 
-        ipfs.object.put(testObj).then((node1) => {
-          ipfs.object.get(node1.multihash).then((node2) => {
+        return ipfs.object.put(testObj).then((node1) => {
+          return ipfs.object.get(node1.multihash).then((node2) => {
             // because js-ipfs-api can't infer if the
             // returned Data is Buffer or String
             if (typeof node2.data === 'string') {
@@ -797,7 +805,10 @@ module.exports = (common) => {
 
             expect(node1.data).to.deep.equal(node2.data)
             expect(node1.links).to.deep.equal(node2.links)
-            done()
+            // get object from ipfs multihash string
+            return ipfs.object.get(node1.toJSON().multihash).then((node2) => {
+              expect(node2).to.exist()
+            });
           })
         })
       })
