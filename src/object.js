@@ -789,14 +789,14 @@ module.exports = (common) => {
           })
       })
 
-      it('object.get', () => {
+      it('object.get', (done) => {
         const testObj = {
           Data: new Buffer('get test object'),
           Links: []
         }
 
-        return ipfs.object.put(testObj).then((node1) => {
-          return ipfs.object.get(node1.multihash).then((node2) => {
+        ipfs.object.put(testObj).then((node1) => {
+          ipfs.object.get(node1.multihash).then((node2) => {
             // because js-ipfs-api can't infer if the
             // returned Data is Buffer or String
             if (typeof node2.data === 'string') {
@@ -805,11 +805,15 @@ module.exports = (common) => {
 
             expect(node1.data).to.deep.equal(node2.data)
             expect(node1.links).to.deep.equal(node2.links)
-            // get object from ipfs multihash string
-            return ipfs.object.get(node1.toJSON().multihash).then((node2) => {
-              expect(node2).to.exist()
-            });
+            done()
           })
+        })
+      })
+
+      it('object.get multihash string', (done) => {
+        ipfs.object.get('QmPb5f92FxKPYdT3QNBd1GKiL4tZUXUrzF4Hkpdr3Gf1gK').then((node) => {
+          expect(node.data).to.exist()
+          done()
         })
       })
 
