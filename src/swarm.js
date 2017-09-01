@@ -178,15 +178,13 @@ module.exports = (common) => {
               }
             ], done)
           })
+
           it('Connecting two peers with two addresses each', (done) => {
             let nodeA
             let nodeB
             let nodeBAddress
             const configA = getConfig([
-              // Need to explicitly declare the ports as 0 doesn't work with
-              // multiple swarm addresses apparently
-              // Not sure how to deal with the case if the ports are busy, this
-              // is introducing flakyness
+              // TODO: Change to port 0, needs: https://github.com/ipfs/interface-ipfs-core/issues/152
               '/ip4/127.0.0.1/tcp/6543',
               '/ip4/127.0.0.1/tcp/6544'
             ])
