@@ -127,10 +127,10 @@ module.exports = (common) => {
           const expectedMultihash = 'Qme79tX2bViL26vNjPsF3DP1R9rMKMvnPYJiKTTKPrXJjq'
 
           let progCount = 0
-          let progress = 0
+          let accumProgress = 0
           const handler = (p) => {
             progCount += 1
-            progress = p
+            accumProgress = p
           }
 
           ipfs.files.add(bigFile, { progress: handler }, (err, res) => {
@@ -140,7 +140,7 @@ module.exports = (common) => {
             expect(file.hash).to.equal(expectedMultihash)
             expect(file.path).to.equal(file.hash)
             expect(progCount).to.equal(58)
-            expect(progress).to.equal(bigFile.byteLength)
+            expect(accumProgress).to.equal(bigFile.byteLength)
             done()
           })
         })
@@ -214,10 +214,10 @@ module.exports = (common) => {
           }, 0)
 
           let progCount = 0
-          let progress = 0
+          let accumProgress = 0
           const handler = (p) => {
             progCount += 1
-            progress += p
+            accumProgress += p
           }
 
           ipfs.files.add(dirs, { progress: handler }, (err, res) => {
@@ -227,7 +227,7 @@ module.exports = (common) => {
             expect(root.path).to.equal('test-folder')
             expect(root.hash).to.equal(expectedRootMultihash)
             expect(progCount).to.equal(8)
-            expect(progress).to.be.at.least(total)
+            expect(accumProgress).to.be.at.least(total)
             done()
           })
         })
