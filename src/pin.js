@@ -29,7 +29,6 @@ module.exports = (common) => {
       })
 
       function populate () {
-
         ipfs.files.add(testFile, (err, res) => {
           expect(err).to.not.exist()
           expect(res).to.have.length(1)
@@ -57,14 +56,14 @@ module.exports = (common) => {
         })
       })
 
-//      it('.ls type indirect', (done) => {
-//        ipfs.pin.ls({ type: 'indirect' }, (err, pinset) => {
-//          expect(err).to.not.exist()
-//          // because the pinned file has no links
-//          expect(pinset).to.be.empty()
-//          done()
-//        })
-//      })
+      it.skip('.ls type indirect', (done) => {
+        ipfs.pin.ls({ type: 'indirect' }, (err, pinset) => {
+          expect(err).to.not.exist()
+          // because the pinned file has no links
+          expect(pinset).to.be.empty()
+          done()
+        })
+      })
 
       it('.rm', (done) => {
         ipfs.pin.rm(testHash, { recursive: true }, (err, pinset) => {
