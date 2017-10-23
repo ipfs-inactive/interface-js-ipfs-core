@@ -63,13 +63,13 @@ ipfs.files.add(files, function (err, files) {
 
 A great source of [examples][] can be found in the tests for this API.
 
-#### `AddReadableStream`
+#### `addReadableStream`
 
 > Add files and data to IPFS using a [Readable Stream][rs] of class Duplex.
 
 ##### `Go` **WIP**
 
-##### `JavaScript` - ipfs.files.AddReadableStream([options]) -> [Readable Stream][rs]
+##### `JavaScript` - ipfs.files.addReadableStream([options]) -> [Readable Stream][rs]
 
 Returns a Readable Stream of class Duplex, where objects can be written of the forms
 
@@ -91,7 +91,7 @@ If no `callback` is passed, a promise is returned.
 **Example:**
 
 ```JavaScript
-const stream = ipfs.files.AddReadableStream()
+const stream = ipfs.files.addReadableStream()
 stream.on('data', function (file) {
   // 'file' will be of the form
   // {
@@ -113,13 +113,13 @@ stream.end()
 
 A great source of [examples][] can be found in the tests for this API.
 
-#### `AddPullStream`
+#### `addPullStream`
 
 > Add files and data to IPFS using a [Pull Stream][ps].
 
 ##### `Go` **WIP**
 
-##### `JavaScript` - ipfs.files.AddPullStream([options]) -> [Pull Stream][ps]
+##### `JavaScript` - ipfs.files.addPullStream([options]) -> [Pull Stream][ps]
 
 Returns a Pull Stream, where objects can be written of the forms
 
@@ -141,7 +141,7 @@ If no `callback` is passed, a promise is returned.
 **Example:**
 
 ```JavaScript
-const stream = ipfs.files.AddPullStream()
+const stream = ipfs.files.addPullStream()
 
 pull(
   pull.values([
@@ -342,51 +342,51 @@ A great source of [examples][] can be found in the tests for this API.
 
 #### `getPullStream`
 
-> Get [UnixFS][] files from IPFS.
+> Fetch a file or an entire directory tree from IPFS that is addressed by a valid IPFS Path. The files will be yielded as Readable Streams.
 
 ##### `Go` **WIP**
 
-##### `JavaScript` - ipfs.files.getPullStream(ipfsPath, [callback])
+##### `JavaScript` - ipfs.files.getPullStream(ipfsPath) -> [Pull Stream][ps]
 
 ipfsPath can be of type:
 
-- `multihash` is a [multihash][] which can be passed as
-  - Buffer, the raw Buffer of the multihash
-  - String, the base58 encoded version of the multihash
-- String, including the ipfs handler, a multihash and a path to traverse to, ie:
+- [`cid`][cid] of type:
+  - [Buffer][b], the raw Buffer of the cid
+  - String, the base58 encoded version of the cid
+- String, including the ipfs handler, a cid and a path to traverse to, ie:
   - '/ipfs/QmXEmhrMpbVvTh61FNAxP9nU7ygVtyvZA8HZDUaqQCAb66'
   - '/ipfs/QmXEmhrMpbVvTh61FNAxP9nU7ygVtyvZA8HZDUaqQCAb66/a.txt'
   - 'QmXEmhrMpbVvTh61FNAxP9nU7ygVtyvZA8HZDUaqQCAb66/a.txt'
 
-`callback` must follow `function (err, stream) {}` signature, where `err` is an
-error if the operation was not successful. `stream` will be a Readable stream in
-[*object mode*](https://nodejs.org/api/stream.html#stream_object_mode),
-outputting objects of the form
+It returns a [Pull Stream][os] that will yield objects of the form:
 
 ```js
 {
   path: '/tmp/myfile.txt',
-  content: <Readable stream>
+  content: <Pull Stream>
 }
 ```
-
-Here, each `path` corresponds to the name of a file, and `content` is a regular
-Readable stream with the raw contents of that file.
-
-If no `callback` is passed, a promise is returned with the Readable stream.
 
 **Example:**
 
 ```JavaScript
-const multihashStr = 'QmQ2r6iMNpky5f1m4cnm3Yqw8VSvjuKpTcK1X7dBR1LkJF'
+const validCID = 'QmQ2r6iMNpky5f1m4cnm3Yqw8VSvjuKpTcK1X7dBR1LkJF'
 
-ipfs.files.get(multihashStr, function (err, stream) {
-  stream.on('data', (file) => {
-    // write the file's path and contents to standard out
-    console.log(file.path)
-    file.content.pipe(process.stdout)
+const stream = ipfs.files.getReadableStream(validCID)
+
+pull(
+  stream,
+  pull.collect((err, files) => {
+    if (err) {
+      throw err
+    }
+
+    files.forEach((file) => {
+      console.log(file.path)
+      console.log(file.path.toString())
+    })
   })
-})
+)
 ```
 
 A great source of [examples][] can be found in the tests for this API.
