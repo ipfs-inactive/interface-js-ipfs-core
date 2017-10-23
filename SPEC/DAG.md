@@ -152,7 +152,7 @@ function errOrLog(err, result) {
   }
 }
 
-ipfs.dag.tree('zdpuAmtur968yprkhG9N5Zxn6MFVoqAWBbhUAkNLJs2UtkTq5/a', errOrLog)
+ipfs.dag.tree('zdpuAmtur968yprkhG9N5Zxn6MFVoqAWBbhUAkNLJs2UtkTq5', errOrLog)
 // Logs:
 // a
 // b
