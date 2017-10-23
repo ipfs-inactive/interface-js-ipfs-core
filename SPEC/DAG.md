@@ -148,7 +148,7 @@ function errOrLog(err, result) {
   if (err) {
     console.error('error: ' + err)
   } else {
-    console.log(result.value)
+    console.log(result)
   }
 }
 
