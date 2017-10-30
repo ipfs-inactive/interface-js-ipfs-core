@@ -18,7 +18,7 @@ Where `data` may be:
 - a [`Pull Stream`][ps]
 - a Path (caveat: will only work in Node.js)
 - a URL
-- an array of objects, each of the form
+- an array of objects, each of the form:
 ```JavaScript
 {
   path: '/tmp/myfile.txt', // The file path
