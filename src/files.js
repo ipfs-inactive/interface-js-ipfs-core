@@ -59,7 +59,7 @@ module.exports = (common) => {
 
     after((done) => common.teardown(done))
 
-    describe.only('.add', () => {
+    describe('.add', () => {
       it('a Buffer', (done) => {
         ipfs.files.add(smallFile.data, (err, filesAdded) => {
           expect(err).to.not.exist()
@@ -246,7 +246,7 @@ module.exports = (common) => {
       })
     })
 
-    describe('.addReadableStream', () => {
+    describe.only('.addReadableStream', () => {
       it('stream of valid files and dirs', (done) => {
         const content = (name) => ({
           path: `test-folder/${name}`,
@@ -266,20 +266,21 @@ module.exports = (common) => {
           emptyDir('files/empty')
         ]
 
-        ipfs.files.createAddStream((err, stream) => {
+        const stream = ipfs.files.addReadableStream()
+
+        stream.on('error', (err) => {
           expect(err).to.not.exist()
-
-          stream.on('data', (file) => {
-            if (file.path === 'test-folder') {
-              expect(file.hash).to.equal(directory.cid)
-              done()
-            }
-          })
-
-          files.forEach((file) => stream.write(file))
-
-          stream.end()
         })
+
+        stream.on('data', (file) => {
+          if (file.path === 'test-folder') {
+            expect(file.hash).to.equal(directory.cid)
+            done()
+          }
+        })
+
+        files.forEach((file) => stream.write(file))
+        stream.end()
       })
     })
 
