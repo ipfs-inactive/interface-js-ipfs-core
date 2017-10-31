@@ -189,7 +189,7 @@ ipfs.files.cat(ipfsPath, function (err, file) {
     throw err
   }
 
-  console.log(file.toString())
+  console.log(file.toString('utf8'))
 })
 ```
 
@@ -290,7 +290,7 @@ const validCID = 'QmQ2r6iMNpky5f1m4cnm3Yqw8VSvjuKpTcK1X7dBR1LkJF'
 ipfs.files.get(validCID, function (err, files) {
   files.forEach((file) => {
     console.log(file.path)
-    console.log(file.path.toString())
+    console.log(file.content.toString('utf8'))
   })
 })
 ```
