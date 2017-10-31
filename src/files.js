@@ -17,7 +17,7 @@ const bl = require('bl')
 
 module.exports = (common) => {
   describe.only('.files', function () {
-    this.timeout(80 * 1000)
+    this.timeout(5 * 1000)
 
     let ipfs
 
@@ -68,7 +68,8 @@ module.exports = (common) => {
           const file = filesAdded[0]
           expect(file.hash).to.equal(smallFile.cid)
           expect(file.path).to.equal(smallFile.cid)
-          expect(file.size).to.equal(smallFile.data.length)
+          // file.size counts the overhead by IPLD nodes and unixfs protobuf
+          expect(file.size).greaterThan(smallFile.data.length)
           done()
         })
       })
@@ -81,7 +82,8 @@ module.exports = (common) => {
           const file = filesAdded[0]
           expect(file.hash).to.equal(bigFile.cid)
           expect(file.path).to.equal(bigFile.cid)
-          expect(file.size).to.equal(bigFile.data.length)
+          // file.size counts the overhead by IPLD nodes and unixfs protobuf
+          expect(file.size).greaterThan(bigFile.data.length)
           done()
         })
       })
@@ -101,7 +103,6 @@ module.exports = (common) => {
           const file = filesAdded[0]
           expect(file.hash).to.equal(bigFile.cid)
           expect(file.path).to.equal(bigFile.cid)
-          expect(file.size).to.equal(bigFile.data.length)
 
           expect(progCount).to.equal(58)
           expect(accumProgress).to.equal(bigFile.data.length)
@@ -119,9 +120,8 @@ module.exports = (common) => {
 
           expect(filesAdded).to.have.length(1)
           const file = filesAdded[0]
-          expect(file.hash).to.equal(bigFile.cid)
+          expect(file.hash).to.equal(smallFile.cid)
           expect(file.path).to.equal('testfile.txt')
-          expect(file.size).to.equal(bigFile.data.length)
 
           done()
         })
