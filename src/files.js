@@ -25,15 +25,25 @@ module.exports = (common) => {
       return loadFixture(__dirname, path, 'interface-ipfs-core')
     }
 
-    const smallFile = fixture('../test/fixtures/testfile.txt')
-    const bigFile = fixture('../test/fixtures/15mb.random')
-    const directoryContent = {
-      'pp.txt': fixture('../test/fixtures/test-folder/pp.txt'),
-      'holmes.txt': fixture('../test/fixtures/test-folder/holmes.txt'),
-      'jungle.txt': fixture('../test/fixtures/test-folder/jungle.txt'),
-      'alice.txt': fixture('../test/fixtures/test-folder/alice.txt'),
-      'files/hello.txt': fixture('../test/fixtures/test-folder/files/hello.txt'),
-      'files/ipfs.txt': fixture('../test/fixtures/test-folder/files/ipfs.txt')
+    const smallFile = {
+      cid: 'Qma4hjFTnCasJ8PVp3mZbZK5g2vGDT4LByLJ7m8ciyRFZP',
+      data: fixture('../test/fixtures/testfile.txt')
+    }
+    const bigFile = {
+      cid: 'Qme79tX2bViL26vNjPsF3DP1R9rMKMvnPYJiKTTKPrXJjq',
+      data: fixture('../test/fixtures/15mb.random')
+    }
+
+    const directory = {
+      cid: 'QmVvjDy7yF7hdnqE8Hrf4MHo5ABDtb5AbX6hWbD3Y42bXP',
+      files: {
+        'pp.txt': fixture('../test/fixtures/test-folder/pp.txt'),
+        'holmes.txt': fixture('../test/fixtures/test-folder/holmes.txt'),
+        'jungle.txt': fixture('../test/fixtures/test-folder/jungle.txt'),
+        'alice.txt': fixture('../test/fixtures/test-folder/alice.txt'),
+        'files/hello.txt': fixture('../test/fixtures/test-folder/files/hello.txt'),
+        'files/ipfs.txt': fixture('../test/fixtures/test-folder/files/ipfs.txt')
+      }
     }
 
     before((done) => {
@@ -49,116 +59,106 @@ module.exports = (common) => {
 
     after((done) => common.teardown(done))
 
-    describe('.add', () => {
+    describe.only('.add', () => {
       it('a Buffer', (done) => {
-        const expectedMultihash = 'Qma4hjFTnCasJ8PVp3mZbZK5g2vGDT4LByLJ7m8ciyRFZP'
-
-        ipfs.files.add(smallFile, (err, res) => {
+        ipfs.files.add(smallFile.data, (err, filesAdded) => {
           expect(err).to.not.exist()
-          expect(res).to.have.length(1)
-          const file = res[0]
-          expect(file.hash).to.equal(expectedMultihash)
-          expect(file.path).to.equal(file.hash)
+
+          expect(filesAdded).to.have.length(1)
+          const file = filesAdded[0]
+          expect(file.hash).to.equal(smallFile.cid)
+          expect(file.path).to.equal(smallFile.cid)
+          expect(file.size).to.equal(smallFile.data.length)
           done()
         })
       })
 
       it('a BIG buffer', (done) => {
-        const expectedMultihash = 'Qme79tX2bViL26vNjPsF3DP1R9rMKMvnPYJiKTTKPrXJjq'
-
-        ipfs.files.add(bigFile, (err, res) => {
+        ipfs.files.add(bigFile.data, (err, filesAdded) => {
           expect(err).to.not.exist()
-          expect(res).to.have.length(1)
-          const file = res[0]
-          expect(file.hash).to.equal(expectedMultihash)
-          expect(file.path).to.equal(file.hash)
+
+          expect(filesAdded).to.have.length(1)
+          const file = filesAdded[0]
+          expect(file.hash).to.equal(bigFile.cid)
+          expect(file.path).to.equal(bigFile.cid)
+          expect(file.size).to.equal(bigFile.data.length)
           done()
         })
       })
 
       it('a BIG buffer with progress enabled', (done) => {
-        const expectedMultihash = 'Qme79tX2bViL26vNjPsF3DP1R9rMKMvnPYJiKTTKPrXJjq'
-
         let progCount = 0
         let accumProgress = 0
-        const handler = (p) => {
+        function handler (p) {
           progCount += 1
           accumProgress = p
         }
 
-        ipfs.files.add(bigFile, { progress: handler }, (err, res) => {
+        ipfs.files.add(bigFile.data, { progress: handler }, (err, filesAdded) => {
           expect(err).to.not.exist()
-          expect(res).to.have.length(1)
-          const file = res[0]
-          expect(file.hash).to.equal(expectedMultihash)
-          expect(file.path).to.equal(file.hash)
+
+          expect(filesAdded).to.have.length(1)
+          const file = filesAdded[0]
+          expect(file.hash).to.equal(bigFile.cid)
+          expect(file.path).to.equal(bigFile.cid)
+          expect(file.size).to.equal(bigFile.data.length)
+
           expect(progCount).to.equal(58)
-          expect(accumProgress).to.equal(bigFile.byteLength)
+          expect(accumProgress).to.equal(bigFile.data.length)
           done()
         })
       })
 
       it('a Buffer as tuple', (done) => {
-        const file = {
-          path: 'testfile.txt',
-          content: smallFile
-        }
-        const expectedMultihash = 'Qma4hjFTnCasJ8PVp3mZbZK5g2vGDT4LByLJ7m8ciyRFZP'
+        const tuple = { path: 'testfile.txt', content: smallFile.data }
 
-        ipfs.files.add([file], (err, res) => {
+        ipfs.files.add([
+          tuple
+        ], (err, filesAdded) => {
           expect(err).to.not.exist()
 
-          const file = res[0]
-          expect(file.hash).to.equal(expectedMultihash)
+          expect(filesAdded).to.have.length(1)
+          const file = filesAdded[0]
+          expect(file.hash).to.equal(bigFile.cid)
           expect(file.path).to.equal('testfile.txt')
+          expect(file.size).to.equal(bigFile.data.length)
+
           done()
         })
       })
 
       it('a Readable Stream', (done) => {
-        const buffered = Buffer.from('some data')
-        const expectedMultihash = 'QmVv4Wz46JaZJeH5PMV4LGbRiiMKEmszPYY3g6fjGnVXBS'
+        const expectedCid = 'QmVv4Wz46JaZJeH5PMV4LGbRiiMKEmszPYY3g6fjGnVXBS'
 
         const rs = new Readable()
-        rs.push(buffered)
+        rs.push(Buffer.from('some data'))
         rs.push(null)
 
-        const arr = []
-        const filePair = {
-          path: 'data.txt',
-          content: rs
-        }
+        const tuple = { path: 'data.txt', content: rs }
 
-        arr.push(filePair)
-
-        ipfs.files.add(arr, (err, res) => {
+        ipfs.files.add([tuple], (err, filesAdded) => {
           expect(err).to.not.exist()
-          expect(res).to.be.length(1)
-          const file = res[0]
-          expect(file).to.exist()
+
+          expect(filesAdded).to.be.length(1)
+          const file = filesAdded[0]
           expect(file.path).to.equal('data.txt')
           expect(file.size).to.equal(17)
-          expect(file.hash).to.equal(expectedMultihash)
+          expect(file.hash).to.equal(expectedCid)
           done()
         })
       })
 
-
       it('add a nested directory as array of tupples', (done) => {
-        // Needs https://github.com/ipfs/js-ipfs-api/issues/339 to be fixed
-        // for js-ipfs-api + go-ipfs
+        // Needs https://github.com/ipfs/js-ipfs-api/issues/339
+        // to be fixed for js-ipfs-api + go-ipfs
         if (!isNode) { return done() }
 
         const content = (name) => ({
           path: `test-folder/${name}`,
-          content: directoryContent[name]
+          content: directory.files[name]
         })
 
-        const emptyDir = (name) => ({
-          path: `test-folder/${name}`
-        })
-
-        const expectedRootMultihash = 'QmVvjDy7yF7hdnqE8Hrf4MHo5ABDtb5AbX6hWbD3Y42bXP'
+        const emptyDir = (name) => ({ path: `test-folder/${name}` })
 
         const dirs = [
           content('pp.txt'),
@@ -176,7 +176,7 @@ module.exports = (common) => {
           const root = res[res.length - 1]
 
           expect(root.path).to.equal('test-folder')
-          expect(root.hash).to.equal(expectedRootMultihash)
+          expect(root.hash).to.equal(directory.cid)
           done()
         })
       })
@@ -188,14 +188,10 @@ module.exports = (common) => {
 
         const content = (name) => ({
           path: `test-folder/${name}`,
-          content: directoryContent[name]
+          content: directory.files[name]
         })
 
-        const emptyDir = (name) => ({
-          path: `test-folder/${name}`
-        })
-
-        const expectedRootMultihash = 'QmVvjDy7yF7hdnqE8Hrf4MHo5ABDtb5AbX6hWbD3Y42bXP'
+        const emptyDir = (name) => ({ path: `test-folder/${name}` })
 
         const dirs = [
           content('pp.txt'),
@@ -224,7 +220,7 @@ module.exports = (common) => {
           const root = res[res.length - 1]
 
           expect(root.path).to.equal('test-folder')
-          expect(root.hash).to.equal(expectedRootMultihash)
+          expect(root.hash).to.equal(directory.cid)
           expect(progCount).to.equal(8)
           expect(accumProgress).to.be.at.least(total)
           done()
@@ -241,13 +237,11 @@ module.exports = (common) => {
       })
 
       it('Promise test', () => {
-        const expectedMultihash = 'Qma4hjFTnCasJ8PVp3mZbZK5g2vGDT4LByLJ7m8ciyRFZP'
-
-        return ipfs.files.add(smallFile)
-          .then((res) => {
-            const file = res[0]
-            expect(file.hash).to.equal(expectedMultihash)
-            expect(file.path).to.equal(file.hash)
+        return ipfs.files.add(smallFile.data)
+          .then((filesAdded) => {
+            const file = filesAdded[0]
+            expect(file.hash).to.equal(smallFile.cid)
+            expect(file.path).to.equal(smallFile.cid)
           })
       })
     })
@@ -256,14 +250,10 @@ module.exports = (common) => {
       it('stream of valid files and dirs', (done) => {
         const content = (name) => ({
           path: `test-folder/${name}`,
-          content: directoryContent[name]
+          content: directory.files[name]
         })
 
-        const emptyDir = (name) => ({
-          path: `test-folder/${name}`
-        })
-
-        const expectedRootMultihash = 'QmVvjDy7yF7hdnqE8Hrf4MHo5ABDtb5AbX6hWbD3Y42bXP'
+        const emptyDir = (name) => ({ path: `test-folder/${name}` })
 
         const files = [
           content('pp.txt'),
@@ -281,7 +271,7 @@ module.exports = (common) => {
 
           stream.on('data', (file) => {
             if (file.path === 'test-folder') {
-              expect(file.hash).to.equal(expectedRootMultihash)
+              expect(file.hash).to.equal(directory.cid)
               done()
             }
           })
@@ -352,7 +342,7 @@ module.exports = (common) => {
       it('with ipfs path, nested value', (done) => {
         const file = {
           path: 'a/testfile.txt',
-          content: smallFile
+          content: smallFile.data
         }
 
         ipfs.files.createAddStream((err, stream) => {
@@ -427,6 +417,7 @@ module.exports = (common) => {
     describe('.get', () => {
       it('with a base58 encoded multihash', (done) => {
         const hash = 'Qma4hjFTnCasJ8PVp3mZbZK5g2vGDT4LByLJ7m8ciyRFZP'
+
         ipfs.files.get(hash, (err, stream) => {
           expect(err).to.not.exist()
 
@@ -548,12 +539,12 @@ module.exports = (common) => {
               return file.content ? file.content.toString() : null
             })
             expect(contents).to.include.members([
-              directoryContent['alice.txt'].toString(),
-              directoryContent['files/hello.txt'].toString(),
-              directoryContent['files/ipfs.txt'].toString(),
-              directoryContent['holmes.txt'].toString(),
-              directoryContent['jungle.txt'].toString(),
-              directoryContent['pp.txt'].toString()
+              directory.files['alice.txt'].toString(),
+              directory.files['files/hello.txt'].toString(),
+              directory.files['files/ipfs.txt'].toString(),
+              directory.files['holmes.txt'].toString(),
+              directory.files['jungle.txt'].toString(),
+              directory.files['pp.txt'].toString()
             ])
             done()
           }))
@@ -576,10 +567,7 @@ module.exports = (common) => {
                 let files = []
                 stream.pipe(through.obj((file, enc, next) => {
                   file.content.pipe(concat((content) => {
-                    files.push({
-                      path: file.path,
-                      content: content
-                    })
+                    files.push({ path: file.path, content: content })
                     next()
                   }))
                 }, () => {
@@ -603,10 +591,7 @@ module.exports = (common) => {
           return new Promise((resolve, reject) => {
             stream.pipe(through.obj((file, enc, next) => {
               file.content.pipe(concat((content) => {
-                files.push({
-                  path: file.path,
-                  content: content
-                })
+                files.push({ path: file.path, content: content })
                 next()
               }))
             }, () => {
@@ -621,16 +606,18 @@ module.exports = (common) => {
 
       it('errors on invalid key', () => {
         const hash = 'somethingNotMultihash'
-        return ipfs.files.get(hash).catch((err) => {
-          expect(err).to.exist()
-          const errString = err.toString()
-          if (errString === 'Error: invalid ipfs ref path') {
-            expect(err.toString()).to.contain('Error: invalid ipfs ref path')
-          }
-          if (errString === 'Error: Invalid Key') {
-            expect(err.toString()).to.contain('Error: Invalid Key')
-          }
-        })
+
+        return ipfs.files.get(hash)
+          .catch((err) => {
+            expect(err).to.exist()
+            const errString = err.toString()
+            if (errString === 'Error: invalid ipfs ref path') {
+              expect(err.toString()).to.contain('Error: invalid ipfs ref path')
+            }
+            if (errString === 'Error: Invalid Key') {
+              expect(err.toString()).to.contain('Error: Invalid Key')
+            }
+          })
       })
 
       describe('.ls', () => {
