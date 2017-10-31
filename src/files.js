@@ -325,7 +325,7 @@ module.exports = (common) => {
       })
     })
 
-    describe.only('.cat', () => {
+    describe('.cat', () => {
       before((done) => {
         parallel([
           (cb) => ipfs.files.add(smallFile.data, cb),
@@ -413,12 +413,24 @@ module.exports = (common) => {
       })
     })
 
-    describe('.catReadableStream', () => {
-      it.skip('returns a Readable Stream for a multihash', (done) => {})
+    describe.only('.catReadableStream', () => {
+      before((done) => ipfs.files.add(bigFile.data, done))
+
+      it('returns a Readable Stream for a cid', (done) => {
+        const stream = ipfs.files.catReadableStream(bigFile.cid)
+
+        stream.pipe(bl((err, data) => {
+          expect(err).to.not.exist()
+          expect(data).to.eql(bigFile.data)
+          done()
+        }))
+      })
     })
 
     describe('.catPullStream', () => {
-      it.skip('returns a Pull Stream for a multihash', (done) => {})
+      before((done) => ipfs.files.add(bigFile.data, done))
+
+      it.skip('returns a Pull Stream for a cid', (done) => {})
     })
 
     describe('.get', () => {
