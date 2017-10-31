@@ -11,6 +11,7 @@ const loadFixture = require('aegir/fixtures')
 const bs58 = require('bs58')
 const isNode = require('detect-node')
 const Readable = require('readable-stream').Readable
+const pull = require('pull-stream')
 const concat = require('concat-stream')
 const through = require('through2')
 const bl = require('bl')
@@ -246,7 +247,7 @@ module.exports = (common) => {
       })
     })
 
-    describe.only('.addReadableStream', () => {
+    describe('.addReadableStream', () => {
       it('stream of valid files and dirs', (done) => {
         const content = (name) => ({
           path: `test-folder/${name}`,
@@ -284,8 +285,43 @@ module.exports = (common) => {
       })
     })
 
-    describe('.addPullStream', () => {
-      it.skip('stream of valid files and dirs', (done) => {})
+    describe.only('.addPullStream', () => {
+      it('stream of valid files and dirs', (done) => {
+        const content = (name) => ({
+          path: `test-folder/${name}`,
+          content: directory.files[name]
+        })
+
+        const emptyDir = (name) => ({ path: `test-folder/${name}` })
+
+        const files = [
+          content('pp.txt'),
+          content('holmes.txt'),
+          content('jungle.txt'),
+          content('alice.txt'),
+          emptyDir('empty-folder'),
+          content('files/hello.txt'),
+          content('files/ipfs.txt'),
+          emptyDir('files/empty')
+        ]
+
+        const stream = ipfs.files.addPullStream()
+
+        pull(
+          pull.values(files),
+          stream,
+          pull.collect((err, filesAdded) => {
+            expect(err).to.not.exist()
+
+            filesAdded.forEach((file) => {
+              if (file.path === 'test-folder') {
+                expect(file.hash).to.equal(directory.cid)
+                done()
+              }
+            })
+          })
+        )
+      })
     })
 
     describe('.cat', () => {
