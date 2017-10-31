@@ -9,6 +9,7 @@ const expect = chai.expect
 chai.use(dirtyChai)
 const loadFixture = require('aegir/fixtures')
 const bs58 = require('bs58')
+const parallel = require('async/parallel')
 const isNode = require('detect-node')
 const Readable = require('readable-stream').Readable
 const pull = require('pull-stream')
@@ -285,7 +286,7 @@ module.exports = (common) => {
       })
     })
 
-    describe.only('.addPullStream', () => {
+    describe('.addPullStream', () => {
       it('stream of valid files and dirs', (done) => {
         const content = (name) => ({
           path: `test-folder/${name}`,
@@ -324,121 +325,90 @@ module.exports = (common) => {
       })
     })
 
-    describe('.cat', () => {
-      it('with a base58 string encoded multihash', (done) => {
-        const hash = 'Qma4hjFTnCasJ8PVp3mZbZK5g2vGDT4LByLJ7m8ciyRFZP'
+    describe.only('.cat', () => {
+      before((done) => {
+        parallel([
+          (cb) => ipfs.files.add(smallFile.data, cb),
+          (cb) => ipfs.files.add(bigFile.data, cb)
+        ], done)
+      })
 
-        ipfs.files.cat(hash, (err, stream) => {
+      it('with a base58 string encoded multihash', (done) => {
+        ipfs.files.cat(smallFile.cid, (err, data) => {
           expect(err).to.not.exist()
-          stream.pipe(bl((err, data) => {
-            expect(err).to.not.exist()
-            expect(data.toString()).to.contain('Plz add me!')
-            done()
-          }))
+          expect(data.toString()).to.contain('Plz add me!')
+          done()
         })
       })
 
       it('with a multihash', (done) => {
-        const mhBuf = Buffer.from(bs58.decode('Qma4hjFTnCasJ8PVp3mZbZK5g2vGDT4LByLJ7m8ciyRFZP'))
-        ipfs.files.cat(mhBuf, (err, stream) => {
+        const cid = Buffer.from(bs58.decode(smallFile.cid))
+
+        ipfs.files.cat(cid, (err, data) => {
           expect(err).to.not.exist()
-          stream.pipe(bl((err, data) => {
-            expect(err).to.not.exist()
-            expect(data.toString()).to.contain('Plz add me!')
-            done()
-          }))
+          expect(data.toString()).to.contain('Plz add me!')
+          done()
         })
       })
 
       it('streams a large file', (done) => {
-        const hash = 'Qme79tX2bViL26vNjPsF3DP1R9rMKMvnPYJiKTTKPrXJjq'
-
-        ipfs.files.cat(hash, (err, stream) => {
+        ipfs.files.cat(bigFile.cid, (err, data) => {
           expect(err).to.not.exist()
-          stream.pipe(bl((err, data) => {
-            expect(err).to.not.exist()
-            expect(data).to.deep.equal(bigFile)
-            done()
-          }))
+          expect(data).to.eql(bigFile.data)
+          done()
         })
       })
 
       it('with ipfs path', (done) => {
-        const ipfsPath = '/ipfs/Qma4hjFTnCasJ8PVp3mZbZK5g2vGDT4LByLJ7m8ciyRFZP'
+        const ipfsPath = '/ipfs/' + smallFile.cid
 
-        ipfs.files.cat(ipfsPath, (err, stream) => {
+        ipfs.files.cat(ipfsPath, (err, data) => {
           expect(err).to.not.exist()
-          stream.pipe(bl((err, data) => {
-            expect(err).to.not.exist()
-            expect(data.toString()).to.contain('Plz add me!')
-            done()
-          }))
+          expect(data.toString()).to.contain('Plz add me!')
+          done()
         })
       })
 
       it('with ipfs path, nested value', (done) => {
-        const file = {
-          path: 'a/testfile.txt',
-          content: smallFile.data
-        }
+        const file = { path: 'a/testfile.txt', content: smallFile.data }
 
-        ipfs.files.createAddStream((err, stream) => {
+        ipfs.files.add([file], (err, filesAdded) => {
           expect(err).to.not.exist()
 
-          stream.on('data', (file) => {
+          filesAdded.forEach((file) => {
             if (file.path === 'a') {
-              ipfs.files.cat(`/ipfs/${file.hash}/testfile.txt`, (err, stream) => {
+              ipfs.files.cat(`/ipfs/${file.hash}/testfile.txt`, (err, data) => {
                 expect(err).to.not.exist()
-                stream.pipe(bl((err, data) => {
-                  expect(err).to.not.exist()
-                  expect(data.toString()).to.contain('Plz add me!')
-                  done()
-                }))
+                expect(data.toString()).to.contain('Plz add me!')
+                done()
               })
             }
           })
-
-          stream.write(file)
-          stream.end()
         })
       })
 
       it('Promise test', () => {
-        const hash = 'Qma4hjFTnCasJ8PVp3mZbZK5g2vGDT4LByLJ7m8ciyRFZP'
-
-        return ipfs.files.cat(hash)
-          .then((stream) => {
-            stream.pipe(bl((err, data) => {
-              expect(err).to.not.exist()
-              expect(data.toString()).to.contain('Plz add me!')
-            }))
+        return ipfs.files.cat(smallFile.cid)
+          .then((data) => {
+            expect(data.toString()).to.contain('Plz add me!')
           })
       })
 
       it('errors on invalid key', () => {
-        const hash = 'somethingNotMultihash'
+        const invalidCid = 'somethingNotMultihash'
 
-        return ipfs.files.cat(hash)
+        return ipfs.files.cat(invalidCid)
           .catch((err) => {
             expect(err).to.exist()
+
             const errString = err.toString()
             if (errString === 'Error: invalid ipfs ref path') {
               expect(err.toString()).to.contain('Error: invalid ipfs ref path')
             }
+
             if (errString === 'Error: Invalid Key') {
               expect(err.toString()).to.contain('Error: Invalid Key')
             }
-          })
-      })
-
-      it('with a multihash', () => {
-        const hash = Buffer.from(bs58.decode('Qma4hjFTnCasJ8PVp3mZbZK5g2vGDT4LByLJ7m8ciyRFZP'))
-        return ipfs.files.cat(hash)
-          .then((stream) => {
-            stream.pipe(bl((err, data) => {
-              expect(err).to.not.exist()
-              expect(data.toString()).to.contain('Plz add me!')
-            }))
           })
       })
     })
