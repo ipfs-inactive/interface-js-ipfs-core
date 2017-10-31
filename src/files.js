@@ -413,7 +413,7 @@ module.exports = (common) => {
       })
     })
 
-    describe.only('.catReadableStream', () => {
+    describe('.catReadableStream', () => {
       before((done) => ipfs.files.add(bigFile.data, done))
 
       it('returns a Readable Stream for a cid', (done) => {
@@ -427,10 +427,22 @@ module.exports = (common) => {
       })
     })
 
-    describe('.catPullStream', () => {
-      before((done) => ipfs.files.add(bigFile.data, done))
+    describe.only('.catPullStream', () => {
+      before((done) => ipfs.files.add(smallFile.data, done))
 
-      it.skip('returns a Pull Stream for a cid', (done) => {})
+      it('returns a Pull Stream for a cid', (done) => {
+        const stream = ipfs.files.catPullStream(smallFile.cid)
+
+        pull(
+          stream,
+          pull.concat((err, data) => {
+            expect(err).to.not.exist()
+            expect(data.length).to.equal(smallFile.data.length)
+            expect(data).to.eql(smallFile.data.toString())
+            done()
+          })
+        )
+      })
     })
 
     describe('.get', () => {
