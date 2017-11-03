@@ -14,6 +14,8 @@ const series = require('async/series')
 const isNode = require('detect-node')
 const Readable = require('readable-stream').Readable
 const pull = require('pull-stream')
+const concat = require('concat-stream')
+const through = require('through2')
 const bl = require('bl')
 
 module.exports = (common) => {
@@ -444,7 +446,7 @@ module.exports = (common) => {
       })
     })
 
-    describe.only('.get', () => {
+    describe('.get', () => {
       before((done) => {
         parallel([
           (cb) => ipfs.files.add(smallFile.data, cb),
@@ -662,12 +664,31 @@ module.exports = (common) => {
       })
     })
 
-    describe('.getReadableStream', () => {
-      it.skip('returns a Readable Stream of Readable Streams', () => {})
+    describe.only('.getReadableStream', () => {
+      before((done) => ipfs.files.add(smallFile.data, done))
+
+      it('returns a Readable Stream of Readable Streams', (done) => {
+        const stream = ipfs.files.getReadableStream(smallFile.cid)
+
+        let files = []
+        stream.pipe(through.obj((file, enc, next) => {
+          file.content.pipe(concat((content) => {
+            files.push({ path: file.path, content: content })
+            next()
+          }))
+        }, () => {
+          expect(files).to.be.length(1)
+          expect(files[0].path).to.eql(smallFile.cid)
+          expect(files[0].content.toString()).to.contain('Plz add me!')
+          done()
+        }))
+      })
     })
 
     describe('.getPullStream', () => {
-      it.skip('returns a Pull Stream of Pull Streams', () => {})
+      before((done) => ipfs.files.add(smallFile.data, done))
+
+      it.skip('returns a Pull Stream of Pull Streams', (done) => {})
     })
   })
 }
