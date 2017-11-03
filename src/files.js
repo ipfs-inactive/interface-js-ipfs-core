@@ -10,11 +10,10 @@ chai.use(dirtyChai)
 const loadFixture = require('aegir/fixtures')
 const bs58 = require('bs58')
 const parallel = require('async/parallel')
+const series = require('async/series')
 const isNode = require('detect-node')
 const Readable = require('readable-stream').Readable
 const pull = require('pull-stream')
-const concat = require('concat-stream')
-const through = require('through2')
 const bl = require('bl')
 
 module.exports = (common) => {
@@ -427,7 +426,7 @@ module.exports = (common) => {
       })
     })
 
-    describe.only('.catPullStream', () => {
+    describe('.catPullStream', () => {
       before((done) => ipfs.files.add(smallFile.data, done))
 
       it('returns a Pull Stream for a cid', (done) => {
@@ -445,76 +444,45 @@ module.exports = (common) => {
       })
     })
 
-    describe('.get', () => {
-      it('with a base58 encoded multihash', (done) => {
-        const hash = 'Qma4hjFTnCasJ8PVp3mZbZK5g2vGDT4LByLJ7m8ciyRFZP'
+    describe.only('.get', () => {
+      before((done) => {
+        parallel([
+          (cb) => ipfs.files.add(smallFile.data, cb),
+          (cb) => ipfs.files.add(bigFile.data, cb)
+        ], done)
+      })
 
-        ipfs.files.get(hash, (err, stream) => {
+      it('with a base58 encoded multihash', (done) => {
+        ipfs.files.get(smallFile.cid, (err, files) => {
           expect(err).to.not.exist()
 
-          let files = []
-          stream.pipe(through.obj((file, enc, next) => {
-            file.content.pipe(concat((content) => {
-              files.push({
-                path: file.path,
-                content: content
-              })
-              next()
-            }))
-          }, () => {
-            expect(files).to.be.length(1)
-            expect(files[0].path).to.be.eql(hash)
-            expect(files[0].content.toString()).to.contain('Plz add me!')
-            done()
-          }))
+          expect(files).to.be.length(1)
+          expect(files[0].path).to.eql(smallFile.cid)
+          expect(files[0].content.toString('utf8')).to.contain('Plz add me!')
+          done()
         })
       })
 
       it('with a multihash', (done) => {
-        const hash = 'Qma4hjFTnCasJ8PVp3mZbZK5g2vGDT4LByLJ7m8ciyRFZP'
-        const mhBuf = Buffer.from(bs58.decode(hash))
-        ipfs.files.get(mhBuf, (err, stream) => {
+        const cidBuf = Buffer.from(bs58.decode(smallFile.cid))
+        ipfs.files.get(cidBuf, (err, files) => {
           expect(err).to.not.exist()
 
-          let files = []
-          stream.pipe(through.obj((file, enc, next) => {
-            file.content.pipe(concat((content) => {
-              files.push({
-                path: file.path,
-                content: content
-              })
-              next()
-            }))
-          }, () => {
-            expect(files).to.be.length(1)
-            expect(files[0].path).to.be.eql(hash)
-            expect(files[0].content.toString()).to.contain('Plz add me!')
-            done()
-          }))
+          expect(files).to.be.length(1)
+          expect(files[0].path).to.eql(smallFile.cid)
+          expect(files[0].content.toString('utf8')).to.contain('Plz add me!')
+          done()
         })
       })
 
       it('large file', (done) => {
-        const hash = 'Qme79tX2bViL26vNjPsF3DP1R9rMKMvnPYJiKTTKPrXJjq'
-        ipfs.files.get(hash, (err, stream) => {
+        ipfs.files.get(bigFile.cid, (err, files) => {
           expect(err).to.not.exist()
 
-          // accumulate the files and their content
-          var files = []
-          stream.pipe(through.obj((file, enc, next) => {
-            file.content.pipe(concat((content) => {
-              files.push({
-                path: file.path,
-                content: content
-              })
-              next()
-            }))
-          }, () => {
-            expect(files.length).to.equal(1)
-            expect(files[0].path).to.equal(hash)
-            expect(files[0].content).to.deep.equal(bigFile)
-            done()
-          }))
+          expect(files.length).to.equal(1)
+          expect(files[0].path).to.equal(bigFile.cid)
+          expect(files[0].content).to.eql(bigFile.data)
+          done()
         })
       })
 
@@ -523,122 +491,116 @@ module.exports = (common) => {
         // for js-ipfs-api + go-ipfs
         if (!isNode) { return done() }
 
-        const hash = 'QmVvjDy7yF7hdnqE8Hrf4MHo5ABDtb5AbX6hWbD3Y42bXP'
-        ipfs.files.get(hash, (err, stream) => {
-          expect(err).to.not.exist()
+        series([
+          (cb) => {
+            const content = (name) => ({
+              path: `test-folder/${name}`,
+              content: directory.files[name]
+            })
 
-          // accumulate the files and their content
-          var files = []
-          stream.pipe(through.obj((file, enc, next) => {
-            if (file.content) {
-              file.content.pipe(concat((content) => {
-                files.push({
-                  path: file.path,
-                  content: content
-                })
-                next()
-              }))
-            } else {
-              files.push(file)
-              next()
-            }
-          }, () => {
-            files = files.sort((a, b) => {
-              if (a.path > b.path) return 1
-              if (a.path < b.path) return -1
-              return 0
-            })
-            // Check paths
-            var paths = files.map((file) => {
-              return file.path
-            })
-            expect(paths).to.include.members([
-              'QmVvjDy7yF7hdnqE8Hrf4MHo5ABDtb5AbX6hWbD3Y42bXP',
-              'QmVvjDy7yF7hdnqE8Hrf4MHo5ABDtb5AbX6hWbD3Y42bXP/alice.txt',
-              'QmVvjDy7yF7hdnqE8Hrf4MHo5ABDtb5AbX6hWbD3Y42bXP/empty-folder',
-              'QmVvjDy7yF7hdnqE8Hrf4MHo5ABDtb5AbX6hWbD3Y42bXP/files',
-              'QmVvjDy7yF7hdnqE8Hrf4MHo5ABDtb5AbX6hWbD3Y42bXP/files/empty',
-              'QmVvjDy7yF7hdnqE8Hrf4MHo5ABDtb5AbX6hWbD3Y42bXP/files/hello.txt',
-              'QmVvjDy7yF7hdnqE8Hrf4MHo5ABDtb5AbX6hWbD3Y42bXP/files/ipfs.txt',
-              'QmVvjDy7yF7hdnqE8Hrf4MHo5ABDtb5AbX6hWbD3Y42bXP/holmes.txt',
-              'QmVvjDy7yF7hdnqE8Hrf4MHo5ABDtb5AbX6hWbD3Y42bXP/jungle.txt',
-              'QmVvjDy7yF7hdnqE8Hrf4MHo5ABDtb5AbX6hWbD3Y42bXP/pp.txt'
-            ])
+            const emptyDir = (name) => ({ path: `test-folder/${name}` })
 
-            // Check contents
-            const contents = files.map((file) => {
-              return file.content ? file.content.toString() : null
+            const dirs = [
+              content('pp.txt'),
+              content('holmes.txt'),
+              content('jungle.txt'),
+              content('alice.txt'),
+              emptyDir('empty-folder'),
+              content('files/hello.txt'),
+              content('files/ipfs.txt'),
+              emptyDir('files/empty')
+            ]
+
+            ipfs.files.add(dirs, (err, res) => {
+              expect(err).to.not.exist()
+              const root = res[res.length - 1]
+
+              expect(root.path).to.equal('test-folder')
+              expect(root.hash).to.equal(directory.cid)
+              cb()
             })
-            expect(contents).to.include.members([
-              directory.files['alice.txt'].toString(),
-              directory.files['files/hello.txt'].toString(),
-              directory.files['files/ipfs.txt'].toString(),
-              directory.files['holmes.txt'].toString(),
-              directory.files['jungle.txt'].toString(),
-              directory.files['pp.txt'].toString()
-            ])
-            done()
-          }))
-        })
+          },
+          (cb) => {
+            ipfs.files.get(directory.cid, (err, files) => {
+              expect(err).to.not.exist()
+
+              files = files.sort((a, b) => {
+                if (a.path > b.path) return 1
+                if (a.path < b.path) return -1
+                return 0
+              })
+
+              // Check paths
+              const paths = files.map((file) => { return file.path })
+              expect(paths).to.include.members([
+                'QmVvjDy7yF7hdnqE8Hrf4MHo5ABDtb5AbX6hWbD3Y42bXP',
+                'QmVvjDy7yF7hdnqE8Hrf4MHo5ABDtb5AbX6hWbD3Y42bXP/alice.txt',
+                'QmVvjDy7yF7hdnqE8Hrf4MHo5ABDtb5AbX6hWbD3Y42bXP/empty-folder',
+                'QmVvjDy7yF7hdnqE8Hrf4MHo5ABDtb5AbX6hWbD3Y42bXP/files',
+                'QmVvjDy7yF7hdnqE8Hrf4MHo5ABDtb5AbX6hWbD3Y42bXP/files/empty',
+                'QmVvjDy7yF7hdnqE8Hrf4MHo5ABDtb5AbX6hWbD3Y42bXP/files/hello.txt',
+                'QmVvjDy7yF7hdnqE8Hrf4MHo5ABDtb5AbX6hWbD3Y42bXP/files/ipfs.txt',
+                'QmVvjDy7yF7hdnqE8Hrf4MHo5ABDtb5AbX6hWbD3Y42bXP/holmes.txt',
+                'QmVvjDy7yF7hdnqE8Hrf4MHo5ABDtb5AbX6hWbD3Y42bXP/jungle.txt',
+                'QmVvjDy7yF7hdnqE8Hrf4MHo5ABDtb5AbX6hWbD3Y42bXP/pp.txt'
+              ])
+
+              // Check contents
+              const contents = files.map((file) => {
+                return file.content
+                  ? file.content.toString()
+                  : null
+              })
+
+              expect(contents).to.include.members([
+                directory.files['alice.txt'].toString(),
+                directory.files['files/hello.txt'].toString(),
+                directory.files['files/ipfs.txt'].toString(),
+                directory.files['holmes.txt'].toString(),
+                directory.files['jungle.txt'].toString(),
+                directory.files['pp.txt'].toString()
+              ])
+              cb()
+            })
+          }
+        ], done)
       })
 
       it('with ipfs path, nested value', (done) => {
         const file = {
           path: 'a/testfile.txt',
-          content: smallFile
+          content: smallFile.data
         }
 
-        ipfs.files.createAddStream((err, stream) => {
+        ipfs.files.add([file], (err, filesAdded) => {
           expect(err).to.not.exist()
 
-          stream.on('data', (file) => {
+          filesAdded.forEach((file) => {
             if (file.path === 'a') {
-              ipfs.files.get(`/ipfs/${file.hash}/testfile.txt`, (err, stream) => {
+              ipfs.files.get(`/ipfs/${file.hash}/testfile.txt`, (err, files) => {
                 expect(err).to.not.exist()
-                let files = []
-                stream.pipe(through.obj((file, enc, next) => {
-                  file.content.pipe(concat((content) => {
-                    files.push({ path: file.path, content: content })
-                    next()
-                  }))
-                }, () => {
-                  expect(files).to.be.length(1)
-                  expect(files[0].content.toString()).to.contain('Plz add me!')
-                  done()
-                }))
+                expect(files).to.be.length(1)
+                expect(files[0].content.toString('utf8')).to.contain('Plz add me!')
+                done()
               })
             }
           })
-
-          stream.write(file)
-          stream.end()
         })
       })
 
       it('Promise test', () => {
-        const hash = 'Qma4hjFTnCasJ8PVp3mZbZK5g2vGDT4LByLJ7m8ciyRFZP'
-        return ipfs.files.get(hash).then((stream) => {
-          let files = []
-          return new Promise((resolve, reject) => {
-            stream.pipe(through.obj((file, enc, next) => {
-              file.content.pipe(concat((content) => {
-                files.push({ path: file.path, content: content })
-                next()
-              }))
-            }, () => {
-              expect(files).to.be.length(1)
-              expect(files[0].path).to.equal(hash)
-              expect(files[0].content.toString()).to.contain('Plz add me!')
-              resolve()
-            }))
+        return ipfs.files.get(smallFile.cid)
+          .then((files) => {
+            expect(files).to.be.length(1)
+            expect(files[0].path).to.equal(smallFile.cid)
+            expect(files[0].content.toString()).to.contain('Plz add me!')
           })
-        })
       })
 
       it('errors on invalid key', () => {
-        const hash = 'somethingNotMultihash'
+        const invalidCid = 'somethingNotMultihash'
 
-        return ipfs.files.get(hash)
+        return ipfs.files.get(invalidCid)
           .catch((err) => {
             expect(err).to.exist()
             const errString = err.toString()
