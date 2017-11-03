@@ -19,7 +19,7 @@ const through = require('through2')
 const bl = require('bl')
 
 module.exports = (common) => {
-  describe.only('.files', function () {
+  describe('.files', function () {
     this.timeout(5 * 1000)
 
     let ipfs
@@ -664,7 +664,7 @@ module.exports = (common) => {
       })
     })
 
-    describe.only('.getReadableStream', () => {
+    describe('.getReadableStream', () => {
       before((done) => ipfs.files.add(smallFile.data, done))
 
       it('returns a Readable Stream of Readable Streams', (done) => {
@@ -688,7 +688,26 @@ module.exports = (common) => {
     describe('.getPullStream', () => {
       before((done) => ipfs.files.add(smallFile.data, done))
 
-      it.skip('returns a Pull Stream of Pull Streams', (done) => {})
+      it('returns a Pull Stream of Pull Streams', (done) => {
+        const stream = ipfs.files.getPullStream(smallFile.cid)
+
+        pull(
+          stream,
+          pull.collect((err, files) => {
+            expect(err).to.not.exist()
+            expect(files).to.be.length(1)
+            expect(files[0].path).to.eql(smallFile.cid)
+            pull(
+              files[0].content,
+              pull.concat((err, data) => {
+                expect(err).to.not.exist()
+                expect(data.toString()).to.contain('Plz add me!')
+                done()
+              })
+            )
+          })
+        )
+      })
     })
   })
 }
