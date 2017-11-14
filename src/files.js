@@ -709,5 +709,53 @@ module.exports = (common) => {
         )
       })
     })
+
+    describe('.ls', () => {
+      it('with a base58 encoded string', (done) => {
+        const hash = 'QmVvjDy7yF7hdnqE8Hrf4MHo5ABDtb5AbX6hWbD3Y42bXP'
+        ipfs.ls(hash, (err, files) => {
+          expect(err).to.not.exist()
+          files.forEach((file) => delete file.content)
+          expect(files).to.deep.equal([
+            { depth: 1,
+              name: 'alice.txt',
+              path: 'QmVvjDy7yF7hdnqE8Hrf4MHo5ABDtb5AbX6hWbD3Y42bXP/alice.txt',
+              size: 11696,
+              hash: 'QmZyUEQVuRK3XV7L9Dk26pg6RVSgaYkiSTEdnT2kZZdwoi',
+              type: 'file' },
+            { depth: 1,
+              name: 'empty-folder',
+              path: 'QmVvjDy7yF7hdnqE8Hrf4MHo5ABDtb5AbX6hWbD3Y42bXP/empty-folder',
+              size: 4,
+              hash: 'QmUNLLsPACCz1vLxQVkXqqLX5R1X345qqfHbsf67hvA3Nn',
+              type: 'dir' },
+            { depth: 1,
+              name: 'files',
+              path: 'QmVvjDy7yF7hdnqE8Hrf4MHo5ABDtb5AbX6hWbD3Y42bXP/files',
+              size: 183,
+              hash: 'QmZ25UfTqXGz9RsEJFg7HUAuBcmfx5dQZDXQd2QEZ8Kj74',
+              type: 'dir' },
+            { depth: 1,
+              name: 'holmes.txt',
+              path: 'QmVvjDy7yF7hdnqE8Hrf4MHo5ABDtb5AbX6hWbD3Y42bXP/holmes.txt',
+              size: 582072,
+              hash: 'QmR4nFjTu18TyANgC65ArNWp5Yaab1gPzQ4D8zp7Kx3vhr',
+              type: 'file' },
+            { depth: 1,
+              name: 'jungle.txt',
+              path: 'QmVvjDy7yF7hdnqE8Hrf4MHo5ABDtb5AbX6hWbD3Y42bXP/jungle.txt',
+              size: 2305,
+              hash: 'QmT6orWioMiSqXXPGsUi71CKRRUmJ8YkuueV2DPV34E9y9',
+              type: 'file' },
+            { depth: 1,
+              name: 'pp.txt',
+              path: 'QmVvjDy7yF7hdnqE8Hrf4MHo5ABDtb5AbX6hWbD3Y42bXP/pp.txt',
+              size: 4551,
+              hash: 'QmVwdDCY4SPGVFnNCiZnX5CtzwWDn6kAM98JXzKxE3kCmn',
+              type: 'file' } ])
+          done()
+        })
+      })
+    })
   })
 }
