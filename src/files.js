@@ -19,7 +19,7 @@ const through = require('through2')
 const bl = require('bl')
 
 module.exports = (common) => {
-  describe('.files', function () {
+  describe.only('.files', function () {
     this.timeout(5 * 1000)
 
     let ipfs
@@ -711,12 +711,41 @@ module.exports = (common) => {
     })
 
     describe('.ls', () => {
-      it('with a base58 encoded string', (done) => {
-        const hash = 'QmVvjDy7yF7hdnqE8Hrf4MHo5ABDtb5AbX6hWbD3Y42bXP'
-        ipfs.ls(hash, (err, files) => {
+      before((done) => {
+        const content = (name) => ({
+          path: `test-folder/${name}`,
+          content: directory.files[name]
+        })
+
+        const emptyDir = (name) => ({ path: `test-folder/${name}` })
+
+        const dirs = [
+          content('pp.txt'),
+          content('holmes.txt'),
+          content('jungle.txt'),
+          content('alice.txt'),
+          emptyDir('empty-folder'),
+          content('files/hello.txt'),
+          content('files/ipfs.txt'),
+          emptyDir('files/empty')
+        ]
+
+        ipfs.files.add(dirs, (err, res) => {
           expect(err).to.not.exist()
-          files.forEach((file) => delete file.content)
-          expect(files).to.deep.equal([
+          const root = res[res.length - 1]
+
+          expect(root.path).to.equal('test-folder')
+          expect(root.hash).to.equal(directory.cid)
+          done()
+        })
+      })
+
+      it('with a base58 encoded CID', (done) => {
+        const cid = 'QmVvjDy7yF7hdnqE8Hrf4MHo5ABDtb5AbX6hWbD3Y42bXP'
+        ipfs.ls(cid, (err, files) => {
+          expect(err).to.not.exist()
+
+          expect(files).to.eql([
             { depth: 1,
               name: 'alice.txt',
               path: 'QmVvjDy7yF7hdnqE8Hrf4MHo5ABDtb5AbX6hWbD3Y42bXP/alice.txt',
@@ -752,7 +781,8 @@ module.exports = (common) => {
               path: 'QmVvjDy7yF7hdnqE8Hrf4MHo5ABDtb5AbX6hWbD3Y42bXP/pp.txt',
               size: 4551,
               hash: 'QmVwdDCY4SPGVFnNCiZnX5CtzwWDn6kAM98JXzKxE3kCmn',
-              type: 'file' } ])
+              type: 'file' }
+          ])
           done()
         })
       })
