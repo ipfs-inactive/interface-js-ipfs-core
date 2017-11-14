@@ -478,7 +478,7 @@ It returns a [Readable Stream][rs] in [Object mode](https://nodejs.org/api/strea
 ```JavaScript
 const validCID = 'QmQ2r6iMNpky5f1m4cnm3Yqw8VSvjuKpTcK1X7dBR1LkJF'
 
-const stream = ipfs.files.getReadableStream(validCID)
+const stream = ipfs.files.lsReadableStream(validCID)
 
 stream.on('data', (file) => {
   // write the file's path and contents to standard out
@@ -490,7 +490,7 @@ A great source of [examples][] can be found in the tests for this API.
 
 #### `lsPullStream`
 
-> Fetch a file or an entire directory tree from IPFS that is addressed by a valid IPFS Path. The files will be yielded as Readable Streams.
+> Fetch a file or an entire directory tree from IPFS that is addressed by a valid IPFS Path. The files will be yielded through a Pull Stream.
 
 ##### `Go` **WIP**
 
