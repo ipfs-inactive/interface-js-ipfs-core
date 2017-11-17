@@ -319,7 +319,7 @@ module.exports = (common) => {
       })
     })
 
-    describe.skip('.cat', () => {
+    describe('.cat', () => {
       before((done) => {
         parallel([
           (cb) => ipfs.files.add(smallFile.data, cb),
@@ -348,6 +348,7 @@ module.exports = (common) => {
       it('streams a large file', (done) => {
         ipfs.files.cat(bigFile.cid, (err, data) => {
           expect(err).to.not.exist()
+          expect(data.length).to.equal(bigFile.data.length)
           expect(data).to.eql(bigFile.data)
           done()
         })
@@ -407,7 +408,7 @@ module.exports = (common) => {
       })
     })
 
-    describe.skip('.catReadableStream', () => {
+    describe('.catReadableStream', () => {
       before((done) => ipfs.files.add(bigFile.data, done))
 
       it('returns a Readable Stream for a cid', (done) => {
@@ -421,7 +422,7 @@ module.exports = (common) => {
       })
     })
 
-    describe.skip('.catPullStream', () => {
+    describe('.catPullStream', () => {
       before((done) => ipfs.files.add(smallFile.data, done))
 
       it('returns a Pull Stream for a cid', (done) => {
