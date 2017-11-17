@@ -18,7 +18,7 @@ const through = require('through2')
 const bl = require('bl')
 
 module.exports = (common) => {
-  describe.only('.files', function () {
+  describe('.files', function () {
     this.timeout(5 * 1000)
 
     let ipfs
@@ -653,7 +653,7 @@ module.exports = (common) => {
       })
     })
 
-    describe.skip('.ls', () => {
+    describe('.ls', () => {
       before((done) => {
         const content = (name) => ({
           path: `test-folder/${name}`,
@@ -731,7 +731,7 @@ module.exports = (common) => {
       })
     })
 
-    describe.skip('.lsReadableStream', () => {
+    describe('.lsReadableStream', () => {
       before((done) => {
         const content = (name) => ({
           path: `test-folder/${name}`,
@@ -809,7 +809,7 @@ module.exports = (common) => {
       })
     })
 
-    describe.skip('.lsPullStream', () => {
+    describe('.lsPullStream', () => {
       before((done) => {
         const content = (name) => ({
           path: `test-folder/${name}`,
