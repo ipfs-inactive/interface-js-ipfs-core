@@ -440,7 +440,7 @@ module.exports = (common) => {
       })
     })
 
-    describe.skip('.get', () => {
+    describe('.get', () => {
       before((done) => {
         parallel([
           (cb) => ipfs.files.add(smallFile.data, cb),
@@ -477,6 +477,7 @@ module.exports = (common) => {
 
           expect(files.length).to.equal(1)
           expect(files[0].path).to.equal(bigFile.cid)
+          expect(files[0].content.length).to.eql(bigFile.data.length)
           expect(files[0].content).to.eql(bigFile.data)
           done()
         })
@@ -606,7 +607,7 @@ module.exports = (common) => {
       })
     })
 
-    describe.skip('.getReadableStream', () => {
+    describe('.getReadableStream', () => {
       before((done) => ipfs.files.add(smallFile.data, done))
 
       it('returns a Readable Stream of Readable Streams', (done) => {
@@ -627,7 +628,7 @@ module.exports = (common) => {
       })
     })
 
-    describe.skip('.getPullStream', () => {
+    describe('.getPullStream', () => {
       before((done) => ipfs.files.add(smallFile.data, done))
 
       it('returns a Pull Stream of Pull Streams', (done) => {
