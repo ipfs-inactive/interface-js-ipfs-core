@@ -11,7 +11,6 @@ const loadFixture = require('aegir/fixtures')
 const bs58 = require('bs58')
 const parallel = require('async/parallel')
 const series = require('async/series')
-const isNode = require('detect-node')
 const Readable = require('readable-stream').Readable
 const pull = require('pull-stream')
 const concat = require('concat-stream')
@@ -152,10 +151,6 @@ module.exports = (common) => {
       })
 
       it('add a nested directory as array of tupples', (done) => {
-        // Needs https://github.com/ipfs/js-ipfs-api/issues/339
-        // to be fixed for js-ipfs-api + go-ipfs
-        if (!isNode) { return done() }
-
         const content = (name) => ({
           path: `test-folder/${name}`,
           content: directory.files[name]
@@ -185,10 +180,6 @@ module.exports = (common) => {
       })
 
       it('add a nested directory as array of tuppled with progress', (done) => {
-        // Needs https://github.com/ipfs/js-ipfs-api/issues/339 to be fixed
-        // for js-ipfs-api + go-ipfs
-        if (!isNode) { return done() }
-
         const content = (name) => ({
           path: `test-folder/${name}`,
           content: directory.files[name]
@@ -288,7 +279,9 @@ module.exports = (common) => {
     })
 
     describe('.addPullStream', () => {
-      it('stream of valid files and dirs', (done) => {
+      it('stream of valid files and dirs', function (done) {
+        this.timeout(20 * 1000)
+
         const content = (name) => ({
           path: `test-folder/${name}`,
           content: directory.files[name]
@@ -489,10 +482,6 @@ module.exports = (common) => {
       })
 
       it('directory', (done) => {
-        // Needs https://github.com/ipfs/js-ipfs-api/issues/339 to be fixed
-        // for js-ipfs-api + go-ipfs
-        if (!isNode) { return done() }
-
         series([
           (cb) => {
             const content = (name) => ({
