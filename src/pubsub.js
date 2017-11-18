@@ -596,7 +596,7 @@ module.exports = (common) => {
                       expect(err).to.not.exist()
                       expect(topics).to.eql([])
                       done()
-                    })                  
+                    })
                   }
                 )
               }
