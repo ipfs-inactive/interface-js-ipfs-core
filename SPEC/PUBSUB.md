@@ -25,7 +25,7 @@ If no `callback` is passed, a [promise][] is returned.
 const topic = 'fruit-of-the-day'
 
 const receiveMsg = (msg) => {
-  console.log(msg.toString())
+  console.log(msg.data.toString())
 }
 
 ipfs.pubsub.subscribe(topic, receiveMsg)
@@ -52,7 +52,7 @@ This works like `EventEmitter.removeListener`, as that only the `handler` passed
 const topic = 'fruit-of-the-day'
 
 const receiveMsg = (msg) => {
-  console.log(msg.toString())
+  console.log(msg.data.toString())
 }
 
 ipfs.pubsub.subscribe(topic, receiveMsg)
