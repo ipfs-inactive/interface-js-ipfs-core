@@ -165,7 +165,7 @@ module.exports = (common) => {
           ipfs1.pubsub
             .subscribe(topic, handler)
             .then(() => ipfs1.pubsub.publish(topic, Buffer.from('hi'), check))
-            .error((err) => expect(err).to.not.exist())
+            .catch((err) => expect(err).to.not.exist())
         })
 
         it('to one topic with options and Promise', (done) => {
@@ -191,7 +191,7 @@ module.exports = (common) => {
           ipfs1.pubsub
             .subscribe(topic, {}, handler)
             .then(() => ipfs1.pubsub.publish(topic, Buffer.from('hi'), check))
-            .error((err) => expect(err).to.not.exist())
+            .catch((err) => expect(err).to.not.exist())
         })
 
         it('attaches multiple event listeners', (done) => {
