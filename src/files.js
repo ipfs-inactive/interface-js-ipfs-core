@@ -432,7 +432,7 @@ module.exports = (common) => {
           })
       })
 
-      it.only('errors on unknown path', () => {
+      it('errors on unknown path', () => {
         return ipfs.files.cat(smallFile.cid + '/does-not-exist')
           .catch((err) => {
             expect(err).to.exist()
@@ -440,7 +440,7 @@ module.exports = (common) => {
           })
       })
 
-      it.only('errors on dir path', () => {
+      it('errors on dir path', () => {
         const file = { path: 'dir/testfile.txt', content: smallFile.data }
 
         return ipfs.files.add([file])
