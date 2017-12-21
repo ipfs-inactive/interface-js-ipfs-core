@@ -17,25 +17,25 @@ module.exports = (common) => {
     this.timeout(80 * 1000)
 
     let ipfs
+    let ipfsd
 
     before(function (done) {
       // CI takes longer to instantiate the daemon, so we need to increase the
       // timeout for the before step
       this.timeout(60 * 1000)
 
-      common.setup((err, factory) => {
+      common.setup((err, df) => {
         expect(err).to.not.exist()
-        factory.spawnNode((err, node) => {
+        df.spawn((err, node) => {
           expect(err).to.not.exist()
-          ipfs = node
+          ipfs = node.api
+          ipfsd = node
           done()
         })
       })
     })
 
-    after((done) => {
-      common.teardown(done)
-    })
+    after((done) => ipfsd.stop(done))
 
     describe('callback API', () => {
       describe('.new', () => {

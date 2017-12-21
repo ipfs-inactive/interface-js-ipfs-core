@@ -16,6 +16,7 @@ module.exports = (common) => {
     ]
     const keys = []
     let ipfs
+    let ipfsd
     let withGo
 
     before(function (done) {
@@ -23,11 +24,12 @@ module.exports = (common) => {
       // timeout for the before step
       this.timeout(60 * 1000)
 
-      common.setup((err, factory) => {
+      common.setup((err, df) => {
         expect(err).to.not.exist()
-        factory.spawnNode((err, node) => {
+        df.spawn((err, node) => {
           expect(err).to.not.exist()
-          ipfs = node
+          ipfsd = node
+          ipfs = node.api
           ipfs.id((err, id) => {
             expect(err).to.not.exist()
             withGo = id.agentVersion.startsWith('go-ipfs')
@@ -37,7 +39,7 @@ module.exports = (common) => {
       })
     })
 
-    after((done) => common.teardown(done))
+    after((done) => ipfsd.stop(done))
 
     describe('.gen', () => {
       keyTypes.forEach((kt) => {

@@ -10,14 +10,14 @@ const series = require('async/series')
 const parallel = require('async/parallel')
 const CID = require('cids')
 
-function spawnWithId (factory, callback) {
+function spawnWithId (df, callback) {
   waterfall([
-    (cb) => factory.spawnNode(cb),
-    (node, cb) => node.id((err, peerId) => {
+    (cb) => df.spawn(cb),
+    (node, cb) => node.api.id((err, peerId) => {
       if (err) {
         return cb(err)
       }
-      node.peerId = peerId
+      node.api.peerId = peerId
       cb(null, node)
     })
   ], callback)
@@ -31,6 +31,7 @@ module.exports = (common) => {
     let nodeB
     let nodeC
 
+    let ipfsdNodes
     before(function (done) {
       // CI takes longer to instantiate the daemon, so we need to increase the
       // timeout for the before step
@@ -45,9 +46,11 @@ module.exports = (common) => {
         ], (err, nodes) => {
           expect(err).to.not.exist()
 
-          nodeA = nodes[0]
-          nodeB = nodes[1]
-          nodeC = nodes[2]
+          ipfsdNodes = nodes
+
+          nodeA = nodes[0].api
+          nodeB = nodes[1].api
+          nodeC = nodes[2].api
 
           parallel([
             (cb) => nodeA.swarm.connect(nodeB.peerId.addresses[0], cb),
@@ -58,7 +61,7 @@ module.exports = (common) => {
       })
     })
 
-    after((done) => common.teardown(done))
+    after((done) => parallel(ipfsdNodes.map((node) => (cb) => node.stop(cb)), done))
 
     describe('.get and .put', () => {
       it('errors when getting a non-existent key from the DHT', (done) => {
