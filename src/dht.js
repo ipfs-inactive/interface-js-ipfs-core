@@ -11,12 +11,12 @@ const parallel = require('async/parallel')
 const CID = require('cids')
 
 function spawnWithId (df, type, exec, callback) {
-  if (typeof  type === 'function') {
+  if (typeof type === 'function') {
     callback = type
     type = undefined
   }
 
-  if (typeof  exec === 'function') {
+  if (typeof exec === 'function') {
     callback = exec
     exec = undefined
   }
