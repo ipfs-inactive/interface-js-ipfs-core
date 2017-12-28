@@ -151,6 +151,7 @@ module.exports = (common) => {
 
       it('exports', (done) => {
         if (withGo) {
+          console.log('Not supported by go-ipfs yet')
           return done()
         }
         ipfs.key.export('self', passwordPem, (err, pem) => {
@@ -163,6 +164,7 @@ module.exports = (common) => {
 
       it('imports', (done) => {
         if (withGo) {
+          console.log('Not supported by go-ipfs yet')
           return done()
         }
         ipfs.key.import('clone', selfPem, passwordPem, (err, key) => {
@@ -174,8 +176,9 @@ module.exports = (common) => {
         })
       })
 
-      it('removes', function (done) {
+      it('removes', (done) => {
         if (withGo) {
+          console.log('Not supported by go-ipfs yet')
           return done()
         }
         ipfs.key.rm('clone', (err) => {
