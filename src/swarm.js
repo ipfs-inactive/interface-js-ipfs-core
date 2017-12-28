@@ -28,11 +28,11 @@ module.exports = (common) => {
       // timeout for the before step
       this.timeout(100 * 1000)
 
-      common.setup((err, df) => {
+      common.setup((err, df, type, exec) => {
         expect(err).to.not.exist()
         dfInstance = df
         series([
-          (cb) => df.spawn((err, node) => {
+          (cb) => df.spawn({ type, exec }, (err, node) => {
             expect(err).to.not.exist()
             ipfsA = node.api
             nodes.push(node)

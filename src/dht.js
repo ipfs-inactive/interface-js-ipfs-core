@@ -10,9 +10,19 @@ const series = require('async/series')
 const parallel = require('async/parallel')
 const CID = require('cids')
 
-function spawnWithId (df, callback) {
+function spawnWithId (df, type, exec, callback) {
+  if (typeof  type === 'function') {
+    callback = type
+    type = undefined
+  }
+
+  if (typeof  exec === 'function') {
+    callback = exec
+    exec = undefined
+  }
+
   waterfall([
-    (cb) => df.spawn(cb),
+    (cb) => df.spawn({ type, exec }, cb),
     (node, cb) => node.api.id((err, peerId) => {
       if (err) {
         return cb(err)
@@ -37,12 +47,12 @@ module.exports = (common) => {
       // timeout for the before step
       this.timeout(60 * 1000)
 
-      common.setup((err, factory) => {
+      common.setup((err, df, type) => {
         expect(err).to.not.exist()
         series([
-          (cb) => spawnWithId(factory, cb),
-          (cb) => spawnWithId(factory, cb),
-          (cb) => spawnWithId(factory, cb)
+          (cb) => spawnWithId(df, type, cb),
+          (cb) => spawnWithId(df, type, cb),
+          (cb) => spawnWithId(df, type, cb)
         ], (err, nodes) => {
           expect(err).to.not.exist()
 

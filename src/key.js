@@ -12,7 +12,7 @@ const hat = require('hat')
 module.exports = (common) => {
   describe('.key', () => {
     const keyTypes = [
-      {type: 'rsa', size: 2048}
+      { type: 'rsa', size: 2048 }
     ]
     const keys = []
     let ipfs
@@ -24,9 +24,9 @@ module.exports = (common) => {
       // timeout for the before step
       this.timeout(60 * 1000)
 
-      common.setup((err, df) => {
+      common.setup((err, df, type, exec) => {
         expect(err).to.not.exist()
-        df.spawn((err, node) => {
+        df.spawn({ type, exec }, (err, node) => {
           expect(err).to.not.exist()
           ipfsd = node
           ipfs = node.api

@@ -32,9 +32,19 @@ function waitForPeers (ipfs, topic, peersToWait, callback) {
   }, 500)
 }
 
-function spawnWithId (df, callback) {
+function spawnWithId (df, type, exec, callback) {
+  if (typeof type === 'function') {
+    callback = type
+    type = undefined
+  }
+
+  if (typeof exec === 'function') {
+    callback = exec
+    exec = undefined
+  }
+
   waterfall([
-    (cb) => df.spawn({ args: ['--enable-pubsub-experiment'] }, cb),
+    (cb) => df.spawn({ type, exec, args: ['--enable-pubsub-experiment'] }, cb),
     (node, cb) => node.api.id((err, res) => {
       if (err) {
         return cb(err)

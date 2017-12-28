@@ -24,9 +24,9 @@ module.exports = (common) => {
       // timeout for the before step
       this.timeout(60 * 1000)
 
-      common.setup((err, df) => {
+      common.setup((err, df, type, exec) => {
         expect(err).to.not.exist()
-        df.spawn((err, node) => {
+        df.spawn({ type, exec }, (err, node) => {
           expect(err).to.not.exist()
           ipfs = node.api
           ipfsd = node
