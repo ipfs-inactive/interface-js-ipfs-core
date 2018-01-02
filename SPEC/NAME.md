@@ -1,4 +1,4 @@
-name API
+Name API
 ========
 
 #### `publish`
@@ -34,9 +34,9 @@ If no `callback` is passed, a promise is returned.
 
 **Example:**
 
-Imagine you want to publish your website under IPFS. You will need to use the `ipfs files add` API to add your files, but every time you make a change to the website, its multihash will change too. That's why the `name` API comes in handy.
+Imagine you want to publish your website under IPFS. You can use the [Files API](./FILES.md) to publish your static website and then you'll get a multihash you can link to. But when you need to make a change, a problem arises: you get a new multihash because you now have a different content. And it is not possible for you to be always giving others the new address.
 
-With it, you can use one address for your website which points to the newest version of your website. Let's imagine you already have the multiahash of your website files.
+Here's where the Name API comes in handy. With it, you can use one static multihash for your website under IPNS (InterPlanetary Name Service). This way, you can have one single multihash poiting to the newest version of your website.
 
 ```JavaScript
 // The address of your files.
