@@ -32,11 +32,25 @@ name API
 
 If no `callback` is passed, a promise is returned.
 
-Example:
+**Example:**
+
+Imagine you want to publish your website under IPFS. You will need to use the `ipfs files add` API to add your files, but every time you make a change to the website, its multihash will change too. That's why the `name` API comes in handy.
+
+With it, you can use one address for your website which points to the newest version of your website. Let's imagine you already have the multiahash of your website files.
 
 ```JavaScript
-// TODO
+// The address of your files.
+const addr = '/ipfs/QmbezGequPwcsWo8UL4wDF6a8hYwM1hmbzYv2mnKkEWaUp'
+
+ipfs.name.publish(addr, function (err, res) {
+    // You now receive a res which contains two fields:
+    //   - Name: the name under which the content was published.
+    //   - Value: the "real" address to which Name points.
+    console.log(`https://gateway.ipfs.io/ipns/${res.Name}`)
+})
 ```
+
+This way, you can republish a new version of your website under the same address. By default, `ipfs.name.publish` will use the Peer ID. If you want to have multiple websites (for example) under the same IPFS module, you can always check the [key API](./KEY.md).
 
 #### `resolve`
 
