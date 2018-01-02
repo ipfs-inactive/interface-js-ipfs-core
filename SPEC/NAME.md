@@ -58,7 +58,9 @@ This way, you can republish a new version of your website under the same address
 
 ##### `Go` **WIP**
 
-##### `JavaScript` - ipfs.name.resolve([options, callback])
+##### `JavaScript` - ipfs.name.resolve(value, [options, callback])
+
+`value` is a IPNS address, such as: `/ipns/ipfs.io`.
 
 `options` is an object that may contain:
 
@@ -80,8 +82,13 @@ This way, you can republish a new version of your website under the same address
 
 If no `callback` is passed, a promise is returned.
 
-Example:
+**Example:**
 
 ```JavaScript
-// TODO
+// The IPNS address you want to resolve.
+const addr = '/ipns/ipfs.io'
+
+ipfs.name.resolve(addr, function (err, res) {
+    // res now contains the path to which addr points out.
+})
 ```
