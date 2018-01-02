@@ -15,9 +15,10 @@ Name API
 
 ```JavaScript
 {
-  resolve: // bool - Resolve given path before publishing. Default: true.
+  resolve:  // bool - Resolve given path before publishing. Default: true
   lifetime: // string - Time duration of the record. Default: 24h
-  ttl:  // string - Time duration this record should be cached
+  ttl:      // string - Time duration this record should be cached
+  key:      // string - Name of the key to be used or Peer ID. Default: 'self'
 }
 ```
 
