@@ -43,7 +43,14 @@ ipfs.key.add(
 
 ##### `JavaScript` - ipfs.key.list([callback])
 
-`callback` must follow `function (err, keys) {}` signature, where `err` is an Error if the operation was not successful. `keys` is an object with the property `Keys` that is an array of `KeyInfo` (`name` and `id`)
+`callback` must follow `function (err, keys) {}` signature, where `err` is an Error if the operation was not successful. `keys` is an array of:
+
+```
+{
+  id: 'hash',   // string - the hash of the key
+  name: 'self'  // string - the name of the key
+}
+```
 
 If no `callback` is passed, a promise is returned.
 
@@ -52,14 +59,12 @@ If no `callback` is passed, a promise is returned.
 ```JavaScript
 ipfs.key.list((err, keys) => console.log(keys))
 
-{ 
-  Keys: [
-    { Name: 'self',
-      Id: 'QmRT6i9wXVSmxKi3MxVRduZqF3Wvv8DuV5utMXPN3BxPML' },
-    { Name: 'my-key',
-      Id: 'Qmd4xC46Um6s24MradViGLFtMitvrR4SVexKUgPgFjMNzg' } 
-  ]
-}
+// [
+//   { id: 'QmTe4tuceM2sAmuZiFsJ9tmAopA8au71NabBDdpPYDjxAb',
+//     name: 'self' },
+//   { id: 'QmWETF5QvzGnP7jKq5sPDiRjSM2fzwzNsna4wSBEzRzK6W',
+//     name: 'a-key' }
+// ]
 ```
 
 #### `rm`
