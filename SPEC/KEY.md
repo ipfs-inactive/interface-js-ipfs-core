@@ -94,8 +94,7 @@ If no `callback` is passed, a promise is returned.
 ```JavaScript
 ipfs.key.rm('my-key', (err, key) => console.log(key))
 
-// {
-//  id: 'QmWETF5QvzGnP7jKq5sPDiRjSM2fzwzNsna4wSBEzRzK6W',
+// { id: 'QmWETF5QvzGnP7jKq5sPDiRjSM2fzwzNsna4wSBEzRzK6W',
 //   name: 'my-key' }
 ```
 
