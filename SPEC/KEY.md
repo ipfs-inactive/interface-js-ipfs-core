@@ -137,7 +137,7 @@ Where:
 - `name` is the local name for the key
 - `password` is the password to protect the key
 
-`callback` must follow `function (err, pem) {}` signature, where `err` is an Error if the operation was not successful. `pem` is the string representation of the key
+`callback` must follow `function (err, pem) {}` signature, where `err` is an Error if the operation was not successful. `pem` is the string representation of the key.
 
 If no `callback` is passed, a promise is returned.
 
@@ -146,12 +146,11 @@ If no `callback` is passed, a promise is returned.
 ```JavaScript
 ipfs.key.export('self', 'password', (err, pem) => console.log(pem))
 
------BEGIN ENCRYPTED PRIVATE KEY-----
-MIIFDTA/BgkqhkiG9w0BBQ0wMjAaBgkqhkiG9w0BBQwwDQQIpdO40RVyBwACAWQw
-...
-YA==
------END ENCRYPTED PRIVATE KEY-----
-
+// -----BEGIN ENCRYPTED PRIVATE KEY-----
+// MIIFDTA/BgkqhkiG9w0BBQ0wMjAaBgkqhkiG9w0BBQwwDQQIpdO40RVyBwACAWQw
+// ...
+// YA==
+// -----END ENCRYPTED PRIVATE KEY-----
 ```
 
 #### `import`
@@ -176,7 +175,6 @@ If no `callback` is passed, a promise is returned.
 ```JavaScript
 ipfs.key.import('clone', 'password', (err, key) => console.log(key))
 
-{ Name: 'clone',
-  Id: 'QmQRiays958UM7norGRQUG3tmrLq8pJdmJarwYSk2eLthQ' 
-}
+// { id: 'QmQRiays958UM7norGRQUG3tmrLq8pJdmJarwYSk2eLthQ',
+//   name: 'clone' }
 ```
