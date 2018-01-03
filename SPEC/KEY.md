@@ -23,16 +23,13 @@ If no `callback` is passed, a promise is returned.
 **Example:**
 
 ```JavaScript
-ipfs.key.add(
-  'my-key', 
-  { type: 'rsa', size: 2048 }, 
-  (err, key) => console.log(key))
+ipfs.key.gen('my-key', {
+    type: 'rsa',
+    size: 2048
+}, (err, key) => console.log(key))
 
-
-{ 
-  name: 'my-key',
-  id: 'Qmd4xC46Um6s24MradViGLFtMitvrR4SVexKUgPgFjMNzg'
-}
+// { id: 'QmYWqAFvLWb2G5A69JGXui2JJXzaHXiUEmQkQgor6kNNcJ',
+//  name: 'my-key' }
 ```
 
 #### `list`
