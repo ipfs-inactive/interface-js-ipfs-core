@@ -63,7 +63,7 @@ ipfs.key.list((err, keys) => console.log(keys))
 //   { id: 'QmTe4tuceM2sAmuZiFsJ9tmAopA8au71NabBDdpPYDjxAb',
 //     name: 'self' },
 //   { id: 'QmWETF5QvzGnP7jKq5sPDiRjSM2fzwzNsna4wSBEzRzK6W',
-//     name: 'a-key' }
+//     name: 'my-key' }
 // ]
 ```
 
@@ -78,7 +78,14 @@ ipfs.key.list((err, keys) => console.log(keys))
 Where:
 - `name` is the local name for the key
 
-`callback` must follow `function (err, key) {}` signature, where `err` is an Error if the operation was not successful. `key` is an object that describes the removed key.
+`callback` must follow `function (err, key) {}` signature, where `err` is an Error if the operation was not successful. `key` is an object that describes the removed key:
+
+```
+{
+  id: 'hash',   // string - the hash of the key
+  name: 'self'  // string - the name of the key
+}
+```
 
 If no `callback` is passed, a promise is returned.
 
@@ -87,12 +94,8 @@ If no `callback` is passed, a promise is returned.
 ```JavaScript
 ipfs.key.rm('my-key', (err, key) => console.log(key))
 
-{ 
-  Keys: [
-    { Name: 'my-key',
-      Id: 'Qmd4xC46Um6s24MradViGLFtMitvrR4SVexKUgPgFjMNzg' } 
-  ]
-}
+// { id: 'QmWETF5QvzGnP7jKq5sPDiRjSM2fzwzNsna4wSBEzRzK6W',
+//   name: 'my-key' }
 ```
 
 #### `rename`
