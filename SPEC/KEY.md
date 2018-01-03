@@ -30,8 +30,8 @@ ipfs.key.add(
 
 
 { 
-  Name: 'my-key',
-  Id: 'Qmd4xC46Um6s24MradViGLFtMitvrR4SVexKUgPgFjMNzg'
+  name: 'my-key',
+  id: 'Qmd4xC46Um6s24MradViGLFtMitvrR4SVexKUgPgFjMNzg'
 }
 ```
 
