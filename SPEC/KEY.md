@@ -94,7 +94,8 @@ If no `callback` is passed, a promise is returned.
 ```JavaScript
 ipfs.key.rm('my-key', (err, key) => console.log(key))
 
-// { id: 'QmWETF5QvzGnP7jKq5sPDiRjSM2fzwzNsna4wSBEzRzK6W',
+// {
+//  id: 'QmWETF5QvzGnP7jKq5sPDiRjSM2fzwzNsna4wSBEzRzK6W',
 //   name: 'my-key' }
 ```
 
@@ -117,17 +118,12 @@ If no `callback` is passed, a promise is returned.
 **Example:**
 
 ```JavaScript
-ipfs.key.rename(
-  'my-key', 
-  'my-new-key',
-  (err, key) => console.log(key))
-  
-{ 
-  Was: 'my-key',
-  Now: 'my-new-key',
-  Id: 'Qmd4xC46Um6s24MradViGLFtMitvrR4SVexKUgPgFjMNzg',
-  Overwrite: false
-}
+ipfs.key.rename('my-key', 'my-new-key', (err, key) => console.log(key))
+
+// { id: 'Qmd4xC46Um6s24MradViGLFtMitvrR4SVexKUgPgFjMNzg',
+//   was: 'my-key',
+//   now: 'my-new-key',
+//   overwrite: false }
 ```
 
 #### `export`
