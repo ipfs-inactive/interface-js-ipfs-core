@@ -45,8 +45,8 @@ const addr = '/ipfs/QmbezGequPwcsWo8UL4wDF6a8hYwM1hmbzYv2mnKkEWaUp'
 
 ipfs.name.publish(addr, function (err, res) {
     // You now receive a res which contains two fields:
-    //   - Name: the name under which the content was published.
-    //   - Value: the "real" address to which Name points.
+    //   - name: the name under which the content was published.
+    //   - value: the "real" address to which Name points.
     console.log(`https://gateway.ipfs.io/ipns/${res.Name}`)
 })
 ```
@@ -72,14 +72,7 @@ This way, you can republish a new version of your website under the same address
 }
 ```
 
-`callback` must follow `function (err, name) {}` signature, where `err` is an error if the operation was not successful. `name` is an object that contains the IPNS hash and the IPFS hash, such as: 
-
-```JavaScript
-{
-  name: "/ipns/QmHash.."
-  value: "/ipfs/QmHash.."
-}
-```
+`callback` must follow `function (err, name) {}` signature, where `err` is an error if the operation was not successful. `name` is a string that contains the IPFS hash.
 
 If no `callback` is passed, a promise is returned.
 
@@ -89,7 +82,8 @@ If no `callback` is passed, a promise is returned.
 // The IPNS address you want to resolve.
 const addr = '/ipns/ipfs.io'
 
-ipfs.name.resolve(addr, function (err, res) {
-    // res now contains the path to which addr points out.
+ipfs.name.resolve(addr, function (err, name) {
+    console.log(name)
+    // /ipfs/QmQrX8hka2BtNHa8N8arAq16TCVx5qHcb46c5yPewRycLm
 })
 ```
