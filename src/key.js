@@ -64,7 +64,7 @@ module.exports = (common) => {
           expect(res).to.exist()
           expect(res).to.be.an('array')
           expect(res.length).to.be.above(keys.length - 1)
-          listedKeys = res.Keys
+          listedKeys = res
           done()
         })
       })
@@ -124,7 +124,7 @@ module.exports = (common) => {
       })
 
       it('removes a key', function (done) {
-        ipfs.key.rm(key.Name, (err, res) => {
+        ipfs.key.rm(key.name, (err, res) => {
           expect(err).to.not.exist()
           expect(res).to.exist()
           expect(res).to.have.property('name', key.name)
