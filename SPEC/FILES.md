@@ -539,13 +539,9 @@ pull(
 
 A great source of [examples][] can be found in the tests for this API.
 
----
-
-# MFS (WIP)
-
 #### `cp`
 
-> Copy files.
+> Mutable File System specific. Copy files.
 
 ##### `Go` **WIP**
 
@@ -572,7 +568,7 @@ ipfs.files.cp(['/src-file', '/dst-file'], (err) => {
 
 #### `ls`
 
-> Get directory contents.
+> Mutable File System specific. Get directory contents.
 
 ##### `Go` **WIP**
 
@@ -582,7 +578,7 @@ TODO
 
 #### `mkdir`
 
-> Make a directory.
+> Mutable File System specific. Make a directory.
 
 ##### `Go` **WIP**
 
@@ -610,13 +606,44 @@ ipfs.files.mkdir('/my/beautiful/directory', (err) => {
 
 #### `stat`
 
-> Get file or directory status.
+> Mutable File System specific. Get file or directory status.
 
 ##### `Go` **WIP**
 
 ##### `JavaScript` - ipfs.files.stat(path, [options, callback])
 
-TODO
+Where:
+
+- `path` is the path to the directory to make.
+- `options` is an optional Object that might contain the following keys:
+  - `hash` is a Boolean value to return only the hash.
+  - `size` is a Boolean value to return only the size.
+
+`callback` must follow the `function (err, stat) {}` signature, where `err` is an Error if the operation was not successful and `stat` is an Object with the following keys:
+
+- `hash` is a string with the hash.
+- `size` is an integer with the size in Bytes.
+- `cumulativeSize` is an integer with the cumulative size in Bytes.
+- `blocks` is an integer indicating the number of blocks.
+- `type` is a string that can be either `directory` or `file`.
+
+If no `callback` is passed, a promise is returned.
+
+**Example:**
+
+```JavaScript
+ipfs.files.stat('/file.txt', (err, stats) => {
+  console.log(stats)
+})
+
+// {
+//   hash: 'QmXmJBmnYqXVuicUfn9uDCC8kxCEEzQpsAbeq1iJvLAmVs',
+//   size: 60,
+//   cumulativeSize: 118,
+//   blocks: 1,
+//   type: 'file'
+// }
+```
 
 #### `rm`
 
@@ -656,7 +683,7 @@ ipfs.files.mkdir('/my/beautiful/directory', { recursive: true }, (err) => {
 
 #### `read`
 
-> Read a file.
+> Mutable File System specific. Read a file.
 
 ##### `Go` **WIP**
 
@@ -666,7 +693,7 @@ TODO
 
 #### `write`
 
-> Write to a file.
+> Mutable File System specific. Write to a file.
 
 ##### `Go` **WIP**
 
@@ -676,7 +703,7 @@ TODO
 
 #### `mv`
 
-> Move files.
+> Mutable File System specific. Move files.
 
 ##### `Go` **WIP**
 
@@ -703,7 +730,7 @@ ipfs.files.mv(['/src-file', '/dst-file'], (err) => {
 
 #### `flush`
 
-> Flush a given path's data to the disk
+> Mutable File System specific. Flush a given path's data to the disk
 
 ##### `Go` **WIP**
 
