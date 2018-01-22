@@ -543,15 +543,95 @@ A great source of [examples][] can be found in the tests for this API.
 
 # MFS (WIP)
 
-ipfs.files.cp
-ipfs.files.ls
-ipfs.files.mkdir
-ipfs.files.stat
-ipfs.files.rm
-ipfs.files.read
-ipfs.files.write
-ipfs.files.mv
-ipfs.files.flush(path, [callback])
+#### `cp`
+
+> Copy files.
+
+##### `Go` **WIP**
+
+##### `JavaScript` - ipfs.files.cp([from, to], [callback])
+
+TODO
+
+#### `ls`
+
+> Get directory contents.
+
+##### `Go` **WIP**
+
+##### `JavaScript` - ipfs.files.ls(path, [options, callback])
+
+TODO
+
+#### `mkdir`
+
+> Make a directory.
+
+##### `Go` **WIP**
+
+##### `JavaScript` - ipfs.files.mkdir(path, [options, callback])
+
+TODO
+
+#### `stat`
+
+> Get file or directory status.
+
+##### `Go` **WIP**
+
+##### `JavaScript` - ipfs.files.stat(path, [options, callback])
+
+TODO
+
+#### `rm`
+
+> Remove a file or directory.
+
+##### `Go` **WIP**
+
+##### `JavaScript` - ipfs.files.rm(path, [options, callback])
+
+TODO
+
+#### `read`
+
+> Read a file.
+
+##### `Go` **WIP**
+
+##### `JavaScript` - ipfs.files.read(path, [options, callback])
+
+TODO
+
+#### `write`
+
+> Write to a file.
+
+##### `Go` **WIP**
+
+##### `JavaScript` - ipfs.files.write(path, [options, callback])
+
+TODO
+
+#### `mv`
+
+> Move files.
+
+##### `Go` **WIP**
+
+##### `JavaScript` - ipfs.files.cp([from, to], [callback])
+
+TODO
+
+#### `flush`
+
+> Flush a given path's data to the disk
+
+##### `Go` **WIP**
+
+##### `JavaScript` - ipfs.files.cp(path, [callback])
+
+TODO
 
 [examples]: https://github.com/ipfs/interface-ipfs-core/blob/master/src/files.js
 [b]: https://www.npmjs.com/package/buffer
