@@ -566,16 +566,6 @@ ipfs.files.cp(['/src-file', '/dst-file'], (err) => {
 })
 ```
 
-#### `ls`
-
-> Mutable File System specific. Get directory contents.
-
-##### `Go` **WIP**
-
-##### `JavaScript` - ipfs.files.ls(path, [options, callback])
-
-TODO
-
 #### `mkdir`
 
 > Mutable File System specific. Make a directory.
@@ -689,7 +679,26 @@ ipfs.files.mkdir('/my/beautiful/directory', { recursive: true }, (err) => {
 
 ##### `JavaScript` - ipfs.files.read(path, [options, callback])
 
-TODO
+Where:
+
+- `path` is the path of the object to read.
+- `options` is an optional Object that might contain the following keys:
+  - `offset` is an Integer with the byte offset to begin reading from.
+  - `count` is an Integer with the maximum number of bytes to read.
+
+`callback` must follow the `function (err, buf) {}` signature, where `err` is an Error if the operation was not successful and `buf` is a Buffer with the contents of `path`.
+
+If no `callback` is passed, a promise is returned.
+
+**Example:**
+
+```JavaScript
+ipfs.files.read('/hello-world', (err, buf) => {
+  console.log(buf.toString())
+})
+
+// Hello, World!
+```
 
 #### `write`
 
@@ -697,9 +706,31 @@ TODO
 
 ##### `Go` **WIP**
 
-##### `JavaScript` - ipfs.files.write(path, [options, callback])
+##### `JavaScript` - ipfs.files.write(path, content, [options, callback])
 
-TODO
+Where:
+
+- `path` is the path of the object to write.
+- `content` can be:
+  - a Buffer instance.
+  - a Path (caveat: will only work in Node.js).
+- `options` is an optional Object that might contain the following keys:
+  - `offset` is an Integer with the byte offset to begin writing at.
+  - `create` is a Boolean to indicate to create the file if it doesn't exist.
+  - `truncate` is a Boolean to indicate if the file should be truncated to size 0 before writing.
+  - `count` is an Integer with the maximum number of bytes to read.
+
+`callback` must follow the `function (err) {}` signature, where `err` is an Error if the operation was not successful.
+
+If no `callback` is passed, a promise is returned.
+
+**Example:**
+
+```JavaScript
+ipfs.files.write('/hello-world', Buffer.from('Hello, world!'), (err) => {
+  console.log(err)
+})
+```
 
 #### `mv`
 
