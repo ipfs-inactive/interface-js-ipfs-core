@@ -539,6 +539,20 @@ pull(
 
 A great source of [examples][] can be found in the tests for this API.
 
+---
+
+# MFS (WIP)
+
+ipfs.files.cp
+ipfs.files.ls
+ipfs.files.mkdir
+ipfs.files.stat
+ipfs.files.rm
+ipfs.files.read
+ipfs.files.write
+ipfs.files.mv
+ipfs.files.flush(path, [callback])
+
 [examples]: https://github.com/ipfs/interface-ipfs-core/blob/master/src/files.js
 [b]: https://www.npmjs.com/package/buffer
 [rs]: https://www.npmjs.com/package/readable-stream
