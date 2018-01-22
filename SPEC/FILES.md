@@ -551,7 +551,24 @@ A great source of [examples][] can be found in the tests for this API.
 
 ##### `JavaScript` - ipfs.files.cp([from, to], [callback])
 
-TODO
+Where:
+
+- `from` is the path of the source object to copy.
+- `to` is the path of the destination object to copy to.
+
+`callback` must follow the `function (err) {}` signature, where `err` is an Error if the operation was not successful.
+
+If no `callback` is passed, a promise is returned.
+
+**Example:**
+
+```JavaScript
+ipfs.files.cp(['/src-file', '/dst-file'], (err) => {
+  if (err) {
+    console.error(err)
+  }
+})
+```
 
 #### `ls`
 
@@ -571,7 +588,25 @@ TODO
 
 ##### `JavaScript` - ipfs.files.mkdir(path, [options, callback])
 
-TODO
+Where:
+
+- `path` is the path to the directory to make.
+- `options` is an optional Object that might contain the following keys:
+  - `parents` is a Boolean value to decide whether or not to make the parent directories if they don't exist.
+
+`callback` must follow the `function (err) {}` signature, where `err` is an Error if the operation was not successful.
+
+If no `callback` is passed, a promise is returned.
+
+**Example:**
+
+```JavaScript
+ipfs.files.mkdir('/my/beautiful/directory', (err) => {
+  if (err) {
+    console.error(err)
+  }
+})
+```
 
 #### `stat`
 
@@ -591,7 +626,33 @@ TODO
 
 ##### `JavaScript` - ipfs.files.rm(path, [options, callback])
 
-TODO
+Where:
+
+- `path` is the path of the object to remove.
+- `options` is an optional Object that might contain the following keys:
+  - `recursive` is a Boolean value to decide whether or not to remove directories recursively.
+
+`callback` must follow the `function (err) {}` signature, where `err` is an Error if the operation was not successful.
+
+If no `callback` is passed, a promise is returned.
+
+**Example:**
+
+```JavaScript
+// To remove a file
+ipfs.files.mkdir('/my/beautiful/file.txt', (err) => {
+  if (err) {
+    console.error(err)
+  }
+})
+
+// To remove a directory
+ipfs.files.mkdir('/my/beautiful/directory', { recursive: true }, (err) => {
+  if (err) {
+    console.error(err)
+  }
+})
+```
 
 #### `read`
 
@@ -621,7 +682,24 @@ TODO
 
 ##### `JavaScript` - ipfs.files.cp([from, to], [callback])
 
-TODO
+Where:
+
+- `from` is the path of the source object to move.
+- `to` is the path of the destination object to move to.
+
+`callback` must follow the `function (err) {}` signature, where `err` is an Error if the operation was not successful.
+
+If no `callback` is passed, a promise is returned.
+
+**Example:**
+
+```JavaScript
+ipfs.files.mv(['/src-file', '/dst-file'], (err) => {
+  if (err) {
+    console.error(err)
+  }
+})
+```
 
 #### `flush`
 
@@ -629,9 +707,25 @@ TODO
 
 ##### `Go` **WIP**
 
-##### `JavaScript` - ipfs.files.cp(path, [callback])
+##### `JavaScript` - ipfs.files.cp([path, callback])
 
-TODO
+Where:
+
+- `path` is the path to flush. Default is `/`.
+
+`callback` must follow the `function (err) {}` signature, where `err` is an Error if the operation was not successful.
+
+If no `callback` is passed, a promise is returned.
+
+**Example:**
+
+```JavaScript
+ipfs.files.flush('/', (err) => {
+  if (err) {
+    console.error(err)
+  }
+})
+```
 
 [examples]: https://github.com/ipfs/interface-ipfs-core/blob/master/src/files.js
 [b]: https://www.npmjs.com/package/buffer
