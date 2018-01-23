@@ -387,6 +387,10 @@ pull(
 
 A great source of [examples][] can be found in the tests for this API.
 
+### Mutable File System specific
+
+The Mutable File System (MFS) is a peer-to-peer file system where every file and directory can be addressed by an hash.
+
 #### `ls`
 
 > Lists a directory from IPFS that is addressed by a valid IPFS Path.
@@ -541,7 +545,7 @@ A great source of [examples][] can be found in the tests for this API.
 
 #### `cp`
 
-> Mutable File System specific. Copy files.
+> Copy files.
 
 ##### `Go` **WIP**
 
@@ -568,7 +572,7 @@ ipfs.files.cp(['/src-file', '/dst-file'], (err) => {
 
 #### `mkdir`
 
-> Mutable File System specific. Make a directory.
+> Make a directory.
 
 ##### `Go` **WIP**
 
@@ -596,7 +600,7 @@ ipfs.files.mkdir('/my/beautiful/directory', (err) => {
 
 #### `stat`
 
-> Mutable File System specific. Get file or directory status.
+> Get file or directory status.
 
 ##### `Go` **WIP**
 
@@ -673,7 +677,7 @@ ipfs.files.mkdir('/my/beautiful/directory', { recursive: true }, (err) => {
 
 #### `read`
 
-> Mutable File System specific. Read a file.
+> Read a file.
 
 ##### `Go` **WIP**
 
@@ -702,7 +706,7 @@ ipfs.files.read('/hello-world', (err, buf) => {
 
 #### `write`
 
-> Mutable File System specific. Write to a file.
+> Write to a file.
 
 ##### `Go` **WIP**
 
@@ -734,7 +738,7 @@ ipfs.files.write('/hello-world', Buffer.from('Hello, world!'), (err) => {
 
 #### `mv`
 
-> Mutable File System specific. Move files.
+> Move files.
 
 ##### `Go` **WIP**
 
@@ -761,7 +765,7 @@ ipfs.files.mv(['/src-file', '/dst-file'], (err) => {
 
 #### `flush`
 
-> Mutable File System specific. Flush a given path's data to the disk
+> Flush a given path's data to the disk
 
 ##### `Go` **WIP**
 
