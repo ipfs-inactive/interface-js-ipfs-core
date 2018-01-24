@@ -387,9 +387,6 @@ pull(
 
 A great source of [examples][] can be found in the tests for this API.
 
-### Mutable File System specific
-
-The Mutable File System (MFS) is a peer-to-peer file system where every file and directory can be addressed by an hash.
 
 #### `ls`
 
@@ -431,7 +428,7 @@ If no `callback` is passed, a promise is returned.
 ```JavaScript
 const validCID = 'QmQ2r6iMNpky5f1m4cnm3Yqw8VSvjuKpTcK1X7dBR1LkJF'
 
-ipfs.files.ls(validCID, function (err, files) {
+ipfs.ls(validCID, function (err, files) {
   files.forEach((file) => {
     console.log(file.path)
   })
@@ -542,6 +539,15 @@ pull(
 ```
 
 A great source of [examples][] can be found in the tests for this API.
+
+--------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------
+
+Mutable File System
+===================
+
+The Mutable File System (MFS) is a virtual file system on top of IPFS that exposes a Unix like API over a virtual directory. It enables users to write and read from paths without having to worry about updating the graph. It enables things like [ipfs-blob-store](https://github.com/ipfs/ipfs-blob-store) to exist.
+
 
 #### `cp`
 
