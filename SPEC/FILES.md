@@ -795,6 +795,42 @@ ipfs.files.flush('/', (err) => {
 })
 ```
 
+#### `ls`
+
+> List directories in the local mutable namespace.
+
+##### `Go` **WIP**
+
+##### `JavaScript` - ipfs.files.ls([path, options, callback])
+
+Where:
+
+- `path` is the path to show listing for. Defaults to `/`.
+- `options` is an optional Object that might contain the following keys:
+  - `l` is a Boolean value o use long listing format.
+  
+`callback` must follow `function (err, files) {}` signature, where `err` is an error if the operation was not successful. `files` is an array containing Objects that contain the following keys:
+
+- `name` which is the file's name.
+- `type` which i the object's type (`directory` or `file`).
+- `size` the size of the file in bytes.
+- `hash` the hash of the file.
+
+If no `callback` is passed, a promise is returned.
+
+**Example:**
+
+```JavaScript
+ipfs.files.ls('/screenshots', function (err, files) {
+  files.forEach((file) => {
+    console.log(file.name)
+  })
+})
+
+// 2018-01-22T18:08:46.775Z.png
+// 2018-01-22T18:08:49.184Z.png
+```
+
 [examples]: https://github.com/ipfs/interface-ipfs-core/blob/master/src/files.js
 [b]: https://www.npmjs.com/package/buffer
 [rs]: https://www.npmjs.com/package/readable-stream
