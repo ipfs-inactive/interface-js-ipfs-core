@@ -81,7 +81,7 @@ module.exports = (common) => {
     it('.bw', (done) => {
       if (!withGo) {
         console.log('Not supported in js-ipfs yet')
-        return
+        return done()
       }
 
       ipfs.stats.bw((err, res) => {
@@ -113,7 +113,7 @@ module.exports = (common) => {
     it('.repo', (done) => {
       if (!withGo) {
         console.log('Not supported in js-ipfs yet')
-        return
+        return done()
       }
 
       ipfs.stats.repo((err, res) => {
