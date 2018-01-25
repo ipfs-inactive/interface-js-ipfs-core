@@ -12,8 +12,5 @@ exports.dht = require('./dht')
 exports.dag = require('./dag')
 exports.pubsub = require('./pubsub')
 exports.key = require('./key')
-<<<<<<< HEAD
 exports.stats = require('./stats')
-=======
->>>>>>> fix: linting
 exports.repo = require('./repo')
