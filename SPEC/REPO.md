@@ -60,7 +60,7 @@ ipfs.repo.stats((err, stats) => console.log(stats))
 
 ##### `Go` **WIP**
 
-##### `JavaScript` - ipfs.repo.stat([callback])
+##### `JavaScript` - ipfs.repo.version([callback])
 
 `callback` must follow `function (err, version) {}` signature, where `err` is an Error if the operation was not successful and `version` is a String containing the version.
 
