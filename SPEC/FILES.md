@@ -748,7 +748,7 @@ ipfs.files.write('/hello-world', Buffer.from('Hello, world!'), (err) => {
 
 ##### `Go` **WIP**
 
-##### `JavaScript` - ipfs.files.cp([from, to], [callback])
+##### `JavaScript` - ipfs.files.mv([from, to], [callback])
 
 Where:
 
@@ -775,7 +775,7 @@ ipfs.files.mv(['/src-file', '/dst-file'], (err) => {
 
 ##### `Go` **WIP**
 
-##### `JavaScript` - ipfs.files.cp([path, callback])
+##### `JavaScript` - ipfs.files.flush([path, callback])
 
 Where:
 
