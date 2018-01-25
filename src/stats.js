@@ -101,7 +101,7 @@ module.exports = (common) => {
         return
       }
 
-      ipfs.stats.bw().then((res) => {
+      return ipfs.stats.bw().then((res) => {
         expect(res).to.exist()
         expect(res).to.have.a.property('totalIn')
         expect(res).to.have.a.property('totalOut')
@@ -134,7 +134,7 @@ module.exports = (common) => {
         return
       }
 
-      ipfs.stats.repo().then((res) => {
+      return ipfs.stats.repo().then((res) => {
         expect(res).to.exist()
         expect(res).to.have.a.property('numObjects')
         expect(res).to.have.a.property('repoSize')
