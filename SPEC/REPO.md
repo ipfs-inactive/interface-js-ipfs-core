@@ -51,7 +51,7 @@ If no `callback` is passed, a promise is returned.
 **Example:**
 
 ```JavaScript
-ipfs.repo.stats((err, stats) => console.log(stats))
+ipfs.repo.stat((err, stats) => console.log(stats))
 ```
 
 #### `version`
