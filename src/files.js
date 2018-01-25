@@ -25,7 +25,6 @@ const tests = (common) => {
     this.timeout(40 * 1000)
 
     let ipfs
-    let withGo
 
     function fixture (path) {
       return loadFixture(__dirname, path, 'interface-ipfs-core')
@@ -62,10 +61,7 @@ const tests = (common) => {
         factory.spawnNode((err, node) => {
           expect(err).to.not.exist()
           ipfs = node
-          node.id((err, id) => {
-            withGo = id.agentVersion.startsWith('go-ipfs')
-            done()
-          })
+          done()
         })
       })
     })
