@@ -13,6 +13,8 @@ Bitswap API
 
 ##### `JavaScript` - ipfs.bitswap.stat([callback])
 
+`stats.bitswap` and `bitswap.stat` can be used interchangeably.
+
 `callback` must follow `function (err, stats) {}` signature, where `err` is an error if the operation was not successful. `stats` is an Object containing the following keys:
 
 - `provideBufLen`
