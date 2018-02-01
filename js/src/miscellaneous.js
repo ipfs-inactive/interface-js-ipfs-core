@@ -81,7 +81,7 @@ module.exports = (common) => {
           expect(res).to.exist()
         })
     })
-    
+
     it('.shutdown support', (done) => { // must be last test to run
       // go-ipfs returns an error, https://github.com/ipfs/go-ipfs/issues/4078
       ipfs.shutdown((err) => {
