@@ -83,9 +83,9 @@ module.exports = (common) => {
     })
 
     it('.shutdown support', (done) => { // must be last test to run
-      // go-ipfs returns an error, https://github.com/ipfs/go-ipfs/issues/4078
+      // TODO: go-ipfs returns an error, https://github.com/ipfs/go-ipfs/issues/4078
       ipfs.shutdown((err) => {
-        if (err && err.message != 'read ECONNRESET') {
+        if (err && err.message !== 'read ECONNRESET') {
           expect(err).to.not.exist()
         }
         ipfs.shutdown((err) => {
