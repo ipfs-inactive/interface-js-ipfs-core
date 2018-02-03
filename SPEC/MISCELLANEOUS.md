@@ -92,7 +92,7 @@ If no `callback` is passed, a promise is returned.
 **Example:**
 
 ```JavaScript
-ipfs.shutdown((err) => {
+ipfs.stop((err) => {
   if (err) { 
     throw err
   }
