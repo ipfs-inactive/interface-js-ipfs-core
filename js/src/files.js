@@ -27,7 +27,7 @@ const tests = (common) => {
     let ipfs
 
     function fixture (path) {
-      return loadFixture(__dirname, path, 'interface-ipfs-core')
+      return loadFixture(path, 'interface-ipfs-core')
     }
 
     const smallFile = {
@@ -70,7 +70,6 @@ const tests = (common) => {
 
     describe.only('.add', () => {
       it('a Buffer', (done) => {
-        console.log('->', smallFile)
         ipfs.files.add(smallFile.data, (err, filesAdded) => {
           expect(err).to.not.exist()
 
