@@ -118,21 +118,37 @@ module.exports = (common) => {
 
     describe('.provide', () => {
       it('regular', (done) => {
-        // TODO recheck this test, should it provide or not if block is not available? go-ipfs does provide.
+        nodeC.files.add(Buffer.from('test'), (err, res) => {
+          if (err) return done(err)
+
+          nodeC.dht.provide(new CID(res[0].hash), (err) => {
+            expect(err).to.not.exist()
+            done()
+          })
+        })
+      })
+
+      it('should not provide if block not found locally', (done) => {
         const cid = new CID('Qmd7qZS4T7xXtsNFdRoK1trfMs5zU94EpokQ9WFtxdPxsZ')
 
-        nodeC.dht.provide(cid, done)
+        nodeC.dht.provide(cid, (err) => {
+          expect(err).to.exist()
+          expect(err.message).to.include('not found locally')
+          done()
+        })
       })
 
       it('allows multiple CIDs to be passed', (done) => {
-        const cids = [
-          new CID('Qmd7qZS4T7xXtsNFdRoK1trfMs5zU94EpokQ9WFtxdPxsZ'),
-          new CID('Qmd7qZS4T7xXtsNFdRoK1trfMs5zU94EpokQ9WFtxdPxxx')
-        ]
+        nodeC.files.add([Buffer.from('t0'), Buffer.from('t1')], (err, res) => {
+          if (err) return done(err)
 
-        nodeC.dht.provide(cids, (err) => {
-          expect(err).to.not.exist()
-          done()
+          nodeC.dht.provide([
+            new CID(res[0].hash),
+            new CID(res[1].hash)
+          ], (err) => {
+            expect(err).to.not.exist()
+            done()
+          })
         })
       })
 
