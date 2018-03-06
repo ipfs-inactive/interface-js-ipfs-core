@@ -124,6 +124,32 @@ module.exports = (common) => {
         nodeC.dht.provide(cid, done)
       })
 
+      it('allows multiple CIDs to be passed', (done) => {
+        const cids = [
+          new CID('Qmd7qZS4T7xXtsNFdRoK1trfMs5zU94EpokQ9WFtxdPxsZ'),
+          new CID('Qmd7qZS4T7xXtsNFdRoK1trfMs5zU94EpokQ9WFtxdPxxx')
+        ]
+
+        nodeC.dht.provide(cids, (err) => {
+          expect(err).to.not.exist()
+          done()
+        })
+      })
+
+      it('errors on non CID arg', (done) => {
+        nodeC.dht.provide({}, (err) => {
+          expect(err).to.exist()
+          done()
+        })
+      })
+
+      it('errors on array containing non CID arg', (done) => {
+        nodeC.dht.provide([{}], (err) => {
+          expect(err).to.exist()
+          done()
+        })
+      })
+
       it.skip('recursive', () => {})
     })
 
