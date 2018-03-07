@@ -152,6 +152,19 @@ module.exports = (common) => {
         })
       })
 
+      it('should provide a CIDv1', (done) => {
+        nodeC.files.add(Buffer.from('test'), { 'cid-version': 1 }, (err, res) => {
+          if (err) return done(err)
+
+          const cid = new CID(res[0].hash)
+
+          nodeC.dht.provide(cid, (err) => {
+            expect(err).to.not.exist()
+            done()
+          })
+        })
+      })
+
       it('errors on non CID arg', (done) => {
         nodeC.dht.provide({}, (err) => {
           expect(err).to.exist()
