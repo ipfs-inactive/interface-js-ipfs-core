@@ -51,7 +51,7 @@ module.exports = (common) => {
       })
     })
 
-    it('.bw', function(done) {
+    it('.bw', function (done) {
       if (!withGo) {
         console.log('Not supported in js-ipfs yet')
         this.skip()
@@ -63,7 +63,7 @@ module.exports = (common) => {
       })
     })
 
-    it('.bw Promise', function(done) {
+    it('.bw Promise', function (done) {
       if (!withGo) {
         console.log('Not supported in js-ipfs yet')
         this.skip()
@@ -74,7 +74,7 @@ module.exports = (common) => {
       })
     })
 
-    it('.bwReadableStream', function(done) {
+    it('.bwReadableStream', function (done) {
       if (!withGo) {
         console.log('Not supported in js-ipfs yet')
         this.skip()
@@ -89,7 +89,7 @@ module.exports = (common) => {
       })
     })
 
-    it('.bwPullStream', function(done) {
+    it('.bwPullStream', function (done) {
       if (!withGo) {
         console.log('Not supported in js-ipfs yet')
         this.skip()

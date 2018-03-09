@@ -147,7 +147,7 @@ module.exports = (common) => {
       let selfPem
       let passwordPem = hat()
 
-      it('exports', function(done) {
+      it('exports', function (done) {
         if (withGo) {
           console.log('Not supported by go-ipfs yet')
           this.skip()
@@ -160,7 +160,7 @@ module.exports = (common) => {
         })
       })
 
-      it('imports', function(done) {
+      it('imports', function (done) {
         if (withGo) {
           console.log('Not supported by go-ipfs yet')
           this.skip()
@@ -174,7 +174,7 @@ module.exports = (common) => {
         })
       })
 
-      it('removes', function(done) {
+      it('removes', function (done) {
         if (withGo) {
           console.log('Not supported by go-ipfs yet')
           this.skip()

@@ -165,7 +165,7 @@ module.exports = (common) => {
         })
       })
 
-      it('add a nested directory as array of tupples', function(done) {
+      it('add a nested directory as array of tupples', function (done) {
         // TODO: https://github.com/ipfs/js-ipfs-api/issues/339
         if (!isNode) { this.skip() }
 
@@ -197,7 +197,7 @@ module.exports = (common) => {
         })
       })
 
-      it('add a nested directory as array of tuppled with progress', function(done) {
+      it('add a nested directory as array of tuppled with progress', function (done) {
         // TODO: https://github.com/ipfs/js-ipfs-api/issues/339
         if (!isNode) { this.skip() }
 
@@ -262,7 +262,7 @@ module.exports = (common) => {
     })
 
     describe('.addReadableStream', () => {
-      it('stream of valid files and dirs', function(done) {
+      it('stream of valid files and dirs', function (done) {
         // TODO: https://github.com/ipfs/js-ipfs-api/issues/339
         if (!isNode) { this.skip() }
 
@@ -303,7 +303,7 @@ module.exports = (common) => {
     })
 
     describe('.addPullStream', () => {
-      it('stream of valid files and dirs', function(done) {
+      it('stream of valid files and dirs', function (done) {
         // TODO: https://github.com/ipfs/js-ipfs-api/issues/339
         if (!isNode) { this.skip() }
 
@@ -535,7 +535,7 @@ module.exports = (common) => {
         })
       })
 
-      it('directory', function(done) {
+      it('directory', function (done) {
         // TODO: https://github.com/ipfs/js-ipfs-api/issues/339
         if (!isNode) { this.skip() }
 
@@ -709,7 +709,7 @@ module.exports = (common) => {
     })
 
     describe('.ls', () => {
-      before(function(done) {
+      before(function (done) {
         // TODO: https://github.com/ipfs/js-ipfs-api/issues/339
         if (!isNode) { this.skip() }
 
@@ -741,7 +741,7 @@ module.exports = (common) => {
         })
       })
 
-      it('with a base58 encoded CID', function(done) {
+      it('with a base58 encoded CID', function (done) {
         // TODO: https://github.com/ipfs/js-ipfs-api/issues/339
         if (!isNode) { this.skip() }
 
@@ -809,7 +809,7 @@ module.exports = (common) => {
     })
 
     describe('.lsReadableStream', () => {
-      before(function(done) {
+      before(function (done) {
         // TODO: https://github.com/ipfs/js-ipfs-api/issues/339
         if (!isNode) { this.skip() }
 
@@ -841,7 +841,7 @@ module.exports = (common) => {
         })
       })
 
-      it('with a base58 encoded CID', function(done) {
+      it('with a base58 encoded CID', function (done) {
         // TODO: https://github.com/ipfs/js-ipfs-api/issues/339
         if (!isNode) { this.skip() }
 
@@ -892,7 +892,7 @@ module.exports = (common) => {
       })
     })
 
-    describe('.lsPullStream', function(done) {
+    describe('.lsPullStream', function (done) {
       before((done) => {
         // TODO: https://github.com/ipfs/js-ipfs-api/issues/339
         if (!isNode) { this.skip() }
@@ -925,7 +925,7 @@ module.exports = (common) => {
         })
       })
 
-      it('with a base58 encoded CID', function(done) {
+      it('with a base58 encoded CID', function (done) {
         // TODO: https://github.com/ipfs/js-ipfs-api/issues/339
         if (!isNode) { this.skip() }
 
