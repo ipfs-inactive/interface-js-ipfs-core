@@ -276,10 +276,7 @@ module.exports = (common) => {
             blocks: 1,
             size: 13,
             hash: 'QmcZojhwragQr5qhTeFAmELik623Z21e3jBTpJXoQ9si1T',
-            cumulativeSize: 71,
-            withLocality: false,
-            local: undefined,
-            sizeLocal: undefined
+            cumulativeSize: 71
           })
           done()
         })
@@ -298,54 +295,7 @@ module.exports = (common) => {
             blocks: 2,
             size: 0,
             hash: 'QmVrkkNurBCeJvPRohW5JTvJG4AxGrFg7FnmsZZUS6nJto',
-            cumulativeSize: 216,
-            withLocality: false,
-            local: undefined,
-            sizeLocal: undefined
-          })
-          done()
-        })
-      })
-
-      it('stat withLocal file', function (done) {
-        if (!withGo) {
-          console.log('Not supported in js-ipfs yet')
-          this.skip()
-        }
-
-        ipfs.files.stat('/test/b', {'withLocal': true}, (err, stat) => {
-          expect(err).to.not.exist()
-          expect(stat).to.eql({
-            type: 'file',
-            blocks: 1,
-            size: 13,
-            hash: 'QmcZojhwragQr5qhTeFAmELik623Z21e3jBTpJXoQ9si1T',
-            cumulativeSize: 71,
-            withLocality: true,
-            local: true,
-            sizeLocal: 71
-          })
-          done()
-        })
-      })
-
-      it('stat withLocal dir', function (done) {
-        if (!withGo) {
-          console.log('Not supported in js-ipfs yet')
-          this.skip()
-        }
-
-        ipfs.files.stat('/test', {'withLocal': true}, (err, stat) => {
-          expect(err).to.not.exist()
-          expect(stat).to.eql({
-            type: 'directory',
-            blocks: 2,
-            size: 0,
-            hash: 'QmVrkkNurBCeJvPRohW5JTvJG4AxGrFg7FnmsZZUS6nJto',
-            cumulativeSize: 216,
-            withLocality: true,
-            local: true,
-            sizeLocal: 216
+            cumulativeSize: 216
           })
           done()
         })
