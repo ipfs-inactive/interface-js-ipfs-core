@@ -441,10 +441,29 @@ module.exports = (common) => {
         return ipfs.files.cat(smallFile.cid + '/does-not-exist')
           .catch((err) => {
             expect(err).to.exist()
-            expect(err.message).to.contain.oneOf([
-              'No such file',
+            expect(err.message).to.contain(
               'no link named "does-not-exist" under Qma4hjFTnCasJ8PVp3mZbZK5g2vGDT4LByLJ7m8ciyRFZP'
-            ])
+            )
+          })
+      })
+
+      it('specifies missing directory in a nested link', () => {
+        return ipfs.files.cat(directory.cid + '/files/missing-dir/does-not-exist')
+          .catch((err) => {
+            expect(err).to.exist()
+            expect(err.message).to.contain(
+              'no link named "missing-dir" under QmZ25UfTqXGz9RsEJFg7HUAuBcmfx5dQZDXQd2QEZ8Kj74'
+            )
+          })
+      })
+
+      it('specifies missing file in a nested link', () => {
+        return ipfs.files.cat(directory.cid + '/files/does-not-exist')
+          .catch((err) => {
+            expect(err).to.exist()
+            expect(err.message).to.contain(
+              'no link named "does-not-exist" under QmZ25UfTqXGz9RsEJFg7HUAuBcmfx5dQZDXQd2QEZ8Kj74'
+            )
           })
       })
 
