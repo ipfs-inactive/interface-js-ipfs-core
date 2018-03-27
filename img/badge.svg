@@ -8,10 +8,10 @@
       <use fill="#FFFFFF" fill-rule="evenodd" xlink:href="#path-1"></use>
       <rect stroke="#000000" stroke-width="2" x="2" y="2" width="169" height="54"></rect>
     </g>
-    <text id="IPFS-Core-API" font-family="HelveticaNeue-Medium, Helvetica Neue" font-size="16" font-weight="400" fill="#000000">
+    <text id="IPFS-Core-API" font-family="HelveticaNeue-Medium, Helvetica Neue, Helvetica" font-size="16" font-weight="400" fill="#000000">
       <tspan x="57" y="26">IPFS Core API</tspan>
     </text>
-    <g id="Compatible" transform="translate(57.000000, 30.000000)" fill="#000000" font-family="HelveticaNeue-LightItalic, Helvetica Neue" font-size="14" font-style="italic" font-weight="300">
+    <g id="Compatible" transform="translate(57.000000, 30.000000)" fill="#000000" font-family="HelveticaNeue-LightItalic, Helvetica Neue, Helvetica" font-size="14" font-style="italic" font-weight="300">
       <text id="e">
         <tspan x="97" y="13">e</tspan>
       </text>
