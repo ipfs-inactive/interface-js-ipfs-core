@@ -39,7 +39,7 @@ Send in a PR if you find or write one!
 
 Include this badge in your readme if you make a new module that implements interface-ipfs-core API.
 
-![](/img/badge.png)
+![](/img/badge.svg)
 
 ## Install
 
