@@ -13,7 +13,7 @@ const testFile = loadFixture('js/test/fixtures/testfile.txt', 'interface-ipfs-co
 const testHash = 'Qma4hjFTnCasJ8PVp3mZbZK5g2vGDT4LByLJ7m8ciyRFZP'
 
 module.exports = (common) => {
-  describe.only('.pin', function () {
+  describe('.pin', function () {
     this.timeout(50 * 1000)
 
     let ipfs
