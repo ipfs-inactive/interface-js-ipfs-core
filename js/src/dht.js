@@ -9,19 +9,7 @@ const waterfall = require('async/waterfall')
 const series = require('async/series')
 const parallel = require('async/parallel')
 const CID = require('cids')
-
-function spawnWithId (factory, callback) {
-  waterfall([
-    (cb) => factory.spawnNode(cb),
-    (node, cb) => node.id((err, peerId) => {
-      if (err) {
-        return cb(err)
-      }
-      node.peerId = peerId
-      cb(null, node)
-    })
-  ], callback)
-}
+const { spawnWithId } = require('./utils/spawn')
 
 module.exports = (common) => {
   describe('.dht', function () {

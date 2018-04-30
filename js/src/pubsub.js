@@ -12,6 +12,7 @@ const parallel = require('async/parallel')
 const whilst = require('async/whilst')
 const each = require('async/each')
 const hat = require('hat')
+const { spawnWithId } = require('./utils/spawn')
 
 // On Browsers it will be false, but the tests currently aren't run
 // there anyway
@@ -34,19 +35,6 @@ function waitForPeers (ipfs, topic, peersToWait, callback) {
       }
     })
   }, 500)
-}
-
-function spawnWithId (factory, callback) {
-  waterfall([
-    (cb) => factory.spawnNode(cb),
-    (node, cb) => node.id((err, res) => {
-      if (err) {
-        return cb(err)
-      }
-      node.peerId = res
-      cb(null, node)
-    })
-  ], callback)
 }
 
 function makeCheck (n, done) {
