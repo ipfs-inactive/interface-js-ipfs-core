@@ -55,7 +55,9 @@ module.exports = (common) => {
       })
     })
 
-    it('.dns', (done) => {
+    it('.dns', function (done) {
+      this.timeout(1000 * 10)
+      this.retries(3)
       ipfs.dns('ipfs.io', (err, path) => {
         expect(err).to.not.exist()
         expect(path).to.exist()
@@ -80,7 +82,9 @@ module.exports = (common) => {
         })
     })
 
-    it('.dns Promises support', () => {
+    it('.dns Promises support', function () {
+      this.timeout(1000 * 3)
+      this.retries(3)
       return ipfs.dns('ipfs.io')
         .then((res) => {
           expect(res).to.exist()
