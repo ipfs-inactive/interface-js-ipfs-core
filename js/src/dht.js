@@ -29,6 +29,7 @@ module.exports = (common) => {
         expect(err).to.not.exist()
 
         spawnNodesWithId(5, factory, (err, nodes) => {
+          if (err) console.error('spawn err', err)
           expect(err).to.not.exist()
 
           nodeA = nodes[0]
