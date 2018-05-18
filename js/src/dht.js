@@ -26,10 +26,11 @@ module.exports = (common) => {
       this.timeout(60 * 1000)
 
       common.setup((err, factory) => {
+        if (err) err.message = err.message + err.stack
         expect(err).to.not.exist()
 
         spawnNodesWithId(5, factory, (err, nodes) => {
-          if (err) console.error('spawn err', err)
+          if (err) err.message = err.message + err.stack
           expect(err).to.not.exist()
 
           nodeA = nodes[0]
