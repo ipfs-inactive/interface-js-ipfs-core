@@ -39,6 +39,8 @@ Where `data` may be:
 - a [`Buffer instance`][b]
 - a [`Readable Stream`][rs]
 - a [`Pull Stream`][ps]
+- a [`File System Path`] (caveat: will only work in Node.js)
+- a [`URL`]
 - an array of objects, each of the form:
 ```JavaScript
 {
