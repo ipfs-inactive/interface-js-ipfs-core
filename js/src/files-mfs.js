@@ -406,8 +406,8 @@ module.exports = (common) => {
         ipfs.files.ls('/test', (err, info) => {
           expect(err).to.not.exist()
           expect(info).to.eql([
-            { name: 'b', type: 0, size: 0, hash: '' },
-            { name: 'lv1', type: 0, size: 0, hash: '' }
+            { name: 'b', type: 'file', size: 0, hash: '' },
+            { name: 'lv1', type: 'file', size: 0, hash: '' }
           ])
           done()
         })
@@ -424,13 +424,13 @@ module.exports = (common) => {
           expect(info).to.eql([
             {
               name: 'b',
-              type: 0,
+              type: 'file',
               size: 13,
               hash: 'QmcZojhwragQr5qhTeFAmELik623Z21e3jBTpJXoQ9si1T'
             },
             {
               name: 'lv1',
-              type: 1,
+              type: 'directory',
               size: 0,
               hash: 'QmaSPtNHYKPjNjQnYX9pdu5ocpKUQEL3itSz8LuZcoW6J5'
             }
