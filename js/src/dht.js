@@ -185,7 +185,13 @@ module.exports = (common) => {
     })
 
     describe('findprovs', () => {
-      it('basic', (done) => {
+      it('provide from one node and find it through another node', function (done) {
+        if (withGo) {
+          // TODO go-ipfs endpoint doesn't conform with the others
+          // https://github.com/ipfs/go-ipfs/issues/5047
+          this.skip()
+        }
+
         waterfall([
           (cb) => nodeE.object.new('unixfs-dir', cb),
           (dagNode, cb) => {
