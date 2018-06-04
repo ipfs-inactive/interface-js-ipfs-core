@@ -11,7 +11,7 @@ const CID = require('cids')
 const { spawnNodesWithId } = require('./utils/spawn')
 
 module.exports = (common) => {
-  describe.only('.dht', function () {
+  describe('.dht', function () {
     this.timeout(80 * 1000)
 
     let withGo
@@ -70,6 +70,8 @@ module.exports = (common) => {
       })
 
       it('fetches value after it was put on another node', function (done) {
+        this.timeout(80 * 1000)
+
         if (withGo) {
           // go-ipfs errors with  Error: key was not found (type 6)
           // https://github.com/ipfs/go-ipfs/issues/3862
@@ -79,7 +81,7 @@ module.exports = (common) => {
         // TODO - this test needs to keep tryingl instead of the setTimeout
         waterfall([
           (cb) => nodeB.object.new('unixfs-dir', cb),
-          (dagNode, cb) => setTimeout(() => cb(null, dagNode), 1000),
+          (dagNode, cb) => setTimeout(() => cb(null, dagNode), 20000),
           (dagNode, cb) => {
             const multihash = dagNode.toJSON().multihash
 
