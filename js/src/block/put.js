@@ -13,8 +13,9 @@ const CID = require('cids')
 const Buffer = require('safe-buffer').Buffer
 const { getDescribe } = require('../utils/mocha')
 
-module.exports = (common, options) => {
+module.exports = (createCommon, options) => {
   const describe = getDescribe(options)
+  const common = createCommon()
 
   describe('.block.put', () => {
     let ipfs
@@ -38,7 +39,7 @@ module.exports = (common, options) => {
 
     it('should put a buffer, using defaults', (done) => {
       const expectedHash = 'QmPv52ekjS75L4JmHpXVeuJ5uX2ecSfSZo88NSyxwA3rAQ'
-      const blob = new Buffer('blorb')
+      const blob = Buffer.from('blorb')
 
       ipfs.block.put(blob, (err, block) => {
         expect(err).to.not.exist()
@@ -51,7 +52,7 @@ module.exports = (common, options) => {
     it('should put a buffer, using CID', (done) => {
       const expectedHash = 'QmPv52ekjS75L4JmHpXVeuJ5uX2ecSfSZo88NSyxwA3rAQ'
       const cid = new CID(expectedHash)
-      const blob = new Buffer('blorb')
+      const blob = Buffer.from('blorb')
 
       ipfs.block.put(blob, { cid: cid }, (err, block) => {
         expect(err).to.not.exist()
@@ -63,7 +64,7 @@ module.exports = (common, options) => {
 
     it('should put a buffer, using options', (done) => {
       const expectedHash = 'QmPv52ekjS75L4JmHpXVeuJ5uX2ecSfSZo88NSyxwA3rAQ'
-      const blob = new Buffer('blorb')
+      const blob = Buffer.from('blorb')
 
       ipfs.block.put(blob, {
         format: 'dag-pb',
@@ -80,7 +81,7 @@ module.exports = (common, options) => {
     it('should put a Block instance', (done) => {
       const expectedHash = 'QmPv52ekjS75L4JmHpXVeuJ5uX2ecSfSZo88NSyxwA3rAQ'
       const cid = new CID(expectedHash)
-      const b = new Block(new Buffer('blorb'), cid)
+      const b = new Block(Buffer.from('blorb'), cid)
 
       ipfs.block.put(b, (err, block) => {
         expect(err).to.not.exist()
@@ -91,7 +92,7 @@ module.exports = (common, options) => {
     })
 
     it('should error with array of blocks', (done) => {
-      const blob = Buffer('blorb')
+      const blob = Buffer.from('blorb')
 
       ipfs.block.put([blob, blob], (err) => {
         expect(err).to.be.an.instanceof(Error)

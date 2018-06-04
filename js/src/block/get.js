@@ -10,33 +10,37 @@ chai.use(dirtyChai)
 const multihash = require('multihashes')
 const CID = require('cids')
 const Buffer = require('safe-buffer').Buffer
+const auto = require('async/auto')
 const { getDescribe } = require('../utils/mocha')
 
-module.exports = (common, options) => {
+module.exports = (createCommon, options) => {
   const describe = getDescribe(options)
+  const common = createCommon()
 
   describe('.block.get', function () {
-    let ipfs
+    const data = Buffer.from('blorb')
+    let ipfs, hash
 
     before(function (done) {
       // CI takes longer to instantiate the daemon, so we need to increase the
       // timeout for the before step
       this.timeout(60 * 1000)
 
-      common.setup((err, factory) => {
-        expect(err).to.not.exist()
-        factory.spawnNode((err, node) => {
-          expect(err).to.not.exist()
-          ipfs = node
-          done()
-        })
+      auto({
+        factory: (cb) => common.setup(cb),
+        ipfs: ['factory', (res, cb) => res.factory.spawnNode(cb)],
+        block: ['ipfs', (res, cb) => res.ipfs.block.put(data, cb)]
+      }, (err, res) => {
+        if (err) return done(err)
+        ipfs = res.ipfs
+        hash = res.block.cid.multihash
+        done()
       })
     })
 
     after((done) => common.teardown(done))
 
     it('should get by CID object', (done) => {
-      const hash = 'QmPv52ekjS75L4JmHpXVeuJ5uX2ecSfSZo88NSyxwA3rAQ'
       const cid = new CID(hash)
 
       ipfs.block.get(cid, (err, block) => {
@@ -48,12 +52,10 @@ module.exports = (common, options) => {
     })
 
     it('should get by CID in string', (done) => {
-      const hash = 'QmPv52ekjS75L4JmHpXVeuJ5uX2ecSfSZo88NSyxwA3rAQ'
-
-      ipfs.block.get(hash, (err, block) => {
+      ipfs.block.get(multihash.toB58String(hash), (err, block) => {
         expect(err).to.not.exist()
         expect(block.data).to.eql(new Buffer('blorb'))
-        expect(block.cid.multihash).to.eql(multihash.fromB58String(hash))
+        expect(block.cid.multihash).to.eql(hash)
         done()
       })
     })
