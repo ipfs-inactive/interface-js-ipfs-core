@@ -52,6 +52,7 @@ Include this badge in your readme if you make a new module that implements inter
 ## Install
 
 In JavaScript land:
+
 ```js
 npm install interface-ipfs-core
 ```
@@ -68,20 +69,59 @@ In Go land:
 
 Install `interface-ipfs-core` as one of the dependencies of your project and as a test file. Then, using `mocha` (for Node.js) or a test runner with compatible API, do:
 
-```
-var test = require('interface-ipfs-core')
+```js
+const tests = require('interface-ipfs-core')
 
-var common = {
-  setup: function (cb) {
-    cb(null, IPFSFactory)
+// Create common setup and teardown
+const createCommon = () => ({
+  // Do some setup common to all tests
+  setup (cb) {
+    // Must call back with an "IPFS factory", an object with a `spawnNode` method
+    cb(null, {
+      // Use ipfsd-ctl or other to spawn an IPFS node for testing
+      spawnNode (cb) { /* ... */ }
+    })
   },
-  teardown: function (cb) {
+  // Dispose of nodes created by the IPFS factory and any other teardown
+  teardown (cb) {
     cb()
   }
-}
+})
 
-// use all of the test suits
-test.all(common)
+tests.block(createCommon)
+tests.config(createCommon)
+tests.dag(createCommon)
+// ...etc. (see js/src/index.js)
+```
+
+#### Running tests by command
+
+```js
+tests.repo.version(createCommon)
+```
+
+#### Skipping tests
+
+```js
+tests.repo.version(createCommon)
+tests.repo.stat(createCommon)
+tests.repo.gc(createCommon, { skip: true }) // pass an options object to skip these tests
+
+// OR, at the subsystem level
+
+tests.repo(createCommon, { skip: ['gc'] })
+```
+
+#### Running only some tests
+
+```js
+tests.repo.version(createCommon)
+tests.repo.stat(createCommon)
+tests.repo.gc(createCommon, { only: true }) // pass an options object to run only these tests
+
+// OR, at the subsystem level
+
+tests.repo(createCommon, { only: ['gc'] })
 ```
 
 ### Go
