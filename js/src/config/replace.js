@@ -7,10 +7,11 @@ const chai = require('chai')
 const dirtyChai = require('dirty-chai')
 const expect = chai.expect
 chai.use(dirtyChai)
-const { getDescribe } = require('../utils/mocha')
+const { getDescribe, getIt } = require('../utils/mocha')
 
 module.exports = (createCommon, options) => {
   const describe = getDescribe(options)
+  const it = getIt(options)
   const common = createCommon()
 
   describe('.config.replace', function () {

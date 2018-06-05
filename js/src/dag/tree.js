@@ -11,10 +11,11 @@ const { series, eachSeries } = require('async')
 const dagPB = require('ipld-dag-pb')
 const dagCBOR = require('ipld-dag-cbor')
 const { spawnNodeWithId } = require('../utils/spawn')
-const { getDescribe } = require('../utils/mocha')
+const { getDescribe, getIt } = require('../utils/mocha')
 
 module.exports = (createCommon, options) => {
   const describe = getDescribe(options)
+  const it = getIt(options)
   const common = createCommon()
 
   describe('.dag.tree', () => {

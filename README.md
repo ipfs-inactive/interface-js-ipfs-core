@@ -103,25 +103,41 @@ tests.repo.version(createCommon)
 #### Skipping tests
 
 ```js
-tests.repo.version(createCommon)
-tests.repo.stat(createCommon)
 tests.repo.gc(createCommon, { skip: true }) // pass an options object to skip these tests
 
 // OR, at the subsystem level
 
-tests.repo(createCommon, { skip: ['gc'] })
+tests.repo(createCommon, { skip: ['gc'] }) // skips ALL the repo.gc tests
+```
+
+##### Skipping specific tests
+
+```js
+tests.repo.gc(createCommon, { skip: ['should do a thing'] }) // named test(s) to skip
+
+// OR, at the subsystem level
+
+tests.repo(createCommon, { skip: ['should do a thing'] })
 ```
 
 #### Running only some tests
 
 ```js
-tests.repo.version(createCommon)
-tests.repo.stat(createCommon)
 tests.repo.gc(createCommon, { only: true }) // pass an options object to run only these tests
 
 // OR, at the subsystem level
 
-tests.repo(createCommon, { only: ['gc'] })
+tests.repo(createCommon, { only: ['gc'] }) // runs only ALL the repo.gc tests
+```
+
+##### Running only specific tests
+
+```js
+tests.repo.gc(createCommon, { only: ['should do a thing'] }) // only run these named test(s)
+
+// OR, at the subsystem level
+
+tests.repo(createCommon, { only: ['should do a thing'] })
 ```
 
 ### Go

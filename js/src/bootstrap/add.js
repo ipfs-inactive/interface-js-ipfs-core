@@ -6,13 +6,14 @@ const chai = require('chai')
 const dirtyChai = require('dirty-chai')
 const expect = chai.expect
 chai.use(dirtyChai)
-const { getDescribe } = require('../utils/mocha')
+const { getDescribe, getIt } = require('../utils/mocha')
 
 const invalidArg = 'this/Is/So/Invalid/'
 const validIp4 = '/ip4/104.236.176.52/tcp/4001/ipfs/QmSoLnSGccFuZQJzRadHn95W2CrSFmZuTdDWP8HXaHca9z'
 
 module.exports = (createCommon, options) => {
   const describe = getDescribe(options)
+  const it = getIt(options)
   const common = createCommon()
 
   describe('.bootstrap.add', function () {

@@ -9,10 +9,11 @@ const expect = chai.expect
 chai.use(dirtyChai)
 const CID = require('cids')
 const auto = require('async/auto')
-const { getDescribe } = require('../utils/mocha')
+const { getDescribe, getIt } = require('../utils/mocha')
 
 module.exports = (createCommon, options) => {
   const describe = getDescribe(options)
+  const it = getIt(options)
   const common = createCommon()
 
   describe('.block.stat', () => {

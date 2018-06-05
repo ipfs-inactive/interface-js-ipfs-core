@@ -11,10 +11,11 @@ const multihash = require('multihashes')
 const CID = require('cids')
 const Buffer = require('safe-buffer').Buffer
 const auto = require('async/auto')
-const { getDescribe } = require('../utils/mocha')
+const { getDescribe, getIt } = require('../utils/mocha')
 
 module.exports = (createCommon, options) => {
   const describe = getDescribe(options)
+  const it = getIt(options)
   const common = createCommon()
 
   describe('.block.get', function () {
