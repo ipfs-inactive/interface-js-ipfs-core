@@ -21,7 +21,6 @@ module.exports = (createCommon, options) => {
 
   describe('.dag.get', () => {
     let ipfs
-    let withGo
 
     before(function (done) {
       // CI takes longer to instantiate the daemon, so we need to increase the
@@ -34,7 +33,6 @@ module.exports = (createCommon, options) => {
         spawnNodeWithId(factory, (err, node) => {
           expect(err).to.not.exist()
           ipfs = node
-          withGo = node.peerId.agentVersion.startsWith('go-ipfs')
           done()
         })
       })
@@ -150,12 +148,6 @@ module.exports = (createCommon, options) => {
     })
 
     it('should get a dag-pb node local value', function (done) {
-      // TODO vmx 2018-02-22: Currently not supported in go-ipfs, it might
-      // be possible once https://github.com/ipfs/go-ipfs/issues/4728 is
-      // done
-      if (withGo) {
-        this.skip()
-      }
       ipfs.dag.get(cidPb, 'Data', (err, result) => {
         expect(err).to.not.exist()
         expect(result.value).to.eql(Buffer.from('I am inside a Protobuf'))
@@ -193,12 +185,6 @@ module.exports = (createCommon, options) => {
     it.skip('should get dag-cbor value via dag-pb node', (done) => {})
 
     it('should get dag-pb value via dag-cbor node', function (done) {
-      // TODO vmx 2018-02-22: Currently not supported in go-ipfs, it might
-      // be possible once https://github.com/ipfs/go-ipfs/issues/4728 is
-      // done
-      if (withGo) {
-        this.skip()
-      }
       ipfs.dag.get(cidCbor, 'pb/Data', (err, result) => {
         expect(err).to.not.exist()
         expect(result.value).to.eql(Buffer.from('I am inside a Protobuf'))
@@ -223,12 +209,6 @@ module.exports = (createCommon, options) => {
     })
 
     it('should get by CID string + path', function (done) {
-      // TODO vmx 2018-02-22: Currently not supported in go-ipfs, it might
-      // be possible once https://github.com/ipfs/go-ipfs/issues/4728 is
-      // done
-      if (withGo) {
-        this.skip()
-      }
       const cidCborStr = cidCbor.toBaseEncodedString()
 
       ipfs.dag.get(cidCborStr + '/pb/Data', (err, result) => {

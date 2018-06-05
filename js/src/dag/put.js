@@ -21,7 +21,6 @@ module.exports = (createCommon, options) => {
 
   describe('.dag.put', () => {
     let ipfs
-    let withGo
 
     before(function (done) {
       // CI takes longer to instantiate the daemon, so we need to increase the
@@ -34,7 +33,6 @@ module.exports = (createCommon, options) => {
         spawnNodeWithId(factory, (err, node) => {
           expect(err).to.not.exist()
           ipfs = node
-          withGo = node.peerId.agentVersion.startsWith('go-ipfs')
           done()
         })
       })
@@ -96,12 +94,6 @@ module.exports = (createCommon, options) => {
     })
 
     it('should not put dag-cbor node with wrong multicodec', function (done) {
-      // This works in go-ipfs because dag-pb will serialize any object. If
-      // the object has neither a `data` nor `links` field it's serialized
-      // as an empty object
-      if (withGo) {
-        this.skip()
-      }
       ipfs.dag.put(cborNode, {
         format: 'dag-pb',
         hashAlg: 'sha3-512'
