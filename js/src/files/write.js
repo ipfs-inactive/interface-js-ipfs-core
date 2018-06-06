@@ -4,6 +4,7 @@
 'use strict'
 
 const chai = require('chai')
+const hat = require('hat')
 const dirtyChai = require('dirty-chai')
 const expect = chai.expect
 chai.use(dirtyChai)
@@ -37,14 +38,18 @@ module.exports = (createCommon, options) => {
     after((done) => common.teardown(done))
 
     it('should not write to non existent file, expect error', function (done) {
-      ipfs.files.write('/test/a', Buffer.from('Hello, world!'), (err) => {
+      const testDir = `/test-${hat()}`
+
+      ipfs.files.write(`${testDir}/a`, Buffer.from('Hello, world!'), (err) => {
         expect(err).to.exist()
         done()
       })
     })
 
     it('should write to non existent file with create flag, expect no error', function (done) {
-      ipfs.files.write('/test/a', Buffer.from('Hello, world!'), {create: true}, (err) => {
+      const testDir = `/test-${hat()}`
+
+      ipfs.files.write(testDir, Buffer.from('Hello, world!'), {create: true}, (err) => {
         expect(err).to.not.exist()
         done()
       })

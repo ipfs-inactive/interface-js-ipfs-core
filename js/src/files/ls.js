@@ -4,6 +4,8 @@
 'use strict'
 
 const chai = require('chai')
+const series = require('async/series')
+const hat = require('hat')
 const dirtyChai = require('dirty-chai')
 const expect = chai.expect
 chai.use(dirtyChai)
@@ -36,8 +38,10 @@ module.exports = (createCommon, options) => {
 
     after((done) => common.teardown(done))
 
-    it('should not ls not found, expect error', (done) => {
-      ipfs.files.ls('/test/404', (err, info) => {
+    it('should not ls not found file/dir, expect error', (done) => {
+      const testDir = `/test-${hat()}`
+
+      ipfs.files.ls(`${testDir}/404`, (err, info) => {
         expect(err).to.exist()
         expect(info).to.not.exist()
         done()
@@ -45,34 +49,52 @@ module.exports = (createCommon, options) => {
     })
 
     it('should ls directory', (done) => {
-      ipfs.files.ls('/test', (err, info) => {
+      const testDir = `/test-${hat()}`
+
+      series([
+        (cb) => ipfs.files.mkdir(`${testDir}/lv1`, { p: true }, cb),
+        (cb) => ipfs.files.write(`${testDir}/b`, Buffer.from('Hello, world!'), { create: true }, cb)
+      ], (err) => {
         expect(err).to.not.exist()
-        expect(info).to.eql([
-          { name: 'b', type: 0, size: 0, hash: '' },
-          { name: 'lv1', type: 0, size: 0, hash: '' }
-        ])
-        done()
+
+        ipfs.files.ls(testDir, (err, info) => {
+          expect(err).to.not.exist()
+          expect(info).to.eql([
+            { name: 'b', type: 0, size: 0, hash: '' },
+            { name: 'lv1', type: 0, size: 0, hash: '' }
+          ])
+          done()
+        })
       })
     })
 
     it('should ls -l directory', (done) => {
-      ipfs.files.ls('/test', { l: true }, (err, info) => {
+      const testDir = `/test-${hat()}`
+
+      series([
+        (cb) => ipfs.files.mkdir(`${testDir}/lv1`, { p: true }, cb),
+        (cb) => ipfs.files.write(`${testDir}/b`, Buffer.from('Hello, world!'), { create: true }, cb)
+      ], (err) => {
         expect(err).to.not.exist()
-        expect(info).to.eql([
-          {
-            name: 'b',
-            type: 0,
-            size: 13,
-            hash: 'QmcZojhwragQr5qhTeFAmELik623Z21e3jBTpJXoQ9si1T'
-          },
-          {
-            name: 'lv1',
-            type: 1,
-            size: 0,
-            hash: 'QmaSPtNHYKPjNjQnYX9pdu5ocpKUQEL3itSz8LuZcoW6J5'
-          }
-        ])
-        done()
+
+        ipfs.files.ls(testDir, { l: true }, (err, info) => {
+          expect(err).to.not.exist()
+          expect(info).to.eql([
+            {
+              name: 'lv1',
+              type: 1,
+              size: 0,
+              hash: 'QmUNLLsPACCz1vLxQVkXqqLX5R1X345qqfHbsf67hvA3Nn'
+            },
+            {
+              name: 'b',
+              type: 0,
+              size: 13,
+              hash: 'QmcZojhwragQr5qhTeFAmELik623Z21e3jBTpJXoQ9si1T'
+            }
+          ])
+          done()
+        })
       })
     })
   })

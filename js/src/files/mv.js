@@ -4,6 +4,8 @@
 'use strict'
 
 const chai = require('chai')
+const series = require('async/series')
+const hat = require('hat')
 const dirtyChai = require('dirty-chai')
 const expect = chai.expect
 chai.use(dirtyChai)
@@ -34,33 +36,50 @@ module.exports = (createCommon, options) => {
       })
     })
 
+    before((done) => {
+      series([
+        (cb) => ipfs.files.mkdir('/test/lv1/lv2', { p: true }, cb),
+        (cb) => ipfs.files.write('/test/a', Buffer.from('Hello, world!'), { create: true }, cb)
+      ], done)
+    })
+
     after((done) => common.teardown(done))
 
-    it('should move file, expect error', (done) => {
-      ipfs.files.mv(['/test/404', '/test/a'], (err) => {
+    it('should not move not found file/dir, expect error', (done) => {
+      const testDir = `/test-${hat()}`
+
+      ipfs.files.mv([`${testDir}/404`, `${testDir}/a`], (err) => {
         expect(err).to.exist()
         done()
       })
     })
 
     it('should move file, expect no error', (done) => {
-      ipfs.files.mv(['/test/a', '/test/c'], (err) => {
-        expect(err).to.not.exist()
-        done()
-      })
-    })
+      const testDir = `/test-${hat()}`
 
-    it('should move dir, expect error', (done) => {
-      ipfs.files.mv(['/test/lv1/404', '/test/lv1'], (err) => {
-        expect(err).to.exist()
-        done()
+      series([
+        (cb) => ipfs.files.mkdir(`${testDir}/lv1/lv2`, { p: true }, cb),
+        (cb) => ipfs.files.write(`${testDir}/a`, Buffer.from('Hello, world!'), { create: true }, cb)
+      ], (err) => {
+        expect(err).to.not.exist()
+
+        ipfs.files.mv([`${testDir}/a`, `${testDir}/c`], (err) => {
+          expect(err).to.not.exist()
+          done()
+        })
       })
     })
 
     it('should move dir, expect no error', (done) => {
-      ipfs.files.mv(['/test/lv1/lv2', '/test/lv1/lv4'], (err) => {
+      const testDir = `/test-${hat()}`
+
+      ipfs.files.mkdir(`${testDir}/lv1/lv2`, { p: true }, (err) => {
         expect(err).to.not.exist()
-        done()
+
+        ipfs.files.mv(['/test/lv1/lv2', '/test/lv1/lv4'], (err) => {
+          expect(err).to.not.exist()
+          done()
+        })
       })
     })
   })

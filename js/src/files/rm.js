@@ -4,6 +4,8 @@
 'use strict'
 
 const chai = require('chai')
+const series = require('async/series')
+const hat = require('hat')
 const dirtyChai = require('dirty-chai')
 const expect = chai.expect
 chai.use(dirtyChai)
@@ -36,31 +38,41 @@ module.exports = (createCommon, options) => {
 
     after((done) => common.teardown(done))
 
-    it('should remove file, expect error', (done) => {
-      ipfs.files.rm('/test/a', (err) => {
+    it('should not remove not found file/dir, expect error', (done) => {
+      const testDir = `/test-${hat()}`
+
+      ipfs.files.rm(`${testDir}/a`, (err) => {
         expect(err).to.exist()
         done()
       })
     })
 
     it('should remove file, expect no error', (done) => {
-      ipfs.files.rm('/test/c', (err) => {
-        expect(err).to.not.exist()
-        done()
-      })
-    })
+      const testDir = `/test-${hat()}`
 
-    it('should remove dir, expect error', (done) => {
-      ipfs.files.rm('/test/lv1/lv4', (err) => {
-        expect(err).to.exist()
-        done()
+      series([
+        (cb) => ipfs.files.mkdir(testDir, { p: true }, cb),
+        (cb) => ipfs.files.write(`${testDir}/c`, Buffer.from('Hello, world!'), { create: true }, cb)
+      ], (err) => {
+        expect(err).to.not.exist()
+
+        ipfs.files.rm(`${testDir}/c`, (err) => {
+          expect(err).to.not.exist()
+          done()
+        })
       })
     })
 
     it('should remove dir, expect no error', (done) => {
-      ipfs.files.rm('/test/lv1/lv4', {recursive: true}, (err) => {
+      const testDir = `/test-${hat()}`
+
+      ipfs.files.mkdir(`${testDir}/lv1/lv2`, { p: true }, (err) => {
         expect(err).to.not.exist()
-        done()
+
+        ipfs.files.rm(`${testDir}/lv1/lv2`, { recursive: true }, (err) => {
+          expect(err).to.not.exist()
+          done()
+        })
       })
     })
   })

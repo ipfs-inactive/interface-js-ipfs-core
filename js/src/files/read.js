@@ -4,6 +4,8 @@
 'use strict'
 
 const chai = require('chai')
+const series = require('async/series')
+const hat = require('hat')
 const dirtyChai = require('dirty-chai')
 const expect = chai.expect
 chai.use(dirtyChai)
@@ -37,7 +39,9 @@ module.exports = (createCommon, options) => {
     after((done) => common.teardown(done))
 
     it('should not read not found, expect error', (done) => {
-      ipfs.files.read('/test/404', (err, buf) => {
+      const testDir = `/test-${hat()}`
+
+      ipfs.files.read(`${testDir}/404`, (err, buf) => {
         expect(err).to.exist()
         expect(buf).to.not.exist()
         done()
@@ -45,10 +49,19 @@ module.exports = (createCommon, options) => {
     })
 
     it('should read file', (done) => {
-      ipfs.files.read('/test/b', (err, buf) => {
+      const testDir = `/test-${hat()}`
+
+      series([
+        (cb) => ipfs.files.mkdir(testDir, cb),
+        (cb) => ipfs.files.write(`${testDir}/a`, Buffer.from('Hello, world!'), { create: true }, cb)
+      ], (err) => {
         expect(err).to.not.exist()
-        expect(buf).to.eql(Buffer.from('Hello, world!'))
-        done()
+
+        ipfs.files.read(`${testDir}/a`, (err, buf) => {
+          expect(err).to.not.exist()
+          expect(buf).to.eql(Buffer.from('Hello, world!'))
+          done()
+        })
       })
     })
   })

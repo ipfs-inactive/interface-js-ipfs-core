@@ -4,6 +4,7 @@
 'use strict'
 
 const chai = require('chai')
+const hat = require('hat')
 const dirtyChai = require('dirty-chai')
 const expect = chai.expect
 chai.use(dirtyChai)
@@ -37,20 +38,24 @@ module.exports = (createCommon, options) => {
     after((done) => common.teardown(done))
 
     it('should make directory on root', (done) => {
-      ipfs.files.mkdir('/test', (err) => {
+      const testDir = `/test-${hat()}`
+
+      ipfs.files.mkdir(testDir, (err) => {
         expect(err).to.not.exist()
         done()
       })
     })
 
     it('should make directory and its parents', (done) => {
-      ipfs.files.mkdir('/test/lv1/lv2', { p: true }, (err) => {
+      const testDir = `/test-${hat()}`
+
+      ipfs.files.mkdir(`${testDir}/lv1/lv2`, { p: true }, (err) => {
         expect(err).to.not.exist()
         done()
       })
     })
 
-    it('should make already existent directory', (done) => {
+    it('should not make already existent directory', (done) => {
       ipfs.files.mkdir('/', (err) => {
         expect(err).to.exist()
         done()

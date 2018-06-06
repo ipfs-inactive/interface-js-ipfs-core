@@ -4,6 +4,8 @@
 'use strict'
 
 const chai = require('chai')
+const series = require('async/series')
+const hat = require('hat')
 const dirtyChai = require('dirty-chai')
 const expect = chai.expect
 chai.use(dirtyChai)
@@ -37,28 +39,43 @@ module.exports = (createCommon, options) => {
     after((done) => common.teardown(done))
 
     it('should copy file, expect error', (done) => {
-      ipfs.files.cp(['/test/c', '/test/b'], (err) => {
+      const testDir = `/test-${hat()}`
+
+      ipfs.files.cp([`${testDir}/c`, `${testDir}/b`], (err) => {
         expect(err).to.exist()
         done()
       })
     })
 
     it('should copy file, expect no error', (done) => {
-      ipfs.files.cp(['/test/a', '/test/b'], (err) => {
+      const testDir = `/test-${hat()}`
+
+      series([
+        (cb) => ipfs.files.mkdir(testDir, { p: true }, cb),
+        (cb) => ipfs.files.write(`${testDir}/a`, Buffer.from('TEST'), { create: true }, cb),
+        (cb) => ipfs.files.cp([`${testDir}/a`, `${testDir}/b`], cb)
+      ], (err) => {
         expect(err).to.not.exist()
         done()
       })
     })
 
     it('should copy dir, expect error', (done) => {
-      ipfs.files.cp(['/test/lv1/lv3', '/test/lv1/lv4'], (err) => {
+      const testDir = `/test-${hat()}`
+
+      ipfs.files.cp([`${testDir}/lv1/lv3`, `${testDir}/lv1/lv4`], (err) => {
         expect(err).to.exist()
         done()
       })
     })
 
     it('should copy dir, expect no error', (done) => {
-      ipfs.files.cp(['/test/lv1/lv2', '/test/lv1/lv3'], (err) => {
+      const testDir = `/test-${hat()}`
+
+      series([
+        (cb) => ipfs.files.mkdir(`${testDir}/lv1/lv2`, { p: true }, cb),
+        (cb) => ipfs.files.cp([`${testDir}/lv1/lv2`, `${testDir}/lv1/lv3`], cb)
+      ], (err) => {
         expect(err).to.not.exist()
         done()
       })

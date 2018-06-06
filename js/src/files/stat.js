@@ -4,8 +4,10 @@
 'use strict'
 
 const chai = require('chai')
-const dirtyChai = require('dirty-chai')
+const series = require('async/series')
+const hat = require('hat')
 const loadFixture = require('aegir/fixtures')
+const dirtyChai = require('dirty-chai')
 const expect = chai.expect
 chai.use(dirtyChai)
 const { getDescribe, getIt } = require('../utils/mocha')
@@ -44,44 +46,64 @@ module.exports = (createCommon, options) => {
 
     after((done) => common.teardown(done))
 
-    it('should not stat not found, expect error', function (done) {
-      ipfs.files.stat('/test/404', (err) => {
+    it('should not stat not found file/dir, expect error', function (done) {
+      const testDir = `/test-${hat()}`
+
+      ipfs.files.stat(`${testDir}/404`, (err) => {
         expect(err).to.exist()
         done()
       })
     })
 
     it('should stat file', function (done) {
-      ipfs.files.stat('/test/b', (err, stat) => {
+      const testDir = `/test-${hat()}`
+
+      series([
+        (cb) => ipfs.files.mkdir(testDir, { p: true }, cb),
+        (cb) => ipfs.files.write(`${testDir}/b`, Buffer.from('Hello, world!'), { create: true }, cb)
+      ], (err) => {
         expect(err).to.not.exist()
-        expect(stat).to.eql({
-          type: 'file',
-          blocks: 1,
-          size: 13,
-          hash: 'QmcZojhwragQr5qhTeFAmELik623Z21e3jBTpJXoQ9si1T',
-          cumulativeSize: 71,
-          withLocality: false,
-          local: undefined,
-          sizeLocal: undefined
+
+        ipfs.files.stat(`${testDir}/b`, (err, stat) => {
+          expect(err).to.not.exist()
+          expect(stat).to.eql({
+            type: 'file',
+            blocks: 1,
+            size: 13,
+            hash: 'QmcZojhwragQr5qhTeFAmELik623Z21e3jBTpJXoQ9si1T',
+            cumulativeSize: 71,
+            withLocality: false,
+            local: undefined,
+            sizeLocal: undefined
+          })
+          done()
         })
-        done()
       })
     })
 
     it('should stat dir', function (done) {
-      ipfs.files.stat('/test', (err, stat) => {
+      const testDir = `/test-${hat()}`
+
+      series([
+        (cb) => ipfs.files.mkdir(testDir, { p: true }, cb),
+        (cb) => ipfs.files.write(`${testDir}/a`, Buffer.from('Hello, world!'), { create: true }, cb)
+      ], (err) => {
         expect(err).to.not.exist()
-        expect(stat).to.eql({
-          type: 'directory',
-          blocks: 2,
-          size: 0,
-          hash: 'QmVrkkNurBCeJvPRohW5JTvJG4AxGrFg7FnmsZZUS6nJto',
-          cumulativeSize: 216,
-          withLocality: false,
-          local: undefined,
-          sizeLocal: undefined
+
+        ipfs.files.stat(testDir, (err, stat) => {
+          expect(err).to.not.exist()
+          expect(stat).to.eql({
+            type: 'directory',
+            blocks: 1,
+            size: 0,
+            hash: 'QmQGn7EvzJZRbhcwHrp4UeMeS56WsLmrey9JhfkymjzXQu',
+            cumulativeSize: 118,
+            withLocality: false,
+            local: undefined,
+            sizeLocal: undefined
+          })
+          done()
         })
-        done()
       })
     })
 

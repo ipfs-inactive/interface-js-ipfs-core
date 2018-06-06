@@ -4,6 +4,8 @@
 'use strict'
 
 const chai = require('chai')
+const series = require('async/series')
+const hat = require('hat')
 const dirtyChai = require('dirty-chai')
 const expect = chai.expect
 chai.use(dirtyChai)
@@ -36,8 +38,10 @@ module.exports = (createCommon, options) => {
 
     after((done) => common.teardown(done))
 
-    it('should not flush not found, expect error', (done) => {
-      ipfs.files.flush('/test/404', (err) => {
+    it('should not flush not found file/dir, expect error', (done) => {
+      const testDir = `/test-${hat()}`
+
+      ipfs.files.flush(`${testDir}/404`, (err) => {
         expect(err).to.exist()
         done()
       })
@@ -51,7 +55,12 @@ module.exports = (createCommon, options) => {
     })
 
     it('should flush specific dir', (done) => {
-      ipfs.files.flush('/test', (err) => {
+      const testDir = `/test-${hat()}`
+
+      series([
+        (cb) => ipfs.files.mkdir(testDir, { p: true }, cb),
+        (cb) => ipfs.files.flush(testDir, cb)
+      ], (err) => {
         expect(err).to.not.exist()
         done()
       })
