@@ -1,6 +1,7 @@
 /* eslint-env mocha */
 
 // Get a "describe" function that is optionally 'skipped' or 'onlyed'
+// If skip/only are boolean true, then we want to skip/only the whole suite
 function getDescribe (config) {
   if (config && config.skip === true) return describe.skip
   if (config && config.only === true) return describe.only
@@ -10,6 +11,7 @@ function getDescribe (config) {
 module.exports.getDescribe = getDescribe
 
 // Get an "it" function that is optionally 'skipped' or 'onlyed'
+// If skip/only are an array, then we _might_ want to skip/only the specific test
 function getIt (config) {
   const _it = (name, impl) => {
     if (config && Array.isArray(config.skip)) {
