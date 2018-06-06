@@ -11,7 +11,6 @@ const loadFixture = require('aegir/fixtures')
 const Readable = require('readable-stream').Readable
 const pull = require('pull-stream')
 const path = require('path')
-const isNode = require('detect-node')
 const expectTimeout = require('../utils/expect-timeout')
 const { getDescribe, getIt } = require('../utils/mocha')
 
@@ -221,9 +220,6 @@ module.exports = (createCommon, options) => {
     })
 
     it('should add a nested directory as array of tupples', function (done) {
-      // TODO: https://github.com/ipfs/js-ipfs-api/issues/339
-      if (!isNode) { this.skip() }
-
       const content = (name) => ({
         path: `test-folder/${name}`,
         content: directory.files[name]
@@ -252,10 +248,7 @@ module.exports = (createCommon, options) => {
       })
     })
 
-    it('should add a nested directory as array of tuppled with progress', function (done) {
-      // TODO: https://github.com/ipfs/js-ipfs-api/issues/339
-      if (!isNode) { this.skip() }
-
+    it('should add a nested directory as array of tupples with progress', function (done) {
       const content = (name) => ({
         path: `test-folder/${name}`,
         content: directory.files[name]

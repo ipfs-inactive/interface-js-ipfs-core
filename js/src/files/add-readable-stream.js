@@ -8,7 +8,6 @@ const dirtyChai = require('dirty-chai')
 const expect = chai.expect
 chai.use(dirtyChai)
 const loadFixture = require('aegir/fixtures')
-const isNode = require('detect-node')
 const { getDescribe, getIt } = require('../utils/mocha')
 
 module.exports = (createCommon, options) => {
@@ -50,10 +49,7 @@ module.exports = (createCommon, options) => {
 
     after((done) => common.teardown(done))
 
-    it('should add stream of valid files and dirs', function (done) {
-      // TODO: https://github.com/ipfs/js-ipfs-api/issues/339
-      if (!isNode) { this.skip() }
-
+    it('should add readable stream of valid files and dirs', function (done) {
       const content = (name) => ({
         path: `test-folder/${name}`,
         content: directory.files[name]

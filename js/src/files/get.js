@@ -11,7 +11,6 @@ const loadFixture = require('aegir/fixtures')
 const bs58 = require('bs58')
 const parallel = require('async/parallel')
 const series = require('async/series')
-const isNode = require('detect-node')
 const { getDescribe, getIt } = require('../utils/mocha')
 
 module.exports = (createCommon, options) => {
@@ -119,9 +118,6 @@ module.exports = (createCommon, options) => {
     })
 
     it('should get a directory', function (done) {
-      // TODO: https://github.com/ipfs/js-ipfs-api/issues/339
-      if (!isNode) { this.skip() }
-
       series([
         (cb) => {
           const content = (name) => ({

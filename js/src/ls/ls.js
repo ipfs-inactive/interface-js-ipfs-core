@@ -8,7 +8,6 @@ const dirtyChai = require('dirty-chai')
 const expect = chai.expect
 chai.use(dirtyChai)
 const loadFixture = require('aegir/fixtures')
-const isNode = require('detect-node')
 const { getDescribe, getIt } = require('../utils/mocha')
 
 module.exports = (createCommon, options) => {
@@ -51,9 +50,6 @@ module.exports = (createCommon, options) => {
     after((done) => common.teardown(done))
 
     it('should ls with a base58 encoded CID', function (done) {
-      // TODO: https://github.com/ipfs/js-ipfs-api/issues/339
-      if (!isNode) { this.skip() }
-
       const content = (name) => ({
         path: `test-folder/${name}`,
         content: directory.files[name]
