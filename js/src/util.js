@@ -5,10 +5,16 @@ const crypto = require('libp2p-crypto')
 const isIPFS = require('is-ipfs')
 const chai = require('chai')
 const dirtyChai = require('dirty-chai')
+const { getDescribe, getIt } = require('./utils/mocha')
+
 const expect = chai.expect
 chai.use(dirtyChai)
 
-module.exports = (common) => {
+module.exports = (createCommon, options) => {
+  const describe = getDescribe(options)
+  const it = getIt(options)
+  const common = createCommon()
+
   describe('.util', function () {
     let ipfs
 
@@ -27,11 +33,9 @@ module.exports = (common) => {
       })
     })
 
-    after((done) => {
-      common.teardown(done)
-    })
+    after((done) => common.teardown(done))
 
-    it('util object', () => {
+    it('should have a util object with the required values', () => {
       expect(ipfs.util).to.be.deep.equal({
         crypto: crypto,
         isIPFS: isIPFS

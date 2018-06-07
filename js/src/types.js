@@ -9,13 +9,18 @@ const multiaddr = require('multiaddr')
 const multibase = require('multibase')
 const multihash = require('multihashes')
 const CID = require('cids')
-
 const chai = require('chai')
 const dirtyChai = require('dirty-chai')
+const { getDescribe, getIt } = require('./utils/mocha')
+
 const expect = chai.expect
 chai.use(dirtyChai)
 
-module.exports = (common) => {
+module.exports = (createCommon, options) => {
+  const describe = getDescribe(options)
+  const it = getIt(options)
+  const common = createCommon()
+
   describe('.types', function () {
     let ipfs
 
@@ -34,11 +39,9 @@ module.exports = (common) => {
       })
     })
 
-    after((done) => {
-      common.teardown(done)
-    })
+    after((done) => common.teardown(done))
 
-    it('types object', () => {
+    it('should have a types object with the required values', () => {
       expect(ipfs.types).to.be.deep.equal({
         Buffer: Buffer,
         PeerId: PeerId,
