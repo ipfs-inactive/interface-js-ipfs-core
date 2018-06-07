@@ -107,7 +107,10 @@ tests.repo.gc(createCommon, { skip: true }) // pass an options object to skip th
 
 // OR, at the subsystem level
 
-tests.repo(createCommon, { skip: ['gc'] }) // skips ALL the repo.gc tests
+// skips ALL the repo.gc tests
+tests.repo(createCommon, { skip: ['gc'] })
+// skips ALL the object.patch.addLink tests
+tests.object(createCommon, { skip: ['patch.addLink'] })
 ```
 
 ##### Skipping specific tests
@@ -127,7 +130,10 @@ tests.repo.gc(createCommon, { only: true }) // pass an options object to run onl
 
 // OR, at the subsystem level
 
-tests.repo(createCommon, { only: ['gc'] }) // runs only ALL the repo.gc tests
+// runs only ALL the repo.gc tests
+tests.repo(createCommon, { only: ['gc'] })
+// runs only ALL the object.patch.addLink tests
+tests.object(createCommon, { only: ['patch.addLink'] })
 ```
 
 ##### Running only specific tests
