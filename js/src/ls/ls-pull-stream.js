@@ -7,7 +7,7 @@ const chai = require('chai')
 const dirtyChai = require('dirty-chai')
 const expect = chai.expect
 chai.use(dirtyChai)
-const loadFixture = require('aegir/fixtures')
+const { fixtures } = require('../files/utils')
 const pull = require('pull-stream')
 const { getDescribe, getIt } = require('../utils/mocha')
 
@@ -20,18 +20,6 @@ module.exports = (createCommon, options) => {
     this.timeout(40 * 1000)
 
     let ipfs
-
-    const directory = {
-      cid: 'QmVvjDy7yF7hdnqE8Hrf4MHo5ABDtb5AbX6hWbD3Y42bXP',
-      files: {
-        'pp.txt': loadFixture('js/test/fixtures/test-folder/pp.txt', 'interface-ipfs-core'),
-        'holmes.txt': loadFixture('js/test/fixtures/test-folder/holmes.txt', 'interface-ipfs-core'),
-        'jungle.txt': loadFixture('js/test/fixtures/test-folder/jungle.txt', 'interface-ipfs-core'),
-        'alice.txt': loadFixture('js/test/fixtures/test-folder/alice.txt', 'interface-ipfs-core'),
-        'files/hello.txt': loadFixture('js/test/fixtures/test-folder/files/hello.txt', 'interface-ipfs-core'),
-        'files/ipfs.txt': loadFixture('js/test/fixtures/test-folder/files/ipfs.txt', 'interface-ipfs-core')
-      }
-    }
 
     before(function (done) {
       // CI takes longer to instantiate the daemon, so we need to increase the
@@ -53,7 +41,7 @@ module.exports = (createCommon, options) => {
     it('should pull stream ls with a base58 encoded CID', function (done) {
       const content = (name) => ({
         path: `test-folder/${name}`,
-        content: directory.files[name]
+        content: fixtures.directory.files[name]
       })
 
       const emptyDir = (name) => ({ path: `test-folder/${name}` })
@@ -74,7 +62,7 @@ module.exports = (createCommon, options) => {
         const root = res[res.length - 1]
 
         expect(root.path).to.equal('test-folder')
-        expect(root.hash).to.equal(directory.cid)
+        expect(root.hash).to.equal(fixtures.directory.cid)
 
         const cid = 'QmVvjDy7yF7hdnqE8Hrf4MHo5ABDtb5AbX6hWbD3Y42bXP'
         const stream = ipfs.lsPullStream(cid)

@@ -7,7 +7,7 @@ const chai = require('chai')
 const dirtyChai = require('dirty-chai')
 const expect = chai.expect
 chai.use(dirtyChai)
-const loadFixture = require('aegir/fixtures')
+const { fixtures } = require('../files/utils')
 const concat = require('concat-stream')
 const { getDescribe, getIt } = require('../utils/mocha')
 
@@ -20,22 +20,6 @@ module.exports = (createCommon, options) => {
     this.timeout(40 * 1000)
 
     let ipfs
-
-    function fixture (path) {
-      return loadFixture(path, 'interface-ipfs-core')
-    }
-
-    const directory = {
-      cid: 'QmVvjDy7yF7hdnqE8Hrf4MHo5ABDtb5AbX6hWbD3Y42bXP',
-      files: {
-        'pp.txt': fixture('js/test/fixtures/test-folder/pp.txt'),
-        'holmes.txt': fixture('js/test/fixtures/test-folder/holmes.txt'),
-        'jungle.txt': fixture('js/test/fixtures/test-folder/jungle.txt'),
-        'alice.txt': fixture('js/test/fixtures/test-folder/alice.txt'),
-        'files/hello.txt': fixture('js/test/fixtures/test-folder/files/hello.txt'),
-        'files/ipfs.txt': fixture('js/test/fixtures/test-folder/files/ipfs.txt')
-      }
-    }
 
     before(function (done) {
       // CI takes longer to instantiate the daemon, so we need to increase the
@@ -57,7 +41,7 @@ module.exports = (createCommon, options) => {
     it('should readable stream ls with a base58 encoded CID', function (done) {
       const content = (name) => ({
         path: `test-folder/${name}`,
-        content: directory.files[name]
+        content: fixtures.directory.files[name]
       })
 
       const emptyDir = (name) => ({ path: `test-folder/${name}` })
@@ -78,7 +62,7 @@ module.exports = (createCommon, options) => {
         const root = res[res.length - 1]
 
         expect(root.path).to.equal('test-folder')
-        expect(root.hash).to.equal(directory.cid)
+        expect(root.hash).to.equal(fixtures.directory.cid)
 
         const cid = 'QmVvjDy7yF7hdnqE8Hrf4MHo5ABDtb5AbX6hWbD3Y42bXP'
         const stream = ipfs.lsReadableStream(cid)
