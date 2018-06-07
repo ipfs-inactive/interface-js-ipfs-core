@@ -5,12 +5,17 @@
 
 const chai = require('chai')
 const dirtyChai = require('dirty-chai')
-const statsTests = require('./utils/stats')
+const { getDescribe, getIt } = require('../utils/mocha')
+
 const expect = chai.expect
 chai.use(dirtyChai)
 
-module.exports = (common) => {
-  describe('.repo', () => {
+module.exports = (createCommon, options) => {
+  const describe = getDescribe(options)
+  const it = getIt(options)
+  const common = createCommon()
+
+  describe('.repo.gc', () => {
     let ipfs
 
     before(function (done) {
@@ -28,38 +33,9 @@ module.exports = (common) => {
       })
     })
 
-    after((done) => {
-      common.teardown(done)
-    })
+    after((done) => common.teardown(done))
 
-    it('.version', (done) => {
-      ipfs.repo.version((err, version) => {
-        expect(err).to.not.exist()
-        expect(version).to.exist()
-        done()
-      })
-    })
-
-    it('.version Promise', () => {
-      return ipfs.repo.version().then((version) => {
-        expect(version).to.exist()
-      })
-    })
-
-    it('.stat', (done) => {
-      ipfs.repo.stat((err, res) => {
-        statsTests.expectIsRepo(err, res)
-        done()
-      })
-    })
-
-    it('.stat Promise', () => {
-      return ipfs.repo.stat().then((res) => {
-        statsTests.expectIsRepo(null, res)
-      })
-    })
-
-    it('.gc', (done) => {
+    it('should run garbage collection', (done) => {
       ipfs.repo.gc((err, res) => {
         expect(err).to.not.exist()
         expect(res).to.exist()
@@ -67,7 +43,7 @@ module.exports = (common) => {
       })
     })
 
-    it('.gc Promise', () => {
+    it('should run garbage collection (promised)', () => {
       return ipfs.repo.gc().then((res) => {
         expect(res).to.exist()
       })
