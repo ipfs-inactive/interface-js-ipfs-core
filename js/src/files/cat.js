@@ -7,7 +7,7 @@ const chai = require('chai')
 const dirtyChai = require('dirty-chai')
 const expect = chai.expect
 chai.use(dirtyChai)
-const loadFixture = require('aegir/fixtures')
+const { fixtures } = require('./utils')
 const bs58 = require('bs58')
 const parallel = require('async/parallel')
 const CID = require('cids')
@@ -22,16 +22,6 @@ module.exports = (createCommon, options) => {
     this.timeout(40 * 1000)
 
     let ipfs
-
-    const smallFile = {
-      cid: 'Qma4hjFTnCasJ8PVp3mZbZK5g2vGDT4LByLJ7m8ciyRFZP',
-      data: loadFixture('js/test/fixtures/testfile.txt', 'interface-ipfs-core')
-    }
-
-    const bigFile = {
-      cid: 'Qme79tX2bViL26vNjPsF3DP1R9rMKMvnPYJiKTTKPrXJjq',
-      data: loadFixture('js/test/fixtures/15mb.random', 'interface-ipfs-core')
-    }
 
     before(function (done) {
       // CI takes longer to instantiate the daemon, so we need to increase the
@@ -52,13 +42,13 @@ module.exports = (createCommon, options) => {
 
     before((done) => {
       parallel([
-        (cb) => ipfs.files.add(smallFile.data, cb),
-        (cb) => ipfs.files.add(bigFile.data, cb)
+        (cb) => ipfs.files.add(fixtures.smallFile.data, cb),
+        (cb) => ipfs.files.add(fixtures.bigFile.data, cb)
       ], done)
     })
 
     it('should cat with a base58 string encoded multihash', (done) => {
-      ipfs.files.cat(smallFile.cid, (err, data) => {
+      ipfs.files.cat(fixtures.smallFile.cid, (err, data) => {
         expect(err).to.not.exist()
         expect(data.toString()).to.contain('Plz add me!')
         done()
@@ -66,14 +56,14 @@ module.exports = (createCommon, options) => {
     })
 
     it('should cat with a base58 string encoded multihash (promised)', () => {
-      return ipfs.files.cat(smallFile.cid)
+      return ipfs.files.cat(fixtures.smallFile.cid)
         .then((data) => {
           expect(data.toString()).to.contain('Plz add me!')
         })
     })
 
     it('should cat with a Buffer multihash', (done) => {
-      const cid = Buffer.from(bs58.decode(smallFile.cid))
+      const cid = Buffer.from(bs58.decode(fixtures.smallFile.cid))
 
       ipfs.files.cat(cid, (err, data) => {
         expect(err).to.not.exist()
@@ -83,7 +73,7 @@ module.exports = (createCommon, options) => {
     })
 
     it('should cat with a CID object', (done) => {
-      const cid = new CID(smallFile.cid)
+      const cid = new CID(fixtures.smallFile.cid)
 
       ipfs.files.cat(cid, (err, data) => {
         expect(err).to.not.exist()
@@ -93,16 +83,16 @@ module.exports = (createCommon, options) => {
     })
 
     it('should cat a BIG file', (done) => {
-      ipfs.files.cat(bigFile.cid, (err, data) => {
+      ipfs.files.cat(fixtures.bigFile.cid, (err, data) => {
         expect(err).to.not.exist()
-        expect(data.length).to.equal(bigFile.data.length)
-        expect(data).to.eql(bigFile.data)
+        expect(data.length).to.equal(fixtures.bigFile.data.length)
+        expect(data).to.eql(fixtures.bigFile.data)
         done()
       })
     })
 
     it('should cat with IPFS path', (done) => {
-      const ipfsPath = '/ipfs/' + smallFile.cid
+      const ipfsPath = '/ipfs/' + fixtures.smallFile.cid
 
       ipfs.files.cat(ipfsPath, (err, data) => {
         expect(err).to.not.exist()
@@ -112,7 +102,7 @@ module.exports = (createCommon, options) => {
     })
 
     it('should cat with IPFS path, nested value', (done) => {
-      const file = { path: 'a/testfile.txt', content: smallFile.data }
+      const file = { path: 'a/testfile.txt', content: fixtures.smallFile.data }
 
       ipfs.files.add([file], (err, filesAdded) => {
         expect(err).to.not.exist()
@@ -147,7 +137,7 @@ module.exports = (createCommon, options) => {
     })
 
     it('should error on unknown path (promised)', () => {
-      return ipfs.files.cat(smallFile.cid + '/does-not-exist')
+      return ipfs.files.cat(fixtures.smallFile.cid + '/does-not-exist')
         .catch((err) => {
           expect(err).to.exist()
           expect(err.message).to.oneOf([
@@ -157,7 +147,7 @@ module.exports = (createCommon, options) => {
     })
 
     it('should error on dir path (promised)', () => {
-      const file = { path: 'dir/testfile.txt', content: smallFile.data }
+      const file = { path: 'dir/testfile.txt', content: fixtures.smallFile.data }
 
       return ipfs.files.add([file])
         .then((filesAdded) => {
@@ -177,7 +167,7 @@ module.exports = (createCommon, options) => {
       const offset = 1
       const length = 3
 
-      ipfs.files.cat(smallFile.cid, {
+      ipfs.files.cat(fixtures.smallFile.cid, {
         offset,
         length
       }, (err, data) => {

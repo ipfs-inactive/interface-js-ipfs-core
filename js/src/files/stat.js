@@ -6,7 +6,7 @@
 const chai = require('chai')
 const series = require('async/series')
 const hat = require('hat')
-const loadFixture = require('aegir/fixtures')
+const { fixtures } = require('./utils')
 const dirtyChai = require('dirty-chai')
 const expect = chai.expect
 chai.use(dirtyChai)
@@ -21,11 +21,6 @@ module.exports = (createCommon, options) => {
     this.timeout(40 * 1000)
 
     let ipfs
-
-    const smallFile = {
-      cid: 'Qma4hjFTnCasJ8PVp3mZbZK5g2vGDT4LByLJ7m8ciyRFZP',
-      data: loadFixture('js/test/fixtures/testfile.txt', 'interface-ipfs-core')
-    }
 
     before(function (done) {
       // CI takes longer to instantiate the daemon, so we need to increase the
@@ -42,7 +37,7 @@ module.exports = (createCommon, options) => {
       })
     })
 
-    before((done) => ipfs.files.add(smallFile.data, done))
+    before((done) => ipfs.files.add(fixtures.smallFile.data, done))
 
     after((done) => common.teardown(done))
 
@@ -145,7 +140,7 @@ module.exports = (createCommon, options) => {
 
     // TODO: (achingbrain) - Not yet supported in js-ipfs or go-ipfs yet')
     it.skip('should stat outside of mfs', function (done) {
-      ipfs.files.stat('/ipfs/' + smallFile.cid, (err, stat) => {
+      ipfs.files.stat('/ipfs/' + fixtures.smallFile.cid, (err, stat) => {
         expect(err).to.not.exist()
         expect(stat).to.eql({
           type: 'file',

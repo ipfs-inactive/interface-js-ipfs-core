@@ -7,7 +7,7 @@ const chai = require('chai')
 const dirtyChai = require('dirty-chai')
 const expect = chai.expect
 chai.use(dirtyChai)
-const loadFixture = require('aegir/fixtures')
+const { fixtures } = require('./utils')
 const bl = require('bl')
 const { getDescribe, getIt } = require('../utils/mocha')
 
@@ -20,16 +20,6 @@ module.exports = (createCommon, options) => {
     this.timeout(40 * 1000)
 
     let ipfs
-
-    const smallFile = {
-      cid: 'Qma4hjFTnCasJ8PVp3mZbZK5g2vGDT4LByLJ7m8ciyRFZP',
-      data: loadFixture('js/test/fixtures/testfile.txt', 'interface-ipfs-core')
-    }
-
-    const bigFile = {
-      cid: 'Qme79tX2bViL26vNjPsF3DP1R9rMKMvnPYJiKTTKPrXJjq',
-      data: loadFixture('js/test/fixtures/15mb.random', 'interface-ipfs-core')
-    }
 
     before(function (done) {
       // CI takes longer to instantiate the daemon, so we need to increase the
@@ -46,16 +36,16 @@ module.exports = (createCommon, options) => {
       })
     })
 
-    before((done) => ipfs.files.add(bigFile.data, done))
+    before((done) => ipfs.files.add(fixtures.bigFile.data, done))
 
     after((done) => common.teardown(done))
 
     it('should return a Readable Stream for a CID', (done) => {
-      const stream = ipfs.files.catReadableStream(bigFile.cid)
+      const stream = ipfs.files.catReadableStream(fixtures.bigFile.cid)
 
       stream.pipe(bl((err, data) => {
         expect(err).to.not.exist()
-        expect(data).to.eql(bigFile.data)
+        expect(data).to.eql(fixtures.bigFile.data)
         done()
       }))
     })
@@ -64,7 +54,7 @@ module.exports = (createCommon, options) => {
       const offset = 1
       const length = 3
 
-      const stream = ipfs.files.catReadableStream(smallFile.cid, {
+      const stream = ipfs.files.catReadableStream(fixtures.smallFile.cid, {
         offset,
         length
       })

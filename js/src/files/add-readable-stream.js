@@ -7,7 +7,7 @@ const chai = require('chai')
 const dirtyChai = require('dirty-chai')
 const expect = chai.expect
 chai.use(dirtyChai)
-const loadFixture = require('aegir/fixtures')
+const { fixtures } = require('./utils')
 const { getDescribe, getIt } = require('../utils/mocha')
 
 module.exports = (createCommon, options) => {
@@ -19,18 +19,6 @@ module.exports = (createCommon, options) => {
     this.timeout(40 * 1000)
 
     let ipfs
-
-    const directory = {
-      cid: 'QmVvjDy7yF7hdnqE8Hrf4MHo5ABDtb5AbX6hWbD3Y42bXP',
-      files: {
-        'pp.txt': loadFixture('js/test/fixtures/test-folder/pp.txt', 'interface-ipfs-core'),
-        'holmes.txt': loadFixture('js/test/fixtures/test-folder/holmes.txt', 'interface-ipfs-core'),
-        'jungle.txt': loadFixture('js/test/fixtures/test-folder/jungle.txt', 'interface-ipfs-core'),
-        'alice.txt': loadFixture('js/test/fixtures/test-folder/alice.txt', 'interface-ipfs-core'),
-        'files/hello.txt': loadFixture('js/test/fixtures/test-folder/files/hello.txt', 'interface-ipfs-core'),
-        'files/ipfs.txt': loadFixture('js/test/fixtures/test-folder/files/ipfs.txt', 'interface-ipfs-core')
-      }
-    }
 
     before(function (done) {
       // CI takes longer to instantiate the daemon, so we need to increase the
@@ -52,7 +40,7 @@ module.exports = (createCommon, options) => {
     it('should add readable stream of valid files and dirs', function (done) {
       const content = (name) => ({
         path: `test-folder/${name}`,
-        content: directory.files[name]
+        content: fixtures.directory.files[name]
       })
 
       const emptyDir = (name) => ({ path: `test-folder/${name}` })
@@ -76,7 +64,7 @@ module.exports = (createCommon, options) => {
 
       stream.on('data', (file) => {
         if (file.path === 'test-folder') {
-          expect(file.hash).to.equal(directory.cid)
+          expect(file.hash).to.equal(fixtures.directory.cid)
           done()
         }
       })

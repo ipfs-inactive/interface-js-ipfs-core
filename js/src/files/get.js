@@ -7,7 +7,7 @@ const chai = require('chai')
 const dirtyChai = require('dirty-chai')
 const expect = chai.expect
 chai.use(dirtyChai)
-const loadFixture = require('aegir/fixtures')
+const { fixtures } = require('./utils')
 const bs58 = require('bs58')
 const parallel = require('async/parallel')
 const series = require('async/series')
@@ -22,32 +22,6 @@ module.exports = (createCommon, options) => {
     this.timeout(40 * 1000)
 
     let ipfs
-
-    function fixture (path) {
-      return loadFixture(path, 'interface-ipfs-core')
-    }
-
-    const smallFile = {
-      cid: 'Qma4hjFTnCasJ8PVp3mZbZK5g2vGDT4LByLJ7m8ciyRFZP',
-      data: fixture('js/test/fixtures/testfile.txt')
-    }
-
-    const bigFile = {
-      cid: 'Qme79tX2bViL26vNjPsF3DP1R9rMKMvnPYJiKTTKPrXJjq',
-      data: fixture('js/test/fixtures/15mb.random')
-    }
-
-    const directory = {
-      cid: 'QmVvjDy7yF7hdnqE8Hrf4MHo5ABDtb5AbX6hWbD3Y42bXP',
-      files: {
-        'pp.txt': fixture('js/test/fixtures/test-folder/pp.txt'),
-        'holmes.txt': fixture('js/test/fixtures/test-folder/holmes.txt'),
-        'jungle.txt': fixture('js/test/fixtures/test-folder/jungle.txt'),
-        'alice.txt': fixture('js/test/fixtures/test-folder/alice.txt'),
-        'files/hello.txt': fixture('js/test/fixtures/test-folder/files/hello.txt'),
-        'files/ipfs.txt': fixture('js/test/fixtures/test-folder/files/ipfs.txt')
-      }
-    }
 
     before(function (done) {
       // CI takes longer to instantiate the daemon, so we need to increase the
@@ -66,53 +40,53 @@ module.exports = (createCommon, options) => {
 
     before((done) => {
       parallel([
-        (cb) => ipfs.files.add(smallFile.data, cb),
-        (cb) => ipfs.files.add(bigFile.data, cb)
+        (cb) => ipfs.files.add(fixtures.smallFile.data, cb),
+        (cb) => ipfs.files.add(fixtures.bigFile.data, cb)
       ], done)
     })
 
     after((done) => common.teardown(done))
 
     it('should get with a base58 encoded multihash', (done) => {
-      ipfs.files.get(smallFile.cid, (err, files) => {
+      ipfs.files.get(fixtures.smallFile.cid, (err, files) => {
         expect(err).to.not.exist()
 
         expect(files).to.be.length(1)
-        expect(files[0].path).to.eql(smallFile.cid)
+        expect(files[0].path).to.eql(fixtures.smallFile.cid)
         expect(files[0].content.toString('utf8')).to.contain('Plz add me!')
         done()
       })
     })
 
     it('should get with a base58 encoded multihash (promised)', () => {
-      return ipfs.files.get(smallFile.cid)
+      return ipfs.files.get(fixtures.smallFile.cid)
         .then((files) => {
           expect(files).to.be.length(1)
-          expect(files[0].path).to.equal(smallFile.cid)
+          expect(files[0].path).to.equal(fixtures.smallFile.cid)
           expect(files[0].content.toString()).to.contain('Plz add me!')
         })
     })
 
     it('should get with a Buffer multihash', (done) => {
-      const cidBuf = Buffer.from(bs58.decode(smallFile.cid))
+      const cidBuf = Buffer.from(bs58.decode(fixtures.smallFile.cid))
       ipfs.files.get(cidBuf, (err, files) => {
         expect(err).to.not.exist()
 
         expect(files).to.be.length(1)
-        expect(files[0].path).to.eql(smallFile.cid)
+        expect(files[0].path).to.eql(fixtures.smallFile.cid)
         expect(files[0].content.toString('utf8')).to.contain('Plz add me!')
         done()
       })
     })
 
     it('should get a BIG file', (done) => {
-      ipfs.files.get(bigFile.cid, (err, files) => {
+      ipfs.files.get(fixtures.bigFile.cid, (err, files) => {
         expect(err).to.not.exist()
 
         expect(files.length).to.equal(1)
-        expect(files[0].path).to.equal(bigFile.cid)
-        expect(files[0].content.length).to.eql(bigFile.data.length)
-        expect(files[0].content).to.eql(bigFile.data)
+        expect(files[0].path).to.equal(fixtures.bigFile.cid)
+        expect(files[0].content.length).to.eql(fixtures.bigFile.data.length)
+        expect(files[0].content).to.eql(fixtures.bigFile.data)
         done()
       })
     })
@@ -122,7 +96,7 @@ module.exports = (createCommon, options) => {
         (cb) => {
           const content = (name) => ({
             path: `test-folder/${name}`,
-            content: directory.files[name]
+            content: fixtures.directory.files[name]
           })
 
           const emptyDir = (name) => ({ path: `test-folder/${name}` })
@@ -143,12 +117,12 @@ module.exports = (createCommon, options) => {
             const root = res[res.length - 1]
 
             expect(root.path).to.equal('test-folder')
-            expect(root.hash).to.equal(directory.cid)
+            expect(root.hash).to.equal(fixtures.directory.cid)
             cb()
           })
         },
         (cb) => {
-          ipfs.files.get(directory.cid, (err, files) => {
+          ipfs.files.get(fixtures.directory.cid, (err, files) => {
             expect(err).to.not.exist()
 
             files = files.sort((a, b) => {
@@ -180,12 +154,12 @@ module.exports = (createCommon, options) => {
             })
 
             expect(contents).to.include.members([
-              directory.files['alice.txt'].toString(),
-              directory.files['files/hello.txt'].toString(),
-              directory.files['files/ipfs.txt'].toString(),
-              directory.files['holmes.txt'].toString(),
-              directory.files['jungle.txt'].toString(),
-              directory.files['pp.txt'].toString()
+              fixtures.directory.files['alice.txt'].toString(),
+              fixtures.directory.files['files/hello.txt'].toString(),
+              fixtures.directory.files['files/ipfs.txt'].toString(),
+              fixtures.directory.files['holmes.txt'].toString(),
+              fixtures.directory.files['jungle.txt'].toString(),
+              fixtures.directory.files['pp.txt'].toString()
             ])
             cb()
           })
@@ -196,7 +170,7 @@ module.exports = (createCommon, options) => {
     it('should get with ipfs path, as object and nested value', (done) => {
       const file = {
         path: 'a/testfile.txt',
-        content: smallFile.data
+        content: fixtures.smallFile.data
       }
 
       ipfs.files.add(file, (err, filesAdded) => {
@@ -218,7 +192,7 @@ module.exports = (createCommon, options) => {
     it('should get with ipfs path, as array and nested value', (done) => {
       const file = {
         path: 'a/testfile.txt',
-        content: smallFile.data
+        content: fixtures.smallFile.data
       }
 
       ipfs.files.add([file], (err, filesAdded) => {

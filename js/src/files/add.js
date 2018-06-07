@@ -7,7 +7,7 @@ const chai = require('chai')
 const dirtyChai = require('dirty-chai')
 const expect = chai.expect
 chai.use(dirtyChai)
-const loadFixture = require('aegir/fixtures')
+const { fixtures } = require('./utils')
 const Readable = require('readable-stream').Readable
 const pull = require('pull-stream')
 const path = require('path')
@@ -23,28 +23,6 @@ module.exports = (createCommon, options) => {
     this.timeout(40 * 1000)
 
     let ipfs
-
-    const smallFile = {
-      cid: 'Qma4hjFTnCasJ8PVp3mZbZK5g2vGDT4LByLJ7m8ciyRFZP',
-      data: loadFixture('js/test/fixtures/testfile.txt', 'interface-ipfs-core')
-    }
-
-    const bigFile = {
-      cid: 'Qme79tX2bViL26vNjPsF3DP1R9rMKMvnPYJiKTTKPrXJjq',
-      data: loadFixture('js/test/fixtures/15mb.random', 'interface-ipfs-core')
-    }
-
-    const directory = {
-      cid: 'QmVvjDy7yF7hdnqE8Hrf4MHo5ABDtb5AbX6hWbD3Y42bXP',
-      files: {
-        'pp.txt': loadFixture('js/test/fixtures/test-folder/pp.txt', 'interface-ipfs-core'),
-        'holmes.txt': loadFixture('js/test/fixtures/test-folder/holmes.txt', 'interface-ipfs-core'),
-        'jungle.txt': loadFixture('js/test/fixtures/test-folder/jungle.txt', 'interface-ipfs-core'),
-        'alice.txt': loadFixture('js/test/fixtures/test-folder/alice.txt', 'interface-ipfs-core'),
-        'files/hello.txt': loadFixture('js/test/fixtures/test-folder/files/hello.txt', 'interface-ipfs-core'),
-        'files/ipfs.txt': loadFixture('js/test/fixtures/test-folder/files/ipfs.txt', 'interface-ipfs-core')
-      }
-    }
 
     before(function (done) {
       // CI takes longer to instantiate the daemon, so we need to increase the
@@ -64,38 +42,38 @@ module.exports = (createCommon, options) => {
     after((done) => common.teardown(done))
 
     it('should add a Buffer', (done) => {
-      ipfs.files.add(smallFile.data, (err, filesAdded) => {
+      ipfs.files.add(fixtures.smallFile.data, (err, filesAdded) => {
         expect(err).to.not.exist()
 
         expect(filesAdded).to.have.length(1)
         const file = filesAdded[0]
-        expect(file.hash).to.equal(smallFile.cid)
-        expect(file.path).to.equal(smallFile.cid)
+        expect(file.hash).to.equal(fixtures.smallFile.cid)
+        expect(file.path).to.equal(fixtures.smallFile.cid)
         // file.size counts the overhead by IPLD nodes and unixfs protobuf
-        expect(file.size).greaterThan(smallFile.data.length)
+        expect(file.size).greaterThan(fixtures.smallFile.data.length)
         done()
       })
     })
 
     it('should add a Buffer (promised)', () => {
-      return ipfs.files.add(smallFile.data)
+      return ipfs.files.add(fixtures.smallFile.data)
         .then((filesAdded) => {
           const file = filesAdded[0]
-          expect(file.hash).to.equal(smallFile.cid)
-          expect(file.path).to.equal(smallFile.cid)
+          expect(file.hash).to.equal(fixtures.smallFile.cid)
+          expect(file.path).to.equal(fixtures.smallFile.cid)
         })
     })
 
     it('should add a BIG Buffer', (done) => {
-      ipfs.files.add(bigFile.data, (err, filesAdded) => {
+      ipfs.files.add(fixtures.bigFile.data, (err, filesAdded) => {
         expect(err).to.not.exist()
 
         expect(filesAdded).to.have.length(1)
         const file = filesAdded[0]
-        expect(file.hash).to.equal(bigFile.cid)
-        expect(file.path).to.equal(bigFile.cid)
+        expect(file.hash).to.equal(fixtures.bigFile.cid)
+        expect(file.path).to.equal(fixtures.bigFile.cid)
         // file.size counts the overhead by IPLD nodes and unixfs protobuf
-        expect(file.size).greaterThan(bigFile.data.length)
+        expect(file.size).greaterThan(fixtures.bigFile.data.length)
         done()
       })
     })
@@ -108,22 +86,22 @@ module.exports = (createCommon, options) => {
         accumProgress = p
       }
 
-      ipfs.files.add(bigFile.data, { progress: handler }, (err, filesAdded) => {
+      ipfs.files.add(fixtures.bigFile.data, { progress: handler }, (err, filesAdded) => {
         expect(err).to.not.exist()
 
         expect(filesAdded).to.have.length(1)
         const file = filesAdded[0]
-        expect(file.hash).to.equal(bigFile.cid)
-        expect(file.path).to.equal(bigFile.cid)
+        expect(file.hash).to.equal(fixtures.bigFile.cid)
+        expect(file.path).to.equal(fixtures.bigFile.cid)
 
         expect(progCalled).to.be.true()
-        expect(accumProgress).to.equal(bigFile.data.length)
+        expect(accumProgress).to.equal(fixtures.bigFile.data.length)
         done()
       })
     })
 
     it('should add a Buffer as tuple', (done) => {
-      const tuple = { path: 'testfile.txt', content: smallFile.data }
+      const tuple = { path: 'testfile.txt', content: fixtures.smallFile.data }
 
       ipfs.files.add([
         tuple
@@ -132,7 +110,7 @@ module.exports = (createCommon, options) => {
 
         expect(filesAdded).to.have.length(1)
         const file = filesAdded[0]
-        expect(file.hash).to.equal(smallFile.cid)
+        expect(file.hash).to.equal(fixtures.smallFile.cid)
         expect(file.path).to.equal('testfile.txt')
 
         done()
@@ -222,7 +200,7 @@ module.exports = (createCommon, options) => {
     it('should add a nested directory as array of tupples', function (done) {
       const content = (name) => ({
         path: `test-folder/${name}`,
-        content: directory.files[name]
+        content: fixtures.directory.files[name]
       })
 
       const emptyDir = (name) => ({ path: `test-folder/${name}` })
@@ -243,7 +221,7 @@ module.exports = (createCommon, options) => {
         const root = res[res.length - 1]
 
         expect(root.path).to.equal('test-folder')
-        expect(root.hash).to.equal(directory.cid)
+        expect(root.hash).to.equal(fixtures.directory.cid)
         done()
       })
     })
@@ -251,7 +229,7 @@ module.exports = (createCommon, options) => {
     it('should add a nested directory as array of tupples with progress', function (done) {
       const content = (name) => ({
         path: `test-folder/${name}`,
-        content: directory.files[name]
+        content: fixtures.directory.files[name]
       })
 
       const emptyDir = (name) => ({ path: `test-folder/${name}` })
@@ -285,7 +263,7 @@ module.exports = (createCommon, options) => {
         expect(progCalled).to.be.true()
         expect(accumProgress).to.be.at.least(total)
         expect(root.path).to.equal('test-folder')
-        expect(root.hash).to.equal(directory.cid)
+        expect(root.hash).to.equal(fixtures.directory.cid)
         done()
       })
     })
@@ -300,14 +278,14 @@ module.exports = (createCommon, options) => {
     })
 
     it('should wrap content in a directory', (done) => {
-      const data = { path: 'testfile.txt', content: smallFile.data }
+      const data = { path: 'testfile.txt', content: fixtures.smallFile.data }
 
       ipfs.files.add(data, { wrapWithDirectory: true }, (err, filesAdded) => {
         expect(err).to.not.exist()
         expect(filesAdded).to.have.length(2)
         const file = filesAdded[0]
         const wrapped = filesAdded[1]
-        expect(file.hash).to.equal(smallFile.cid)
+        expect(file.hash).to.equal(fixtures.smallFile.cid)
         expect(file.path).to.equal('testfile.txt')
         expect(wrapped.path).to.equal('')
         done()

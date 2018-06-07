@@ -7,7 +7,7 @@ const chai = require('chai')
 const dirtyChai = require('dirty-chai')
 const expect = chai.expect
 chai.use(dirtyChai)
-const loadFixture = require('aegir/fixtures')
+const { fixtures } = require('./utils')
 const pull = require('pull-stream')
 const { getDescribe, getIt } = require('../utils/mocha')
 
@@ -20,11 +20,6 @@ module.exports = (createCommon, options) => {
     this.timeout(40 * 1000)
 
     let ipfs
-
-    const smallFile = {
-      cid: 'Qma4hjFTnCasJ8PVp3mZbZK5g2vGDT4LByLJ7m8ciyRFZP',
-      data: loadFixture('js/test/fixtures/testfile.txt', 'interface-ipfs-core')
-    }
 
     before(function (done) {
       // CI takes longer to instantiate the daemon, so we need to increase the
@@ -41,19 +36,19 @@ module.exports = (createCommon, options) => {
       })
     })
 
-    before((done) => ipfs.files.add(smallFile.data, done))
+    before((done) => ipfs.files.add(fixtures.smallFile.data, done))
 
     after((done) => common.teardown(done))
 
     it('should return a Pull Stream for a CID', (done) => {
-      const stream = ipfs.files.catPullStream(smallFile.cid)
+      const stream = ipfs.files.catPullStream(fixtures.smallFile.cid)
 
       pull(
         stream,
         pull.concat((err, data) => {
           expect(err).to.not.exist()
-          expect(data.length).to.equal(smallFile.data.length)
-          expect(data).to.eql(smallFile.data.toString())
+          expect(data.length).to.equal(fixtures.smallFile.data.length)
+          expect(data).to.eql(fixtures.smallFile.data.toString())
           done()
         })
       )
@@ -63,7 +58,7 @@ module.exports = (createCommon, options) => {
       const offset = 1
       const length = 3
 
-      const stream = ipfs.files.catPullStream(smallFile.cid, {
+      const stream = ipfs.files.catPullStream(fixtures.smallFile.cid, {
         offset,
         length
       })
