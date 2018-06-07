@@ -1,3 +1,5 @@
+'use strict'
+
 const loadFixture = require('aegir/fixtures')
 
 exports.fixtures = Object.freeze({

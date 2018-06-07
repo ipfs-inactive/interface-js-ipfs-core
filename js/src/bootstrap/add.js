@@ -1,12 +1,12 @@
 /* eslint-env mocha */
-/* eslint max-nested-callbacks: ["error", 8] */
 'use strict'
 
 const chai = require('chai')
 const dirtyChai = require('dirty-chai')
+const { getDescribe, getIt } = require('../utils/mocha')
+
 const expect = chai.expect
 chai.use(dirtyChai)
-const { getDescribe, getIt } = require('../utils/mocha')
 
 const invalidArg = 'this/Is/So/Invalid/'
 const validIp4 = '/ip4/104.236.176.52/tcp/4001/ipfs/QmSoLnSGccFuZQJzRadHn95W2CrSFmZuTdDWP8HXaHca9z'

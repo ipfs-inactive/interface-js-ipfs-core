@@ -1,15 +1,14 @@
 /* eslint-env mocha */
-/* eslint max-nested-callbacks: ["error", 8] */
-
 'use strict'
 
 const chai = require('chai')
 const dirtyChai = require('dirty-chai')
-const expect = chai.expect
-chai.use(dirtyChai)
 const CID = require('cids')
 const auto = require('async/auto')
 const { getDescribe, getIt } = require('../utils/mocha')
+
+const expect = chai.expect
+chai.use(dirtyChai)
 
 module.exports = (createCommon, options) => {
   const describe = getDescribe(options)

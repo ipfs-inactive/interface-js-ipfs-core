@@ -1,6 +1,4 @@
 /* eslint-env mocha */
-/* eslint max-nested-callbacks: ["error", 8] */
-
 'use strict'
 
 const chai = require('chai')
@@ -8,9 +6,10 @@ const series = require('async/series')
 const hat = require('hat')
 const { fixtures } = require('./utils')
 const dirtyChai = require('dirty-chai')
+const { getDescribe, getIt } = require('../utils/mocha')
+
 const expect = chai.expect
 chai.use(dirtyChai)
-const { getDescribe, getIt } = require('../utils/mocha')
 
 module.exports = (createCommon, options) => {
   const describe = getDescribe(options)

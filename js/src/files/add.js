@@ -1,18 +1,17 @@
 /* eslint-env mocha */
-/* eslint max-nested-callbacks: ["error", 8] */
-
 'use strict'
 
 const chai = require('chai')
 const dirtyChai = require('dirty-chai')
-const expect = chai.expect
-chai.use(dirtyChai)
 const { fixtures } = require('./utils')
 const Readable = require('readable-stream').Readable
 const pull = require('pull-stream')
 const path = require('path')
 const expectTimeout = require('../utils/expect-timeout')
 const { getDescribe, getIt } = require('../utils/mocha')
+
+const expect = chai.expect
+chai.use(dirtyChai)
 
 module.exports = (createCommon, options) => {
   const describe = getDescribe(options)

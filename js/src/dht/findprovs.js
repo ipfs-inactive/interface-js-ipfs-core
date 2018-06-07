@@ -3,12 +3,13 @@
 
 const chai = require('chai')
 const dirtyChai = require('dirty-chai')
-const expect = chai.expect
-chai.use(dirtyChai)
 const waterfall = require('async/waterfall')
 const CID = require('cids')
 const { spawnNodesWithId } = require('../utils/spawn')
 const { getDescribe, getIt } = require('../utils/mocha')
+
+const expect = chai.expect
+chai.use(dirtyChai)
 
 module.exports = (createCommon, options) => {
   const describe = getDescribe(options)

@@ -1,4 +1,5 @@
 /* eslint-env mocha */
+'use strict'
 
 // Get a "describe" function that is optionally 'skipped' or 'onlyed'
 // If skip/only are boolean true, then we want to skip/only the whole suite

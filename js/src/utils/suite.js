@@ -1,3 +1,5 @@
+'use strict'
+
 function createSuite (tests, parent) {
   const suite = (createCommon, options) => {
     Object.keys(tests).forEach(t => {
