@@ -308,7 +308,7 @@ module.exports = (createCommon, options) => {
         })
       })
 
-      it('should receive multiple messages', function (done) {
+      it('should receive multiple messages', (done) => {
         const inbox1 = []
         const inbox2 = []
         const outbox = ['hello', 'world', 'this', 'is', 'pubsub']
