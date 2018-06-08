@@ -45,7 +45,7 @@ module.exports = (createCommon, options) => {
 
       ipfs.block.get(cid, (err, block) => {
         expect(err).to.not.exist()
-        expect(block.data).to.eql(new Buffer('blorb'))
+        expect(block.data).to.eql(Buffer.from('blorb'))
         expect(block.cid.multihash).to.eql(cid.multihash)
         done()
       })
@@ -54,7 +54,7 @@ module.exports = (createCommon, options) => {
     it('should get by CID in string', (done) => {
       ipfs.block.get(multihash.toB58String(hash), (err, block) => {
         expect(err).to.not.exist()
-        expect(block.data).to.eql(new Buffer('blorb'))
+        expect(block.data).to.eql(Buffer.from('blorb'))
         expect(block.cid.multihash).to.eql(hash)
         done()
       })

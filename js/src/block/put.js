@@ -85,7 +85,7 @@ module.exports = (createCommon, options) => {
 
       ipfs.block.put(b, (err, block) => {
         expect(err).to.not.exist()
-        expect(block.data).to.eql(new Buffer('blorb'))
+        expect(block.data).to.eql(Buffer.from('blorb'))
         expect(block.cid.multihash).to.eql(multihash.fromB58String(expectedHash))
         done()
       })
