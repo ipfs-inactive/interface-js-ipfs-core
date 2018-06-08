@@ -36,6 +36,7 @@ module.exports = (createCommon, options) => {
     })
 
     before((done) => ipfs.files.add(fixtures.bigFile.data, done))
+    before((done) => ipfs.files.add(fixtures.smallFile.data, done))
 
     after((done) => common.teardown(done))
 
