@@ -9,6 +9,7 @@ const statsTests = require('./utils/stats')
 const spawn = require('./utils/spawn')
 chai.use(dirtyChai)
 const CID = require('cids')
+const PeerId = require('peer-id')
 
 module.exports = (common) => {
   describe('.bitswap online', () => {
@@ -52,7 +53,6 @@ module.exports = (common) => {
 
     it('.stat', (done) => {
       ipfsB.bitswap.stat((err, stats) => {
-        expect(err).to.not.exist()
         statsTests.expectIsBitswap(err, stats)
         done()
       })
@@ -75,6 +75,13 @@ module.exports = (common) => {
       })
     })
 
+    it('.ledger peerid', (done) => {
+      ipfsA.bitswap.ledger(ipfsBId.id, (err, ledger) => {
+        statsTests.expectIsLedger(err, ledger)
+        done()
+      })
+    })
+
     it('.unwant', function (done) {
       if (withGo) {
         this.skip()
@@ -92,6 +99,7 @@ module.exports = (common) => {
 
   describe('.bitswap offline', () => {
     let ipfs
+    const peerId = 'QmaWPUCWAT6mSg5iB4ibaAjp5SBYbCmAEY4hFFdwYkANFH'
 
     before(function (done) {
       // CI takes longer to instantiate the daemon, so we need to increase the
@@ -136,6 +144,13 @@ module.exports = (common) => {
     it('.unwant gives error if offline', (done) => {
       const key = 'QmUBdnXXPyoDFXj3Hj39dNJ5VkN3QFRskXxcGaYFBB8CNR'
       ipfs.bitswap.unwant(key, (err) => {
+        expect(err).to.exist()
+        done()
+      })
+    })
+
+    it('.ledger gives error if offline', (done) => {
+      ipfs.bitswap.ledger(peerId, (err, ledger) => {
         expect(err).to.exist()
         done()
       })

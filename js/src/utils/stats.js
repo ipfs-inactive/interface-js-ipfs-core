@@ -60,3 +60,18 @@ module.exports.expectIsRepo = (err, res) => {
   expect(res.repoPath).to.be.a('string')
   expect(res.version).to.be.a('string')
 }
+
+module.exports.expectIsLedger = (err, res) => {
+  expect(err).to.not.exist()
+  expect(res).to.exist()
+  expect(res).to.have.a.property('Peer')
+  expect(res).to.have.a.property('Value')
+  expect(res).to.have.a.property('Sent')
+  expect(res).to.have.a.property('Recv')
+  expect(res).to.have.a.property('Exchanged')
+  expect(res.Peer).to.be.a('string')
+  expect(isBigInt(res.Value)).to.eql(true)
+  expect(isBigInt(res.Sent)).to.eql(true)
+  expect(isBigInt(res.Recv)).to.eql(true)
+  expect(isBigInt(res.Exchanged)).to.eql(true)
+}
