@@ -20,7 +20,7 @@ module.exports = (createCommon, options) => {
   const it = getIt(options)
   const common = createCommon()
 
-  describe('.swarm', function () {
+  describe('.swarm.peers', function () {
     this.timeout(80 * 1000)
 
     let ipfsA
