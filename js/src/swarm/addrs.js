@@ -3,7 +3,6 @@
 
 const chai = require('chai')
 const dirtyChai = require('dirty-chai')
-const { spawnNodes } = require('../utils/spawn')
 const { getDescribe, getIt } = require('../utils/mocha')
 
 const expect = chai.expect
@@ -26,10 +25,9 @@ module.exports = (createCommon, options) => {
 
       common.setup((err, factory) => {
         expect(err).to.not.exist()
-
-        spawnNodes(2, factory, (err, nodes) => {
+        factory.spawnNode((err, node) => {
           expect(err).to.not.exist()
-          ipfs = nodes[0]
+          ipfs = node
           done()
         })
       })
