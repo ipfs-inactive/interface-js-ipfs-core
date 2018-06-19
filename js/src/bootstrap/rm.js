@@ -3,12 +3,12 @@
 
 const { getDescribe, getIt, expect } = require('../utils/mocha')
 
-const invalidArg = 'this/Is/So/Invalid/'
-
 module.exports = (createCommon, options) => {
   const describe = getDescribe(options)
   const it = getIt(options)
   const common = createCommon()
+
+  const invalidArg = 'this/Is/So/Invalid/'
 
   describe('.bootstrap.rm', function () {
     this.timeout(100 * 1000)
