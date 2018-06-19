@@ -1,10 +1,6 @@
 'use strict'
 
-const chai = require('chai')
-const dirtyChai = require('dirty-chai')
-
-const expect = chai.expect
-chai.use(dirtyChai)
+const { expect } = require('../utils/mocha')
 
 function expectIsPingResponse (obj) {
   expect(obj).to.have.a.property('success')

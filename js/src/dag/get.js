@@ -1,17 +1,12 @@
 /* eslint-env mocha */
 'use strict'
 
-const chai = require('chai')
-const dirtyChai = require('dirty-chai')
 const { series, eachSeries } = require('async')
 const dagPB = require('ipld-dag-pb')
 const DAGNode = dagPB.DAGNode
 const dagCBOR = require('ipld-dag-cbor')
 const { spawnNodeWithId } = require('../utils/spawn')
-const { getDescribe, getIt } = require('../utils/mocha')
-
-const expect = chai.expect
-chai.use(dirtyChai)
+const { getDescribe, getIt, expect } = require('../utils/mocha')
 
 module.exports = (createCommon, options) => {
   const describe = getDescribe(options)

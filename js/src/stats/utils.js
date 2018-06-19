@@ -1,6 +1,6 @@
 'use strict'
 
-const { expect } = require('chai')
+const { expect } = require('../utils/mocha')
 
 const isBigInt = (n) => {
   return n.constructor.name === 'Big'

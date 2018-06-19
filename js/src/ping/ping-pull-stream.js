@@ -1,17 +1,12 @@
 /* eslint-env mocha */
 'use strict'
 
-const chai = require('chai')
-const dirtyChai = require('dirty-chai')
 const pull = require('pull-stream')
 const series = require('async/series')
 const { spawnNodesWithId } = require('../utils/spawn')
 const { waitUntilConnected } = require('../utils/connections')
-const { getDescribe, getIt } = require('../utils/mocha')
+const { getDescribe, getIt, expect } = require('../utils/mocha')
 const { expectIsPingResponse, isPong } = require('./utils')
-
-const expect = chai.expect
-chai.use(dirtyChai)
 
 module.exports = (createCommon, options) => {
   const describe = getDescribe(options)

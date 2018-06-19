@@ -1,16 +1,11 @@
 /* eslint-env mocha */
 'use strict'
 
-const chai = require('chai')
-const dirtyChai = require('dirty-chai')
 const parallel = require('async/parallel')
 const auto = require('async/auto')
 const { spawnNodesWithId } = require('../utils/spawn')
 const { waitForPeers, getTopic } = require('./utils')
-const { getDescribe, getIt } = require('../utils/mocha')
-
-const expect = chai.expect
-chai.use(dirtyChai)
+const { getDescribe, getIt, expect } = require('../utils/mocha')
 
 module.exports = (createCommon, options) => {
   const describe = getDescribe(options)

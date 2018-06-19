@@ -1,6 +1,13 @@
 /* eslint-env mocha */
 'use strict'
 
+const chai = require('chai')
+const dirtyChai = require('dirty-chai')
+
+chai.use(dirtyChai)
+
+module.exports.expect = chai.expect
+
 // Get a "describe" function that is optionally 'skipped' or 'onlyed'
 // If skip/only are boolean true, then we want to skip/only the whole suite
 function getDescribe (config) {

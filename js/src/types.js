@@ -9,12 +9,7 @@ const multiaddr = require('multiaddr')
 const multibase = require('multibase')
 const multihash = require('multihashes')
 const CID = require('cids')
-const chai = require('chai')
-const dirtyChai = require('dirty-chai')
-const { getDescribe, getIt } = require('./utils/mocha')
-
-const expect = chai.expect
-chai.use(dirtyChai)
+const { getDescribe, getIt, expect } = require('./utils/mocha')
 
 module.exports = (createCommon, options) => {
   const describe = getDescribe(options)
