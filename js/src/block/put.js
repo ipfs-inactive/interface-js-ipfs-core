@@ -6,7 +6,6 @@ const dirtyChai = require('dirty-chai')
 const Block = require('ipfs-block')
 const multihash = require('multihashes')
 const CID = require('cids')
-const Buffer = require('safe-buffer').Buffer
 const { getDescribe, getIt } = require('../utils/mocha')
 
 const expect = chai.expect

@@ -5,7 +5,6 @@ const chai = require('chai')
 const dirtyChai = require('dirty-chai')
 const multihash = require('multihashes')
 const CID = require('cids')
-const Buffer = require('safe-buffer').Buffer
 const auto = require('async/auto')
 const { getDescribe, getIt } = require('../utils/mocha')
 
