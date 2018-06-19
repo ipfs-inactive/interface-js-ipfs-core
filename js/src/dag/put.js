@@ -87,7 +87,7 @@ module.exports = (createCommon, options) => {
       }, done)
     })
 
-    it('should not put dag-cbor node with wrong multicodec', function (done) {
+    it('should not put dag-cbor node with wrong multicodec', (done) => {
       ipfs.dag.put(cborNode, {
         format: 'dag-pb',
         hashAlg: 'sha3-512'

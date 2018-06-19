@@ -45,10 +45,10 @@ module.exports = (createCommon, options) => {
       })
     })
 
-    it('should fail to find other peer if peer does not exist', function (done) {
+    it('should fail to find other peer if peer does not exist', (done) => {
       nodeA.dht.findpeer('Qmd7qZS4T7xXtsNFdRoK1trfMs5zU94EpokQ9WFtxdPxsZ', (err, peer) => {
         expect(err).to.not.exist()
-        expect(peer).to.be.equal(null)
+        expect(peer).to.not.exist()
         done()
       })
     })

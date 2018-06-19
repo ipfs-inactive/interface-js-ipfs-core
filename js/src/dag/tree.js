@@ -1,7 +1,8 @@
 /* eslint-env mocha */
 'use strict'
 
-const { series, eachSeries } = require('async')
+const series = require('async/series')
+const eachSeries = require('async/eachSeries')
 const dagPB = require('ipld-dag-pb')
 const dagCBOR = require('ipld-dag-cbor')
 const { spawnNodeWithId } = require('../utils/spawn')
