@@ -545,9 +545,39 @@ module.exports = (common) => {
         return ipfs.files.cat(smallFile.cid + '/does-not-exist')
           .catch((err) => {
             expect(err).to.exist()
-            expect(err.message).to.oneOf([
-              'No such file',
-              'no link named "does-not-exist" under Qma4hjFTnCasJ8PVp3mZbZK5g2vGDT4LByLJ7m8ciyRFZP'])
+          })
+      })
+
+      it('specifies missing directory in a nested link', () => {
+        return ipfs.files.cat(directory.cid + '/files/missing-dir/does-not-exist')
+          .catch((err) => {
+            expect(err).to.exist()
+            expect(err.message).to.contain.oneOf([
+              'no link named "missing-dir" under QmZ25UfTqXGz9RsEJFg7HUAuBcmfx5dQZDXQd2QEZ8Kj74',
+              'no directory named "missing-dir" under QmVvjDy7yF7hdnqE8Hrf4MHo5ABDtb5AbX6hWbD3Y42bXP/files'
+            ])
+          })
+      })
+
+      it('specifies missing file in a nested link', () => {
+        return ipfs.files.cat(directory.cid + '/files/does-not-exist')
+          .catch((err) => {
+            expect(err).to.exist()
+            expect(err.message).to.contain.oneOf([
+              'no link named "does-not-exist" under QmZ25UfTqXGz9RsEJFg7HUAuBcmfx5dQZDXQd2QEZ8Kj74',
+              'no file named "does-not-exist" under QmVvjDy7yF7hdnqE8Hrf4MHo5ABDtb5AbX6hWbD3Y42bXP/files'
+            ])
+          })
+      })
+
+      it('specifies a link is not a directory', () => {
+        return ipfs.files.cat(directory.cid + '/files/hello.txt/does-not-exist')
+          .catch((err) => {
+            expect(err).to.exist()
+            expect(err.message).to.contain.oneOf([
+              'no link named "does-not-exist" under QmY9cxiHqTFoWamkQVkpmmqzBrY3hCBEL2XNu3NtX74Fuu',
+              '"hello.txt" is a file not a directory under QmVvjDy7yF7hdnqE8Hrf4MHo5ABDtb5AbX6hWbD3Y42bXP/files'
+            ])
           })
       })
 
