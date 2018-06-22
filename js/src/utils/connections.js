@@ -1,3 +1,5 @@
+'use strict'
+
 const waterfall = require('async/waterfall')
 
 function waitUntilConnected (fromNode, toNode, opts, cb) {

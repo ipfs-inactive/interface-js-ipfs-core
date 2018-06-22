@@ -4,6 +4,7 @@
 const chai = require('chai')
 const dirtyChai = require('dirty-chai')
 const series = require('async/series')
+const waterfall = require('async/waterfall')
 const expect = chai.expect
 const statsTests = require('./utils/stats')
 const spawn = require('./utils/spawn')
@@ -98,21 +99,20 @@ module.exports = (common) => {
       // timeout for the before step
       this.timeout(60 * 1000)
 
-      common.setup((err, factory) => {
+      waterfall([
+        (cb) => common.setup(cb),
+        (factory, cb) => spawn.spawnNodeWithId(factory, cb)
+      ], (err, node) => {
         expect(err).to.not.exist()
-        factory.spawnNode((err, node) => {
+        ipfs = node
+
+        ipfs.stop((err) => {
           expect(err).to.not.exist()
-          ipfs = node
-          ipfs.id((err, id) => {
+          // TODO: go-ipfs returns an error, https://github.com/ipfs/go-ipfs/issues/4078
+          if (!node.peerId.agentVersion.startsWith('go-ipfs')) {
             expect(err).to.not.exist()
-            ipfs.stop((err) => {
-              // TODO: go-ipfs returns an error, https://github.com/ipfs/go-ipfs/issues/4078
-              if (!id.agentVersion.startsWith('go-ipfs')) {
-                expect(err).to.not.exist()
-              }
-              done()
-            })
-          })
+          }
+          done()
         })
       })
     })

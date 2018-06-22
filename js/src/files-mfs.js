@@ -315,7 +315,7 @@ module.exports = (common) => {
           this.skip()
         }
 
-        ipfs.files.stat('/test/b', {'withLocal': true}, (err, stat) => {
+        ipfs.files.stat('/test/b', {withLocal: true}, (err, stat) => {
           expect(err).to.not.exist()
           expect(stat).to.eql({
             type: 'file',
@@ -338,7 +338,7 @@ module.exports = (common) => {
           this.skip()
         }
 
-        ipfs.files.stat('/test', {'withLocal': true}, (err, stat) => {
+        ipfs.files.stat('/test', {withLocal: true}, (err, stat) => {
           expect(err).to.not.exist()
           expect(stat).to.eql({
             type: 'directory',
