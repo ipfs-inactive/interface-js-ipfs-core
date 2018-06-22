@@ -54,6 +54,22 @@ module.exports = (createCommon, options) => {
       })
     })
 
+    it('should get an empty block', (done) => {
+      ipfs.block.put(Buffer.alloc(0), {
+        format: 'dag-pb',
+        mhtype: 'sha2-256',
+        version: 0
+      }, (err, block) => {
+        expect(err).to.not.exist()
+
+        ipfs.block.get(block.cid, (err, block) => {
+          expect(err).to.not.exist()
+          expect(block.data).to.eql(Buffer.alloc(0))
+          done()
+        })
+      })
+    })
+
     // TODO it.skip('Promises support', (done) => {})
   })
 }
