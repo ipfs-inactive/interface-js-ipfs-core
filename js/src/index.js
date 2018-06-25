@@ -1,5 +1,6 @@
 'use strict'
 
+exports.bitswap = require('./bitswap')
 exports.block = require('./block')
 exports.bootstrap = require('./bootstrap')
 exports.config = require('./config')
