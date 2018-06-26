@@ -2,6 +2,7 @@
 'use strict'
 
 const CID = require('cids')
+const { spawnNodesWithId } = require('../utils/spawn')
 const { getDescribe, getIt, expect } = require('../utils/mocha')
 
 module.exports = (createCommon, options) => {
@@ -22,10 +23,10 @@ module.exports = (createCommon, options) => {
       common.setup((err, factory) => {
         expect(err).to.not.exist()
 
-        factory.spawnNode((err, node) => {
+        spawnNodesWithId(2, factory, (err, nodes) => {
           expect(err).to.not.exist()
-          ipfs = node
-          done()
+          ipfs = nodes[0]
+          ipfs.swarm.connect(nodes[1].peerId.addresses[0], done)
         })
       })
     })
