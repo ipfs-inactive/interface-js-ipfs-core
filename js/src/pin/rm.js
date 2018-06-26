@@ -10,7 +10,7 @@ module.exports = (createCommon, options) => {
   const it = getIt(options)
   const common = createCommon()
 
-  describe('.pin', function () {
+  describe('.pin.rm', function () {
     this.timeout(50 * 1000)
 
     let ipfs
