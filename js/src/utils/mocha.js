@@ -9,24 +9,51 @@ chai.use(dirtyChai)
 module.exports.expect = chai.expect
 
 // Get a "describe" function that is optionally 'skipped' or 'onlyed'
-// If skip/only are boolean true, then we want to skip/only the whole suite
+// If skip/only are boolean true, or an object with a reason property, then we
+// want to skip/only the whole suite
 function getDescribe (config) {
-  if (config && config.skip === true) return describe.skip
-  if (config && config.only === true) return describe.only
+  if (config) {
+    if (config.only === true) return describe.only
+    if (config.skip === true) return describe.skip
+
+    if (typeof config.skip === 'object' && config.skip.reason) {
+      const _describe = (name, impl) => {
+        describe.skip(`${name} (${config.skip.reason})`, impl)
+      }
+
+      _describe.skip = describe.skip
+      _describe.only = describe.only
+
+      return _describe
+    }
+  }
+
   return describe
 }
 
 module.exports.getDescribe = getDescribe
 
 // Get an "it" function that is optionally 'skipped' or 'onlyed'
-// If skip/only are an array, then we _might_ want to skip/only the specific test
+// If skip/only is an array, then we _might_ want to skip/only the specific
+// test if one of the items in the array is the same as the test name or if one
+// of the items in the array is an object with a name property that is the same
+// as the test name.
 function getIt (config) {
+  if (!config) return it
+
   const _it = (name, impl) => {
-    if (config && Array.isArray(config.skip)) {
-      if (config.skip.includes(name)) return it.skip(name, impl)
+    if (Array.isArray(config.skip)) {
+      const skip = config.skip
+        .map((s) => s && typeof s === 'object' ? s : { name: s })
+        .find((s) => s.name === name)
+
+      if (skip) {
+        if (skip.reason) name = `${name} (${skip.reason})`
+        return it.skip(name, impl)
+      }
     }
 
-    if (config && Array.isArray(config.only)) {
+    if (Array.isArray(config.only)) {
       if (config.only.includes(name)) return it.only(name, impl)
     }
 

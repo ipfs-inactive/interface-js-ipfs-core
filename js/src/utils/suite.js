@@ -7,8 +7,12 @@ function createSuite (tests, parent) {
       const suiteName = parent ? `${parent}.${t}` : t
 
       if (Array.isArray(opts.skip)) {
-        if (opts.skip.includes(suiteName)) {
-          opts.skip = true
+        const skip = opts.skip
+          .map((s) => s && typeof s === 'object' ? s : { name: s })
+          .find((s) => s.name === suiteName)
+
+        if (skip) {
+          opts.skip = skip
         }
       }
 
