@@ -5,7 +5,6 @@ const pump = require('pump')
 const { Writable } = require('stream')
 const series = require('async/series')
 const { spawnNodesWithId } = require('../utils/spawn')
-const { waitUntilConnected } = require('../utils/connections')
 const { getDescribe, getIt, expect } = require('../utils/mocha')
 const { expectIsPingResponse, isPong } = require('./utils')
 
@@ -17,8 +16,8 @@ module.exports = (createCommon, options) => {
   describe('.pingReadableStream', function () {
     this.timeout(15 * 1000)
 
-    let ipfsdA
-    let ipfsdB
+    let ipfsA
+    let ipfsB
 
     before(function (done) {
       this.timeout(60 * 1000)
@@ -30,12 +29,12 @@ module.exports = (createCommon, options) => {
           (cb) => {
             spawnNodesWithId(2, factory, (err, nodes) => {
               if (err) return cb(err)
-              ipfsdA = nodes[0]
-              ipfsdB = nodes[1]
+              ipfsA = nodes[0]
+              ipfsB = nodes[1]
               cb()
             })
           },
-          (cb) => waitUntilConnected(ipfsdA, ipfsdB, cb)
+          (cb) => ipfsA.swarm.connect(ipfsB.peerId.addresses[0], cb)
         ], done)
       })
     })
@@ -47,7 +46,7 @@ module.exports = (createCommon, options) => {
       const count = 3
 
       pump(
-        ipfsdA.pingReadableStream(ipfsdB.peerId.id, { count }),
+        ipfsA.pingReadableStream(ipfsB.peerId.id, { count }),
         new Writable({
           objectMode: true,
           write (res, enc, cb) {
@@ -74,7 +73,7 @@ module.exports = (createCommon, options) => {
       const count = 2
 
       pump(
-        ipfsdA.pingReadableStream(unknownPeerId, { count }),
+        ipfsA.pingReadableStream(unknownPeerId, { count }),
         new Writable({
           objectMode: true,
           write (res, enc, cb) {
@@ -106,7 +105,7 @@ module.exports = (createCommon, options) => {
       const count = 2
 
       pump(
-        ipfsdA.pingReadableStream(invalidPeerId, { count }),
+        ipfsA.pingReadableStream(invalidPeerId, { count }),
         new Writable({
           objectMode: true,
           write: (chunk, enc, cb) => cb()

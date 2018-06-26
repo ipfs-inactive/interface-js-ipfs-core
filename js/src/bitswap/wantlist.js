@@ -2,8 +2,7 @@
 'use strict'
 
 const waterfall = require('async/waterfall')
-const { waitUntilConnected } = require('../utils/connections')
-const { spawnNodes } = require('../utils/spawn')
+const { spawnNodesWithId } = require('../utils/spawn')
 const { getDescribe, getIt, expect } = require('../utils/mocha')
 const { waitForWantlistKey } = require('./utils')
 
@@ -25,7 +24,7 @@ module.exports = (createCommon, options) => {
       common.setup((err, factory) => {
         expect(err).to.not.exist()
 
-        spawnNodes(2, factory, (err, nodes) => {
+        spawnNodesWithId(2, factory, (err, nodes) => {
           expect(err).to.not.exist()
 
           ipfsA = nodes[0]
@@ -34,7 +33,7 @@ module.exports = (createCommon, options) => {
           // Add key to the wantlist for ipfsB
           ipfsB.block.get(key, () => {})
 
-          waitUntilConnected(ipfsA, ipfsB, done)
+          ipfsA.swarm.connect(ipfsB.peerId.addresses[0], done)
         })
       })
     })
