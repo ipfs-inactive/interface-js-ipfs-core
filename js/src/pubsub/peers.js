@@ -52,99 +52,97 @@ module.exports = (createCommon, options) => {
       ], done)
     })
 
-    describe('.peers', () => {
-      it('should not error when not subscribed to a topic', (done) => {
-        const topic = getTopic()
+    it('should not error when not subscribed to a topic', (done) => {
+      const topic = getTopic()
+      ipfs1.pubsub.peers(topic, (err, peers) => {
+        expect(err).to.not.exist()
+        // Should be empty() but as mentioned below go-ipfs returns more than it should
+        // expect(peers).to.be.empty()
+
+        done()
+      })
+    })
+
+    it('should not return extra peers', (done) => {
+      // Currently go-ipfs returns peers that have not been
+      // subscribed to the topic. Enable when go-ipfs has been fixed
+      const sub1 = (msg) => {}
+      const sub2 = (msg) => {}
+      const sub3 = (msg) => {}
+
+      const topic = getTopic()
+      const topicOther = topic + 'different topic'
+
+      parallel([
+        (cb) => ipfs1.pubsub.subscribe(topic, sub1, cb),
+        (cb) => ipfs2.pubsub.subscribe(topicOther, sub2, cb),
+        (cb) => ipfs3.pubsub.subscribe(topicOther, sub3, cb)
+      ], (err) => {
+        expect(err).to.not.exist()
+
         ipfs1.pubsub.peers(topic, (err, peers) => {
           expect(err).to.not.exist()
-          // Should be empty() but as mentioned below go-ipfs returns more than it should
-          // expect(peers).to.be.empty()
+          expect(peers).to.be.empty()
 
-          done()
+          parallel([
+            (cb) => ipfs1.pubsub.unsubscribe(topic, sub1, cb),
+            (cb) => ipfs2.pubsub.unsubscribe(topicOther, sub2, cb),
+            (cb) => ipfs3.pubsub.unsubscribe(topicOther, sub3, cb)
+          ], done)
         })
       })
+    })
 
-      it('should not return extra peers', (done) => {
-        // Currently go-ipfs returns peers that have not been
-        // subscribed to the topic. Enable when go-ipfs has been fixed
-        const sub1 = (msg) => {}
-        const sub2 = (msg) => {}
-        const sub3 = (msg) => {}
+    it('should return peers for a topic - one peer', (done) => {
+      // Currently go-ipfs returns peers that have not been
+      // subscribed to the topic. Enable when go-ipfs has been fixed
+      const sub1 = (msg) => {}
+      const sub2 = (msg) => {}
+      const sub3 = (msg) => {}
+      const topic = getTopic()
 
-        const topic = getTopic()
-        const topicOther = topic + 'different topic'
+      auto({
+        sub1: (cb) => ipfs1.pubsub.subscribe(topic, sub1, cb),
+        sub2: (cb) => ipfs2.pubsub.subscribe(topic, sub2, cb),
+        sub3: (cb) => ipfs3.pubsub.subscribe(topic, sub3, cb),
+        peers: ['sub1', 'sub2', 'sub3', (_, cb) => {
+          waitForPeers(ipfs1, topic, [ipfs2.peerId.id], cb)
+        }]
+      }, (err) => {
+        expect(err).to.not.exist()
 
         parallel([
-          (cb) => ipfs1.pubsub.subscribe(topic, sub1, cb),
-          (cb) => ipfs2.pubsub.subscribe(topicOther, sub2, cb),
-          (cb) => ipfs3.pubsub.subscribe(topicOther, sub3, cb)
-        ], (err) => {
-          expect(err).to.not.exist()
-
-          ipfs1.pubsub.peers(topic, (err, peers) => {
-            expect(err).to.not.exist()
-            expect(peers).to.be.empty()
-
-            parallel([
-              (cb) => ipfs1.pubsub.unsubscribe(topic, sub1, cb),
-              (cb) => ipfs2.pubsub.unsubscribe(topicOther, sub2, cb),
-              (cb) => ipfs3.pubsub.unsubscribe(topicOther, sub3, cb)
-            ], done)
-          })
-        })
+          (cb) => ipfs1.pubsub.unsubscribe(topic, sub1, cb),
+          (cb) => ipfs2.pubsub.unsubscribe(topic, sub2, cb),
+          (cb) => ipfs3.pubsub.unsubscribe(topic, sub3, cb)
+        ], done)
       })
+    })
 
-      it('should return peers for a topic - one peer', (done) => {
-        // Currently go-ipfs returns peers that have not been
-        // subscribed to the topic. Enable when go-ipfs has been fixed
-        const sub1 = (msg) => {}
-        const sub2 = (msg) => {}
-        const sub3 = (msg) => {}
-        const topic = getTopic()
+    it('should return peers for a topic - multiple peers', (done) => {
+      const sub1 = (msg) => {}
+      const sub2 = (msg) => {}
+      const sub3 = (msg) => {}
+      const topic = getTopic()
 
-        auto({
-          sub1: (cb) => ipfs1.pubsub.subscribe(topic, sub1, cb),
-          sub2: (cb) => ipfs2.pubsub.subscribe(topic, sub2, cb),
-          sub3: (cb) => ipfs3.pubsub.subscribe(topic, sub3, cb),
-          peers: ['sub1', 'sub2', 'sub3', (_, cb) => {
-            waitForPeers(ipfs1, topic, [ipfs2.peerId.id], cb)
-          }]
-        }, (err) => {
-          expect(err).to.not.exist()
+      auto({
+        sub1: (cb) => ipfs1.pubsub.subscribe(topic, sub1, cb),
+        sub2: (cb) => ipfs2.pubsub.subscribe(topic, sub2, cb),
+        sub3: (cb) => ipfs3.pubsub.subscribe(topic, sub3, cb),
+        peers: ['sub1', 'sub2', 'sub3', (_, cb) => {
+          waitForPeers(ipfs1, topic, [
+            ipfs2.peerId.id,
+            ipfs3.peerId.id
+          ], cb)
+        }]
+      }, (err) => {
+        expect(err).to.not.exist()
 
-          parallel([
-            (cb) => ipfs1.pubsub.unsubscribe(topic, sub1, cb),
-            (cb) => ipfs2.pubsub.unsubscribe(topic, sub2, cb),
-            (cb) => ipfs3.pubsub.unsubscribe(topic, sub3, cb)
-          ], done)
-        })
-      })
-
-      it('should return peers for a topic - multiple peers', (done) => {
-        const sub1 = (msg) => {}
-        const sub2 = (msg) => {}
-        const sub3 = (msg) => {}
-        const topic = getTopic()
-
-        auto({
-          sub1: (cb) => ipfs1.pubsub.subscribe(topic, sub1, cb),
-          sub2: (cb) => ipfs2.pubsub.subscribe(topic, sub2, cb),
-          sub3: (cb) => ipfs3.pubsub.subscribe(topic, sub3, cb),
-          peers: ['sub1', 'sub2', 'sub3', (_, cb) => {
-            waitForPeers(ipfs1, topic, [
-              ipfs2.peerId.id,
-              ipfs3.peerId.id
-            ], cb)
-          }]
-        }, (err) => {
-          expect(err).to.not.exist()
-
-          parallel([
-            (cb) => ipfs1.pubsub.unsubscribe(topic, sub1, cb),
-            (cb) => ipfs2.pubsub.unsubscribe(topic, sub2, cb),
-            (cb) => ipfs3.pubsub.unsubscribe(topic, sub3, cb)
-          ], done)
-        })
+        parallel([
+          (cb) => ipfs1.pubsub.unsubscribe(topic, sub1, cb),
+          (cb) => ipfs2.pubsub.unsubscribe(topic, sub2, cb),
+          (cb) => ipfs3.pubsub.unsubscribe(topic, sub3, cb)
+        ], done)
       })
     })
   })
