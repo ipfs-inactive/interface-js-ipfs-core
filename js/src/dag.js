@@ -71,14 +71,6 @@ module.exports = (common) => {
         }, done)
       })
 
-      // This works because dag-cbor will just treat pbNode as a regular object
-      it.skip('dag-pb node with wrong multicodec', (done) => {
-        ipfs.dag.put(pbNode, 'dag-cbor', 'sha3-512', (err) => {
-          expect(err).to.exist()
-          done()
-        })
-      })
-
       it('dag-cbor with default hash func (sha2-256)', (done) => {
         ipfs.dag.put(cborNode, {
           format: 'dag-cbor',
@@ -91,22 +83,6 @@ module.exports = (common) => {
           format: 'dag-cbor',
           hashAlg: 'sha3-512'
         }, done)
-      })
-
-      it('dag-cbor node with wrong multicodec', function (done) {
-        // This works in go-ipfs because dag-pb will serialize any object. If
-        // the object has neither a `data` nor `links` field it's serialized
-        // as an empty object
-        if (withGo) {
-          this.skip()
-        }
-        ipfs.dag.put(cborNode, {
-          format: 'dag-pb',
-          hashAlg: 'sha3-512'
-        }, (err) => {
-          expect(err).to.exist()
-          done()
-        })
       })
 
       it('returns the cid', (done) => {
