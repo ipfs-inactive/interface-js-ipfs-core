@@ -113,6 +113,10 @@ module.exports = (createCommon, options) => {
       })
     })
 
+    it('should not fail when calling put without options', (done) => {
+      ipfs.dag.put(pbNode, done)
+    })
+
     it.skip('should put by passing the cid instead of format and hashAlg', (done) => {})
 
     // TODO it.skip('Promises support', (done) => {})
