@@ -14,7 +14,7 @@ module.exports = (createCommon, options) => {
   const common = createCommon()
 
   describe('.pubsub.peers', function () {
-    this.timeout(120 * 1000)
+    this.timeout(80 * 1000)
 
     let ipfs1
     let ipfs2
