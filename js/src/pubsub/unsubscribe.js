@@ -1,7 +1,7 @@
 /* eslint-env mocha */
 'use strict'
 
-const eachSeries = require('async/each')
+const eachSeries = require('async/eachSeries')
 const timesSeries = require('async/timesSeries')
 const { getTopic } = require('./utils')
 const { getDescribe, getIt, expect } = require('../utils/mocha')
