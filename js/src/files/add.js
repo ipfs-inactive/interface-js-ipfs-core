@@ -5,6 +5,7 @@ const { fixtures } = require('./utils')
 const Readable = require('readable-stream').Readable
 const pull = require('pull-stream')
 const path = require('path')
+const hat = require('hat')
 const expectTimeout = require('../utils/expect-timeout')
 const { getDescribe, getIt, expect } = require('../utils/mocha')
 
@@ -297,6 +298,16 @@ module.exports = (createCommon, options) => {
           // 'ipfs.object.get(<hash>)' should timeout because content wasn't actually added
           return expectTimeout(ipfs.object.get(files[0].hash), 4000)
         })
+    })
+
+    it('should add and specify CID multibase', (done) => {
+      const data = Buffer.from('test' + hat())
+
+      ipfs.files.add(data, { cidBase: 'base32' }, (err, res) => {
+        expect(err).to.not.exist()
+        console.log({res})
+        done()
+      })
     })
   })
 }
