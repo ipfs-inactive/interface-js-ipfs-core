@@ -7,6 +7,20 @@
 * unsubscribe in series for go-ipfs ([#326](https://github.com/ipfs/interface-ipfs-core/issues/326)) ([8e487da](https://github.com/ipfs/interface-ipfs-core/commit/8e487da))
 
 
+### Breaking Changes
+
+* Git pre-push hook has been removed
+
+  This can cause problems during installation of npm dependencies, in case the repository
+  is not freshly cloned. Prior to 0.72.1 a pre-push hook has been set up to verify
+  changes before sending them to a remote repository. Due to the removal, existing
+  installations will have dead symlinks that cause `npm install` to fail.
+
+  The migration path is to remove the `pre-hook` file/symlink inside `.git/hooks` of
+  your clone.
+
+  [Read this issue](https://github.com/ipfs/js-ipfs/issues/1444) for more information.
+
 
 <a name="0.72.0"></a>
 # [0.72.0](https://github.com/ipfs/interface-ipfs-core/compare/v0.71.0...v0.72.0) (2018-07-05)
