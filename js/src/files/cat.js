@@ -130,6 +130,16 @@ module.exports = (createCommon, options) => {
         })
     })
 
+    it('should error on key/path with invalid encoding', () => {
+      const invalidCid = '/ipfs/QmUzdHisA7ouM8DM5rVAKursVK7t7tKeqDYGvmaCdJw5jEeesdlfjsldkfjsldkfjsdlkfjskldfj'
+
+      return ipfs.files.cat(invalidCid)
+        .catch((err) => {
+          expect(err).to.exist()
+          expect(err.toString()).to.contain('Error: selected encoding not supported')
+        })
+    })
+
     it('should error on unknown path (promised)', () => {
       return ipfs.files.cat(fixtures.smallFile.cid + '/does-not-exist')
         .catch((err) => {
