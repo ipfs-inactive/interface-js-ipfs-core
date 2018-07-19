@@ -38,7 +38,7 @@ ipfs.block.get(cid, function (err, block) {
 })
 ```
 
-A great source of [examples][] can be found in the tests for this API.
+A great source of [examples][examples-get] can be found in the tests for this API.
 
 #### `block.put`
 
@@ -108,7 +108,7 @@ ipfs.block.put(blob, cid, (err, block) => {
 })
 ```
 
-A great source of [examples][] can be found in the tests for this API.
+A great source of [examples][examples-put] can be found in the tests for this API.
 
 #### `block.stat`
 
@@ -154,8 +154,10 @@ ipfs.block.stat(cid, (err, stats) => {
 })
 ```
 
-A great source of [examples][] can be found in the tests for this API.
+A great source of [examples][examples-stat] can be found in the tests for this API.
 
 [block]:https://github.com/ipfs/js-ipfs-block
 [multihash]:https://github.com/multiformats/multihash
-[examples]: https://github.com/ipfs/interface-ipfs-core/blob/master/js/src/block.js
+[examples-get]:https://github.com/ipfs/interface-ipfs-core/blob/master/js/src/block/get.js
+[examples-put]:https://github.com/ipfs/interface-ipfs-core/blob/master/js/src/block/put.js
+[examples-stat]:https://github.com/ipfs/interface-ipfs-core/blob/master/js/src/block/stat.js
