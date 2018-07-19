@@ -88,7 +88,7 @@ module.exports = (createCommon, options) => {
 
       ipfs.resolve('/ipns/ipfs.io', (err, path) => {
         expect(err).to.not.exist()
-        expect(isIpfs.path(path)).to.be.true()
+        expect(isIpfs.ipfsPath(path)).to.be.true()
         done()
       })
     })
@@ -103,7 +103,7 @@ module.exports = (createCommon, options) => {
         ipfs.resolve(`/ipns/${res.name}`, { recursive: true }, (err, res) => {
           expect(err).to.not.exist()
           expect(res).to.not.equal('/ipns/ipfs.io')
-          expect(isIpfs.path(res)).to.be.true()
+          expect(isIpfs.ipfsPath(res)).to.be.true()
           done()
         })
       })
