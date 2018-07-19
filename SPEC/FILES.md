@@ -75,7 +75,7 @@ ipfs.ls(validCID, function (err, files) {
 })
 ```
 
-A great source of [examples](https://github.com/ipfs/interface-ipfs-core/tree/master/js/src/files) can be found in the tests for this API.
+A great source of [examples][] can be found in the tests for this API.
 
 #### `lsReadableStream`
 
@@ -123,7 +123,7 @@ stream.on('data', (file) => {
 })
 ```
 
-A great source of [examples](https://github.com/ipfs/interface-ipfs-core/tree/master/js/src/files) can be found in the tests for this API.
+A great source of [examples][] can be found in the tests for this API.
 
 #### `lsPullStream`
 
@@ -188,7 +188,7 @@ ipfs.files.add(files, function (err, files) {
 })
 ```
 
-A great source of [examples](https://github.com/ipfs/interface-ipfs-core/tree/master/js/src/files) can be found in the tests for this API.
+A great source of [examples][] can be found in the tests for this API.
 
 #### `files.addReadableStream`
 
@@ -238,7 +238,7 @@ stream.end()
 })
 ```
 
-A great source of [examples](https://github.com/ipfs/interface-ipfs-core/tree/master/js/src/files) can be found in the tests for this API.
+A great source of [examples][] can be found in the tests for this API.
 
 #### `files.addPullStream`
 
@@ -325,7 +325,7 @@ ipfs.files.cat(ipfsPath, function (err, file) {
 })
 ```
 
-A great source of [examples](https://github.com/ipfs/interface-ipfs-core/tree/master/js/src/files) can be found in the tests for this API.
+A great source of [examples][] can be found in the tests for this API.
 
 #### `files.catReadableStream`
 
@@ -358,7 +358,7 @@ const stream = ipfs.files.catReadableStream(ipfsPath)
 // stream will be a stream containing the data of the file requested
 ```
 
-A great source of [examples](https://github.com/ipfs/interface-ipfs-core/tree/master/js/src/files) can be found in the tests for this API.
+A great source of [examples][] can be found in the tests for this API.
 
 #### `files.catPullStream`
 
@@ -390,7 +390,7 @@ const stream = ipfs.files.catPullStream(ipfsPath)
 })
 ```
 
-A great source of [examples](https://github.com/ipfs/interface-ipfs-core/tree/master/js/src/files) can be found in the tests for this API.
+A great source of [examples][] can be found in the tests for this API.
 
 #### `files.get`
 
@@ -436,7 +436,7 @@ ipfs.files.get(validCID, function (err, files) {
 })
 ```
 
-A great source of [examples](https://github.com/ipfs/interface-ipfs-core/tree/master/js/src/files) can be found in the tests for this API.
+A great source of [examples][] can be found in the tests for this API.
 
 #### `files.getReadableStream`
 
@@ -484,7 +484,7 @@ stream.on('data', (file) => {
 })
 ```
 
-A great source of [examples](https://github.com/ipfs/interface-ipfs-core/tree/master/js/src/files) can be found in the tests for this API.
+A great source of [examples][] can be found in the tests for this API.
 
 #### `files.getPullStream`
 
@@ -535,7 +535,7 @@ pull(
 )
 ```
 
-A great source of [examples](https://github.com/ipfs/interface-ipfs-core/tree/master/js/src/files) can be found in the tests for this API.
+A great source of [examples][] can be found in the tests for this API.
 
 
 ##### `Go` **WIP**
@@ -587,7 +587,7 @@ pull(
 )
 ```
 
-A great source of [examples](https://github.com/ipfs/interface-ipfs-core/tree/master/js/src/files) can be found in the tests for this API.
+A great source of [examples][] can be found in the tests for this API.
 
 ---
 
@@ -997,7 +997,7 @@ ipfs.files.ls('/screenshots', function (err, files) {
 // 2018-01-22T18:08:49.184Z.png
 ```
 
-[examples]: https://github.com/ipfs/interface-ipfs-core/blob/master/js/src/files.js
+[examples]: https://github.com/ipfs/interface-ipfs-core/blob/master/js/src/files
 [b]: https://www.npmjs.com/package/buffer
 [rs]: https://www.npmjs.com/package/readable-stream
 [ps]: https://www.npmjs.com/package/pull-stream
