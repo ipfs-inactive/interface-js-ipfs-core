@@ -3,6 +3,7 @@
 
 const isIpfs = require('is-ipfs')
 const loadFixture = require('aegir/fixtures')
+const hat = require('hat')
 const { getDescribe, getIt, expect } = require('../utils/mocha')
 
 module.exports = (createCommon, options) => {
@@ -67,7 +68,7 @@ module.exports = (createCommon, options) => {
     })
 
     it('should not resolve an IPFS path non-link', (done) => {
-      const content = { path: { to: { file: 'hello world' } } }
+      const content = { path: { to: { file: hat() } } }
       const options = { format: 'dag-cbor', hashAlg: 'sha2-256' }
 
       ipfs.dag.put(content, options, (err, cid) => {
@@ -83,7 +84,8 @@ module.exports = (createCommon, options) => {
     })
 
     // Test resolve turns /ipns/domain.com into /ipfs/QmHash
-    it('should resolve an IPNS DNS link', function (done) {
+    // TODO skipped until we can find a way to remove dependency on external service
+    it.skip('should resolve an IPNS DNS link', function (done) {
       this.timeout(20 * 1000)
 
       ipfs.resolve('/ipns/ipfs.io', (err, path) => {
@@ -94,7 +96,8 @@ module.exports = (createCommon, options) => {
     })
 
     // Test resolve turns /ipns/QmPeerHash into /ipns/domain.com into /ipfs/QmHash
-    it('should resolve IPNS link recursively', function (done) {
+    // TODO skipped until we can find a way to remove dependency on external service
+    it.skip('should resolve IPNS link recursively', function (done) {
       this.timeout(2 * 60 * 1000)
 
       ipfs.name.publish('/ipns/ipfs.io', { resolve: false }, (err, res) => {
