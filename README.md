@@ -7,6 +7,10 @@
 
 > A test suite and interface you can use to implement a IPFS core interface.
 
+### Upgrading from < 0.72.1
+
+If you're upgrading from < 0.72.1 you might run into errors when installing dependencies due to non-existing git hooks. For fixes, please refer to the [changelog](https://github.com/ipfs/interface-ipfs-core/blob/master/CHANGELOG.md#breaking-changes).
+
 ## Lead Maintainer
 
 [Alan Shaw](http://github.com/alanshaw).
