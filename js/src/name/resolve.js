@@ -1,10 +1,11 @@
+/* eslint max-nested-callbacks: ["error", 6] */
 /* eslint-env mocha */
 'use strict'
 
-const each = require('async/each')
 const hat = require('hat')
 
-const { fixtures } = require('./utils')
+const { fixture } = require('./utils')
+const { spawnNodeWithId } = require('../utils/spawn')
 const { getDescribe, getIt, expect } = require('../utils/mocha')
 
 module.exports = (createCommon, options) => {
@@ -13,80 +14,68 @@ module.exports = (createCommon, options) => {
   const common = createCommon()
 
   describe('.name.resolve', function () {
-    this.timeout(50 * 1000)
-
     const keyName = hat()
     let ipfs
     let nodeId
     let keyId
 
     before(function (done) {
+      // CI takes longer to instantiate the daemon, so we need to increase the
+      // timeout for the before step
       this.timeout(60 * 1000)
 
       common.setup((err, factory) => {
         expect(err).to.not.exist()
 
-        factory.spawnNode((err, node) => {
+        spawnNodeWithId(factory, (err, node) => {
           expect(err).to.not.exist()
 
           ipfs = node
-          ipfs.id().then((res) => {
-            expect(res.id).to.exist()
+          nodeId = node.peerId.id
 
-            nodeId = res.id
-
-            ipfs.key.gen(keyName, { type: 'rsa', size: 2048 }, (err, key) => {
-              expect(err).to.not.exist()
-              expect(key).to.exist()
-              expect(key).to.have.property('name', keyName)
-              expect(key).to.have.property('id')
-
-              keyId = key.id
-              populate()
-            })
-          })
+          ipfs.files.add(fixture.data, { pin: false }, done)
         })
       })
-
-      function populate () {
-        each(fixtures.files, (file, cb) => {
-          ipfs.files.add(file.data, { pin: false }, cb)
-        }, done)
-      }
     })
 
     after((done) => common.teardown(done))
 
-    it('name resolve should resolve correctly after a publish', (done) => {
-      this.timeout(60 * 1000)
+    it('should resolve a record with the default params after a publish', (done) => {
+      this.timeout(50 * 1000)
 
-      const value = fixtures.files[0].cid
+      const value = fixture.cid
 
-      ipfs.name.publish(value, true, '1m', '10s', 'self', (err, res) => {
+      ipfs.name.publish(value, (err, res) => {
         expect(err).to.not.exist()
         expect(res).to.exist()
 
-        ipfs.name.resolve(nodeId, false, false, (err, res) => {
+        ipfs.name.resolve(nodeId, (err, res) => {
           expect(err).to.not.exist()
           expect(res).to.exist()
-          expect(res).to.equal(`/ipfs/${value}`)
+          expect(res.Path).to.equal(`/ipfs/${value}`)
 
           done()
         })
       })
     })
 
-    it('name resolve should not get the entry correctly if its validity time expired', (done) => {
-      this.timeout(60 * 1000)
+    it('should not get the entry if its validity time expired', (done) => {
+      this.timeout(50 * 1000)
 
-      const value = fixtures.files[0].cid
+      const value = fixture.cid
+      const publishOptions = {
+        resolve: true,
+        lifetime: '1ms',
+        ttl: '10s',
+        key: 'self'
+      }
 
-      ipfs.name.publish(value, true, '10ns', '10s', 'self', (err, res) => {
+      ipfs.name.publish(value, publishOptions, (err, res) => {
         expect(err).to.not.exist()
         expect(res).to.exist()
 
         setTimeout(function () {
-          ipfs.name.resolve(nodeId, false, false, (err, res) => {
+          ipfs.name.resolve(nodeId, (err, res) => {
             expect(err).to.exist()
             expect(res).to.not.exist()
 
@@ -96,25 +85,48 @@ module.exports = (createCommon, options) => {
       })
     })
 
-    it('name resolve should should go recursively until finding an ipfs hash', (done) => {
-      this.timeout(60 * 1000)
+    it('should recursively resolve to an IPFS hash', (done) => {
+      this.timeout(100 * 1000)
 
-      const value = fixtures.files[0].cid
+      const value = fixture.cid
+      const publishOptions = {
+        resolve: true,
+        lifetime: '24h',
+        ttl: '10s',
+        key: 'self'
+      }
 
-      ipfs.name.publish(value, true, '24h', '10s', 'self', (err, res) => {
+      // Generate new key
+      ipfs.key.gen(keyName, { type: 'rsa', size: 2048 }, (err, key) => {
         expect(err).to.not.exist()
-        expect(res).to.exist()
 
-        ipfs.name.publish(`/ipns/${nodeId}`, true, '24h', '10s', keyName, (err, res) => {
+        keyId = key.id
+
+        // publish ipfs
+        ipfs.name.publish(value, publishOptions, (err, res) => {
           expect(err).to.not.exist()
           expect(res).to.exist()
 
-          ipfs.name.resolve(keyId, false, true, (err, res) => {
+          publishOptions.key = keyName
+
+          // publish ipns with the generated key
+          ipfs.name.publish(`/ipns/${nodeId}`, publishOptions, (err, res) => {
             expect(err).to.not.exist()
             expect(res).to.exist()
-            expect(res).to.equal(`/ipfs/${value}`)
 
-            done()
+            const resolveOptions = {
+              nocache: false,
+              recursive: true
+            }
+
+            // recursive resolve (will get ipns first, and will resolve again to find the ipfs)
+            ipfs.name.resolve(keyId, resolveOptions, (err, res) => {
+              expect(err).to.not.exist()
+              expect(res).to.exist()
+              expect(res.Path).to.equal(`/ipfs/${value}`)
+
+              done()
+            })
           })
         })
       })

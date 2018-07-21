@@ -1,10 +1,10 @@
 /* eslint-env mocha */
 'use strict'
 
-const each = require('async/each')
 const hat = require('hat')
 
-const { fixtures } = require('./utils')
+const { fixture } = require('./utils')
+const { spawnNodeWithId } = require('../utils/spawn')
 const { getDescribe, getIt, expect } = require('../utils/mocha')
 
 module.exports = (createCommon, options) => {
@@ -13,83 +13,90 @@ module.exports = (createCommon, options) => {
   const common = createCommon()
 
   describe('.name.publish', function () {
-    this.timeout(50 * 1000)
-
     const keyName = hat()
     let ipfs
     let nodeId
-    let keyId
 
     before(function (done) {
+      // CI takes longer to instantiate the daemon, so we need to increase the
+      // timeout for the before step
       this.timeout(60 * 1000)
 
       common.setup((err, factory) => {
         expect(err).to.not.exist()
 
-        factory.spawnNode((err, node) => {
+        spawnNodeWithId(factory, (err, node) => {
           expect(err).to.not.exist()
 
           ipfs = node
-          ipfs.id().then((res) => {
-            expect(res.id).to.exist()
+          nodeId = node.peerId.id
 
-            nodeId = res.id
-
-            ipfs.key.gen(keyName, { type: 'rsa', size: 2048 }, (err, key) => {
-              expect(err).to.not.exist()
-              expect(key).to.exist()
-              expect(key).to.have.property('name', keyName)
-              expect(key).to.have.property('id')
-
-              keyId = key.id
-              populate()
-            })
-          })
+          ipfs.files.add(fixture.data, { pin: false }, done)
         })
       })
-
-      function populate () {
-        each(fixtures.files, (file, cb) => {
-          ipfs.files.add(file.data, { pin: false }, cb)
-        }, done)
-      }
     })
 
     after((done) => common.teardown(done))
 
-    it('name publish should publish correctly', (done) => {
-      const value = fixtures.files[0].cid
+    it('should publish an IPNS record with the default params', (done) => {
+      this.timeout(50 * 1000)
 
-      ipfs.name.publish(value, true, '1m', '10s', 'self', (err, res) => {
+      const value = fixture.cid
+
+      ipfs.name.publish(value, (err, res) => {
         expect(err).to.not.exist()
         expect(res).to.exist()
-        expect(res).to.equal(nodeId)
+        expect(res.Name).to.equal(nodeId)
+        expect(res.Value).to.equal(`/ipfs/${value}`)
 
         done()
       })
     })
 
-    it('name publish should publish correctly when the file was not added but resolve is disabled', (done) => {
+    it('should publish correctly when the file was not added but resolve is disabled', (done) => {
+      this.timeout(50 * 1000)
+
       const value = 'QmPFVLPmp9zv5Z5KUqLhe2EivAGccQW2r7M7jhVJGLZoZU'
 
-      ipfs.name.publish(value, false, '1m', '10s', 'self', (err, res) => {
+      const options = {
+        resolve: false,
+        lifetime: '1m',
+        ttl: '10s',
+        key: 'self'
+      }
+
+      ipfs.name.publish(value, options, (err, res) => {
         expect(err).to.not.exist()
         expect(res).to.exist()
-        expect(res).to.equal(nodeId)
+        expect(res.Name).to.equal(nodeId)
+        expect(res.Value).to.equal(`/ipfs/${value}`)
 
         done()
       })
     })
 
-    it('name publish should publish correctly when a new key is used', (done) => {
-      const value = fixtures.files[0].cid
+    it('should recursively resolve to an IPFS hash', (done) => {
+      this.timeout(90 * 1000)
 
-      ipfs.name.publish(value, false, '24h', '10s', keyName, (err, res) => {
+      const value = fixture.cid
+      const options = {
+        resolve: false,
+        lifetime: '24h',
+        ttl: '10s',
+        key: keyName
+      }
+
+      ipfs.key.gen(keyName, { type: 'rsa', size: 2048 }, (err, key) => {
         expect(err).to.not.exist()
-        expect(res).to.exist()
-        expect(res).to.equal(keyId)
 
-        done()
+        ipfs.name.publish(value, options, (err, res) => {
+          expect(err).to.not.exist()
+          expect(res).to.exist()
+          expect(res.Name).to.equal(key.id)
+          expect(res.Value).to.equal(`/ipfs/${value}`)
+
+          done()
+        })
       })
     })
   })
