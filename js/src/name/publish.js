@@ -46,8 +46,8 @@ module.exports = (createCommon, options) => {
       ipfs.name.publish(value, (err, res) => {
         expect(err).to.not.exist()
         expect(res).to.exist()
-        expect(res.Name).to.equal(nodeId)
-        expect(res.Value).to.equal(`/ipfs/${value}`)
+        expect(res.name).to.equal(nodeId)
+        expect(res.value).to.equal(`/ipfs/${value}`)
 
         done()
       })
@@ -68,8 +68,8 @@ module.exports = (createCommon, options) => {
       ipfs.name.publish(value, options, (err, res) => {
         expect(err).to.not.exist()
         expect(res).to.exist()
-        expect(res.Name).to.equal(nodeId)
-        expect(res.Value).to.equal(`/ipfs/${value}`)
+        expect(res.name).to.equal(nodeId)
+        expect(res.value).to.equal(`/ipfs/${value}`)
 
         done()
       })
@@ -92,8 +92,8 @@ module.exports = (createCommon, options) => {
         ipfs.name.publish(value, options, (err, res) => {
           expect(err).to.not.exist()
           expect(res).to.exist()
-          expect(res.Name).to.equal(key.id)
-          expect(res.Value).to.equal(`/ipfs/${value}`)
+          expect(res.name).to.equal(key.id)
+          expect(res.value).to.equal(`/ipfs/${value}`)
 
           done()
         })

@@ -52,7 +52,7 @@ module.exports = (createCommon, options) => {
         ipfs.name.resolve(nodeId, (err, res) => {
           expect(err).to.not.exist()
           expect(res).to.exist()
-          expect(res.Path).to.equal(`/ipfs/${value}`)
+          expect(res.path).to.equal(`/ipfs/${value}`)
 
           done()
         })
@@ -74,6 +74,7 @@ module.exports = (createCommon, options) => {
         expect(err).to.not.exist()
         expect(res).to.exist()
 
+        // guarantee that the record has an expired validity.
         setTimeout(function () {
           ipfs.name.resolve(nodeId, (err, res) => {
             expect(err).to.exist()
@@ -123,7 +124,7 @@ module.exports = (createCommon, options) => {
             ipfs.name.resolve(keyId, resolveOptions, (err, res) => {
               expect(err).to.not.exist()
               expect(res).to.exist()
-              expect(res.Path).to.equal(`/ipfs/${value}`)
+              expect(res.path).to.equal(`/ipfs/${value}`)
 
               done()
             })
