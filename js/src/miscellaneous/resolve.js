@@ -84,8 +84,7 @@ module.exports = (createCommon, options) => {
     })
 
     // Test resolve turns /ipns/domain.com into /ipfs/QmHash
-    // TODO skipped until we can find a way to remove dependency on external service
-    it.skip('should resolve an IPNS DNS link', function (done) {
+    it('should resolve an IPNS DNS link', function (done) {
       this.timeout(20 * 1000)
 
       ipfs.resolve('/ipns/ipfs.io', (err, path) => {
@@ -96,8 +95,7 @@ module.exports = (createCommon, options) => {
     })
 
     // Test resolve turns /ipns/QmPeerHash into /ipns/domain.com into /ipfs/QmHash
-    // TODO skipped until we can find a way to remove dependency on external service
-    it.skip('should resolve IPNS link recursively', function (done) {
+    it('should resolve IPNS link recursively', function (done) {
       this.timeout(2 * 60 * 1000)
 
       ipfs.name.publish('/ipns/ipfs.io', { resolve: false }, (err, res) => {
