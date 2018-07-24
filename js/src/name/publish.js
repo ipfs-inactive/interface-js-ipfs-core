@@ -75,7 +75,7 @@ module.exports = (createCommon, options) => {
       })
     })
 
-    it('should recursively resolve to an IPFS hash', function (done) {
+    it('should publish with a key received as param, instead of using the key of the node', function (done) {
       this.timeout(90 * 1000)
 
       const value = fixture.cid
