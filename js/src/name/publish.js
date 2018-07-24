@@ -38,7 +38,7 @@ module.exports = (createCommon, options) => {
 
     after((done) => common.teardown(done))
 
-    it('should publish an IPNS record with the default params', (done) => {
+    it('should publish an IPNS record with the default params', function (done) {
       this.timeout(50 * 1000)
 
       const value = fixture.cid
@@ -53,7 +53,7 @@ module.exports = (createCommon, options) => {
       })
     })
 
-    it('should publish correctly when the file was not added but resolve is disabled', (done) => {
+    it('should publish correctly when the file was not added but resolve is disabled', function (done) {
       this.timeout(50 * 1000)
 
       const value = 'QmPFVLPmp9zv5Z5KUqLhe2EivAGccQW2r7M7jhVJGLZoZU'
@@ -75,7 +75,7 @@ module.exports = (createCommon, options) => {
       })
     })
 
-    it('should recursively resolve to an IPFS hash', (done) => {
+    it('should recursively resolve to an IPFS hash', function (done) {
       this.timeout(90 * 1000)
 
       const value = fixture.cid
@@ -86,7 +86,7 @@ module.exports = (createCommon, options) => {
         key: keyName
       }
 
-      ipfs.key.gen(keyName, { type: 'rsa', size: 2048 }, (err, key) => {
+      ipfs.key.gen(keyName, { type: 'rsa', size: 2048 }, function (err, key) {
         expect(err).to.not.exist()
 
         ipfs.name.publish(value, options, (err, res) => {

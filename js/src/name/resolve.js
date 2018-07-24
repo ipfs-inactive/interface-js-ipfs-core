@@ -40,7 +40,7 @@ module.exports = (createCommon, options) => {
 
     after((done) => common.teardown(done))
 
-    it('should resolve a record with the default params after a publish', (done) => {
+    it('should resolve a record with the default params after a publish', function (done) {
       this.timeout(50 * 1000)
 
       const value = fixture.cid
@@ -59,7 +59,7 @@ module.exports = (createCommon, options) => {
       })
     })
 
-    it('should not get the entry if its validity time expired', (done) => {
+    it('should not get the entry if its validity time expired', function (done) {
       this.timeout(50 * 1000)
 
       const value = fixture.cid
@@ -78,6 +78,7 @@ module.exports = (createCommon, options) => {
         setTimeout(function () {
           ipfs.name.resolve(nodeId, (err, res) => {
             expect(err).to.exist()
+            expect(err.message).to.equal('record has expired')
             expect(res).to.not.exist()
 
             done()
@@ -86,12 +87,12 @@ module.exports = (createCommon, options) => {
       })
     })
 
-    it('should recursively resolve to an IPFS hash', (done) => {
+    it('should recursively resolve to an IPFS hash', function (done) {
       this.timeout(100 * 1000)
 
       const value = fixture.cid
       const publishOptions = {
-        resolve: true,
+        resolve: false,
         lifetime: '24h',
         ttl: '10s',
         key: 'self'
