@@ -102,8 +102,8 @@ module.exports = (createCommon, options) => {
 
     it('should not fail when calling put without options (promised)', () => {
       return ipfs.dag.put(cborNode)
-    })    
-    
+    })
+
     it('should set defaults when calling put without options', (done) => {
       ipfs.dag.put(cborNode, (err, cid) => {
         expect(err).to.not.exist()
@@ -112,7 +112,7 @@ module.exports = (createCommon, options) => {
         done()
       })
     })
-    
+
     it('should set defaults when calling put without options (promised)', () => {
       return ipfs.dag.put(cborNode)
         .then((cid) => {
