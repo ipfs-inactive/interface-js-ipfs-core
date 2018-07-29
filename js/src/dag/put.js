@@ -100,7 +100,7 @@ module.exports = (createCommon, options) => {
       ipfs.dag.put(cborNode, done)
     })
 
-    it('should not fail when calling put without options (promised)', (done) => {
+    it('should not fail when calling put without options (promised)', () => {
       return ipfs.dag.put(cborNode)
     })    
     
