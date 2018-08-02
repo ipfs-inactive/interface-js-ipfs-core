@@ -67,7 +67,7 @@ module.exports = (createCommon, options) => {
       ], done)
     })
 
-    it('should take options to override timout config', function (done) {
+    it('should take options to override timeout config', function (done) {
       const options = {
         timeout: 1
       }
