@@ -14,7 +14,7 @@
 
 `key` is the key of the value that should be fetched from the config file. If no key is passed, then the whole config should be returned. `key` should be of type String.
 
-`callback` must follow `function (err, config) {}` signature, where `err` is an error if the operation was not successful and `config` is a JSON object containing the configuration of the IPFS node.
+`callback` must follow `function (err, config) {}` signature, where `err` is an error if the operation was not successful and `config` is an object containing the configuration of the IPFS node.
 
 If no callback is passed, a [promise][] is returned
 
