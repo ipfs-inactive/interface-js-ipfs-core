@@ -34,7 +34,7 @@ module.exports = (createCommon, options) => {
       ipfs.config.get((err, config) => {
         expect(err).to.not.exist()
         expect(config).to.be.an('object')
-        expect(isPlainObject(config)).to.be.true
+        expect(isPlainObject(config)).to.equal(true)
         done()
       })
     })
@@ -43,7 +43,7 @@ module.exports = (createCommon, options) => {
       return ipfs.config.get()
         .then((config) => {
           expect(config).to.be.an('object')
-          expect(isPlainObject(config)).to.be.true
+          expect(isPlainObject(config)).to.equal(true)
         })
     })
 
