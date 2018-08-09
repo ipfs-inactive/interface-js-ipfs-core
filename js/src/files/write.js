@@ -48,5 +48,14 @@ module.exports = (createCommon, options) => {
         done()
       })
     })
+
+    it('should write to deeply nested non existent file with create and parents flags, expect no error', function (done) {
+      const testDir = `/foo/bar/baz/test-${hat()}`
+
+      ipfs.files.write(testDir, Buffer.from('Hello, world!'), {create: true, parents: true}, (err) => {
+        expect(err).to.not.exist()
+        done()
+      })
+    })
   })
 }
