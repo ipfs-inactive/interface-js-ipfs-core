@@ -39,7 +39,7 @@ module.exports = (createCommon, options) => {
     after((done) => common.teardown(done))
 
     it('should publish an IPNS record with the default params', function (done) {
-      this.timeout(50 * 1000)
+      this.timeout(120 * 1000)
 
       const value = fixture.cid
 
@@ -54,7 +54,7 @@ module.exports = (createCommon, options) => {
     })
 
     it('should publish correctly when the file was not added but resolve is disabled', function (done) {
-      this.timeout(50 * 1000)
+      this.timeout(120 * 1000)
 
       const value = 'QmPFVLPmp9zv5Z5KUqLhe2EivAGccQW2r7M7jhVJGLZoZU'
 
@@ -76,7 +76,7 @@ module.exports = (createCommon, options) => {
     })
 
     it('should publish with a key received as param, instead of using the key of the node', function (done) {
-      this.timeout(90 * 1000)
+      this.timeout(140 * 1000)
 
       const value = fixture.cid
       const options = {
