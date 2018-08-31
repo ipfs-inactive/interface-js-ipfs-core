@@ -2,6 +2,9 @@
 
 * [name.publish](#namepublish)
 * [name.resolve](#nameresolve)
+* [name.pubsub.cancel](#namepubsubcancel)
+* [name.pubsub.state](#namepubsubstate)
+* [name.pubsub.subs](#namepubsubsubs)
 
 #### `name.publish`
 
@@ -76,6 +79,8 @@ This way, you can republish a new version of your website under the same address
 
 `callback` must follow `function (err, name) {}` signature, where `err` is an error if the operation was not successful. `name` is a string that contains the IPFS hash.
 
+`callback` must follow `function (err, result) {}` signature, where `err` is an error if the operation was not successful. `result` is an object that contains the resulting path, such as:
+
 If no `callback` is passed, a promise is returned.
 
 **Example:**
@@ -84,8 +89,93 @@ If no `callback` is passed, a promise is returned.
 // The IPNS address you want to resolve.
 const addr = '/ipns/ipfs.io'
 
-ipfs.name.resolve(addr, function (err, name) {
-    console.log(name)
+ipfs.name.resolve(addr, function (err, result) {
+    console.log(result.path)
     // /ipfs/QmQrX8hka2BtNHa8N8arAq16TCVx5qHcb46c5yPewRycLm
+})
+```
+
+#### `name.pubsub.cancel`
+
+> Cancel a name subscription.
+
+##### `Go` **WIP**
+
+##### `JavaScript` - ipfs.name.pubsub.cancel(arg, [callback])
+
+`arg` is the name of the subscription to cancel.
+
+`callback` must follow `function (err, result) {}` signature, where `err` is an error if the operation was not successful. `result` is an object that contains the result of the operation, such as:
+
+```JavaScript
+{
+  canceled: true
+}
+```
+
+If no `callback` is passed, a promise is returned.
+
+**Example:**
+
+```JavaScript
+const name = 'QmQrX8hka2BtNHa8N8arAq16TCVx5qHcb46c5yPewRycLm'
+
+ipfs.name.pubsub.cancel(name, function (err, result) {
+    console.log(result.canceled)
+    // true
+})
+```
+
+#### `name.pubsub.state`
+
+> Query the state of IPNS pubsub.
+
+##### `Go` **WIP**
+
+##### `JavaScript` - ipfs.name.pubsub.state([callback])
+
+`callback` must follow `function (err, result) {}` signature, where `err` is an error if the operation was not successful. `result` is an object that contains the result of the operation, such as:
+
+```JavaScript
+{
+  enabled: true
+}
+```
+
+If no `callback` is passed, a promise is returned.
+
+**Example:**
+
+```JavaScript
+ipfs.name.pubsub.state(function (err, result) {
+    console.log(result.enabled)
+    // true
+})
+```
+
+#### `name.pubsub.subs`
+
+> Show current name subscriptions.
+
+##### `Go` **WIP**
+
+##### `JavaScript` - ipfs.name.pubsub.subs([callback])
+
+`callback` must follow `function (err, result) {}` signature, where `err` is an error if the operation was not successful. `result` is an object that contains the result of the operation, such as:
+
+```JavaScript
+{
+  strings: ['QmQrX8hka2BtNHa8N8arAq16TCVx5qHcb46c5yPewRycLm']
+}
+```
+
+If no `callback` is passed, a promise is returned.
+
+**Example:**
+
+```JavaScript
+ipfs.name.pubsub.subs(function (err, result) {
+    console.log(result.strings)
+    // ['QmQrX8hka2BtNHa8N8arAq16TCVx5qHcb46c5yPewRycLm']
 })
 ```
