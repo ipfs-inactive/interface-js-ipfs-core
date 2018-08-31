@@ -165,7 +165,7 @@ ipfs.name.pubsub.state(function (err, result) {
 
 ```JavaScript
 {
-  strings: ['QmQrX8hka2BtNHa8N8arAq16TCVx5qHcb46c5yPewRycLm']
+  strings: ['/ipns/QmQrX8hka2BtNHa8N8arAq16TCVx5qHcb46c5yPewRycLm']
 }
 ```
 
@@ -176,6 +176,6 @@ If no `callback` is passed, a promise is returned.
 ```JavaScript
 ipfs.name.pubsub.subs(function (err, result) {
     console.log(result.strings)
-    // ['QmQrX8hka2BtNHa8N8arAq16TCVx5qHcb46c5yPewRycLm']
+    // ['/ipns/QmQrX8hka2BtNHa8N8arAq16TCVx5qHcb46c5yPewRycLm']
 })
 ```
