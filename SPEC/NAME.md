@@ -77,9 +77,7 @@ This way, you can republish a new version of your website under the same address
 }
 ```
 
-`callback` must follow `function (err, name) {}` signature, where `err` is an error if the operation was not successful. `name` is a string that contains the IPFS hash.
-
-`callback` must follow `function (err, result) {}` signature, where `err` is an error if the operation was not successful. `result` is an object that contains the resulting path, such as:
+`callback` must follow `function (err, result) {}` signature, where `err` is an error if the operation was not successful. `result` is an object that contains the resulting path.
 
 If no `callback` is passed, a promise is returned.
 
