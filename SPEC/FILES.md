@@ -192,7 +192,7 @@ let hash = results[0].hash; // "Qm...WW"
 Now [ipfs.io/ipfs/Qm...WW](https://ipfs.io/ipfs/QmNz1UBzpdd4HfZ3qir3aPiRdX5a93XwTuDNyXRc6PKhWW)
 returns the "ABC" string.
 
-The following code creates a directory object:
+The following allows you to add multiple files at once. Note that intermediate directories in file paths will be automatically created and returned in the response along with files:
 
 ```JavaScript
 const files = [
