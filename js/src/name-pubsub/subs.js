@@ -2,14 +2,14 @@
 /* eslint-env mocha */
 'use strict'
 
+const series = require('async/series')
 const loadFixture = require('aegir/fixtures')
 
 const { spawnNodeWithId } = require('../utils/spawn')
 const { getDescribe, getIt, expect } = require('../utils/mocha')
 
 const fixture = Object.freeze({
-  data: loadFixture('js/test/fixtures/testfile.txt', 'interface-ipfs-core'),
-  cid: 'Qma4hjFTnCasJ8PVp3mZbZK5g2vGDT4LByLJ7m8ciyRFZP'
+  data: loadFixture('js/test/fixtures/testfile.txt', 'interface-ipfs-core')
 })
 
 module.exports = (createCommon, options) => {
@@ -20,6 +20,7 @@ module.exports = (createCommon, options) => {
   describe('.name.pubsub.subs', function () {
     let ipfs
     let nodeId
+    let value
 
     before(function (done) {
       // CI takes longer to instantiate the daemon, so we need to increase the
@@ -35,45 +36,45 @@ module.exports = (createCommon, options) => {
           ipfs = node
           nodeId = node.peerId.id
 
-          ipfs.files.add(fixture.data, { pin: false }, done)
+          ipfs.files.add(fixture.data, { pin: false }, (err, res) => {
+            expect(err).to.not.exist()
+
+            value = res[0].path
+            done()
+          })
         })
       })
     })
 
     after((done) => common.teardown(done))
 
-    it('should get a null result of subscriptions before any resolve', function (done) {
+    it('should get an empty array as a result of subscriptions before any resolve', function (done) {
       this.timeout(60 * 1000)
 
       ipfs.name.pubsub.subs((err, res) => {
         expect(err).to.not.exist()
         expect(res).to.exist()
-        expect(res).to.have.property('strings')
-        expect(res.strings).to.eql(null)
+        expect(res).to.eql([])
 
         done()
       })
     })
 
     it('should get the list of subscriptions updated after a resolve', function (done) {
-      this.timeout(140 * 1000)
-      const value = fixture.cid
+      this.timeout(300 * 1000)
 
-      ipfs.name.publish(value, { resolve: false }, (err, res) => {
+      series([
+        (cb) => ipfs.name.pubsub.subs(cb),
+        (cb) => ipfs.name.publish(value, { resolve: false }, cb),
+        (cb) => ipfs.name.resolve(nodeId, cb),
+        (cb) => ipfs.name.pubsub.subs(cb)
+      ], (err, res) => {
         expect(err).to.not.exist()
+        expect(res).to.exist()
+        expect(res[0]).to.eql([]) // initally empty
+        expect(res[3]).to.be.an('array').that.does.include(`/ipns/${nodeId}`)
 
-        ipfs.name.resolve(nodeId, (err) => {
-          expect(err).to.not.exist()
-
-          ipfs.name.pubsub.subs((err, res) => {
-            expect(err).to.not.exist()
-            expect(res).to.exist()
-            expect(res).to.have.property('strings')
-            expect(res.strings).to.be.an('array').that.does.include(`/ipns/${nodeId}`)
-
-            done()
-          })
-        })
+        done()
       })
     })
   })

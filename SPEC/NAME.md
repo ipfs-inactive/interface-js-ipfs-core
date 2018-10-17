@@ -1,10 +1,10 @@
 # Name API
 
 * [name.publish](#namepublish)
-* [name.resolve](#nameresolve)
 * [name.pubsub.cancel](#namepubsubcancel)
 * [name.pubsub.state](#namepubsubstate)
 * [name.pubsub.subs](#namepubsubsubs)
+* [name.resolve](#nameresolve)
 
 #### `name.publish`
 
@@ -57,41 +57,6 @@ ipfs.name.publish(addr, function (err, res) {
 ```
 
 This way, you can republish a new version of your website under the same address. By default, `ipfs.name.publish` will use the Peer ID. If you want to have multiple websites (for example) under the same IPFS module, you can always check the [key API](./KEY.md).
-
-#### `name.resolve`
-
-> Resolve an IPNS name.
-
-##### `Go` **WIP**
-
-##### `JavaScript` - ipfs.name.resolve(value, [options, callback])
-
-`value` is a IPNS address, such as: `/ipns/ipfs.io`.
-
-`options` is an object that may contain:
-
-```JavaScript
-{
-  recursive: // bool - Resolve until the result is not an IPNS name. Default: false.
-  nocache: // bool - Do not use cached entries. Default: false.
-}
-```
-
-`callback` must follow `function (err, result) {}` signature, where `err` is an error if the operation was not successful. `result` is an object that contains the resulting path.
-
-If no `callback` is passed, a promise is returned.
-
-**Example:**
-
-```JavaScript
-// The IPNS address you want to resolve.
-const addr = '/ipns/ipfs.io'
-
-ipfs.name.resolve(addr, function (err, result) {
-    console.log(result.path)
-    // /ipfs/QmQrX8hka2BtNHa8N8arAq16TCVx5qHcb46c5yPewRycLm
-})
-```
 
 #### `name.pubsub.cancel`
 
@@ -159,12 +124,10 @@ ipfs.name.pubsub.state(function (err, result) {
 
 ##### `JavaScript` - ipfs.name.pubsub.subs([callback])
 
-`callback` must follow `function (err, result) {}` signature, where `err` is an error if the operation was not successful. `result` is an object that contains the result of the operation, such as:
+`callback` must follow `function (err, result) {}` signature, where `err` is an error if the operation was not successful. `result` is an array of subscriptions, such as:
 
 ```JavaScript
-{
-  strings: ['/ipns/QmQrX8hka2BtNHa8N8arAq16TCVx5qHcb46c5yPewRycLm']
-}
+['/ipns/QmQrX8hka2BtNHa8N8arAq16TCVx5qHcb46c5yPewRycLm']
 ```
 
 If no `callback` is passed, a promise is returned.
@@ -173,7 +136,42 @@ If no `callback` is passed, a promise is returned.
 
 ```JavaScript
 ipfs.name.pubsub.subs(function (err, result) {
-    console.log(result.strings)
+    console.log(result)
     // ['/ipns/QmQrX8hka2BtNHa8N8arAq16TCVx5qHcb46c5yPewRycLm']
+})
+```
+
+#### `name.resolve`
+
+> Resolve an IPNS name.
+
+##### `Go` **WIP**
+
+##### `JavaScript` - ipfs.name.resolve(value, [options, callback])
+
+`value` is a IPNS address, such as: `/ipns/ipfs.io`.
+
+`options` is an object that may contain:
+
+```JavaScript
+{
+  recursive: // bool - Resolve until the result is not an IPNS name. Default: false.
+  nocache: // bool - Do not use cached entries. Default: false.
+}
+```
+
+`callback` must follow `function (err, name) {}` signature, where `err` is an error if the operation was not successful. `name` is a string that contains the IPFS hash.
+
+If no `callback` is passed, a promise is returned.
+
+**Example:**
+
+```JavaScript
+// The IPNS address you want to resolve.
+const addr = '/ipns/ipfs.io'
+
+ipfs.name.resolve(addr, function (err, name) {
+    console.log(name)
+    // /ipfs/QmQrX8hka2BtNHa8N8arAq16TCVx5qHcb46c5yPewRycLm
 })
 ```
