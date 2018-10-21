@@ -3,15 +3,16 @@
 const loadFixture = require('aegir/fixtures')
 
 exports.fixtures = Object.freeze({
+  // NOTE: files under 'directory' need to be different than standalone ones in 'files'
   directory: Object.freeze({
-    cid: 'QmVJV2VF9Qf7rJUFdimhpZDhkyyumM1i4CjjGcss5rqJPa',
+    cid: 'QmY8KdYQSYKFU5hM7F5ioZ5yYSgV5VZ1kDEdqfRL3rFgcd',
     files: Object.freeze([Object.freeze({
       path: 'test-folder/ipfs-add.js',
-      data: loadFixture('js/test/fixtures/test-folder/ipfs-add.js', 'interface-ipfs-core'),
-      cid: 'QmU7wetVaAqc3Meurif9hcYBHGvQmL5QdpPJYBoZizyTNL'
+      data: loadFixture('test/fixtures/test-folder/ipfs-add.js', 'interface-ipfs-core'),
+      cid: 'QmbKtKBrmeRHjNCwR4zAfCJdMVu6dgmwk9M9AE9pUM9RgG'
     }), Object.freeze({
       path: 'test-folder/files/ipfs.txt',
-      data: loadFixture('js/test/fixtures/test-folder/files/ipfs.txt', 'interface-ipfs-core'),
+      data: loadFixture('test/fixtures/test-folder/files/ipfs.txt', 'interface-ipfs-core'),
       cid: 'QmdFyxZXsFiP4csgfM5uPu99AvFiKH62CSPDw5TP92nr7w'
     })])
   }),

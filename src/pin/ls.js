@@ -31,25 +31,18 @@ module.exports = (createCommon, options) => {
 
       function populate () {
         series([
-          cb => { // two files wrapped in a directory, root CID pinned recursively
+          // two files wrapped in directories, only root CID pinned recursively
+          cb => {
             const dir = fixtures.directory.files.map((file) => ({ path: file.path, content: file.data }))
-            ipfs.files.add(dir, { pin: false }, (err, res) => {
-              if (err) return cb(err)
-              ipfs.pin.add(fixtures.directory.cid, { recursive: true }, cb)
-            })
+            ipfs.add(dir, { pin: false, cidVersion: 0 }, cb)
           },
-          cb => { // a file (CID pinned recursively)
-            ipfs.files.add(fixtures.files[0].data, { pin: false }, (err, res) => {
-              if (err) return cb(err)
-              ipfs.pin.add(fixtures.files[0].cid, { recursive: true }, cb)
-            })
-          },
-          cb => { // a single CID (pinned directly)
-            ipfs.files.add(fixtures.files[1].data, { pin: false }, (err, res) => {
-              if (err) return cb(err)
-              ipfs.pin.add(fixtures.files[1].cid, { recursive: false }, cb)
-            })
-          }
+          cb => ipfs.pin.add(fixtures.directory.cid, { recursive: true }, cb),
+          // a file (CID pinned recursively)
+          cb => ipfs.add(fixtures.files[0].data, { pin: false, cidVersion: 0 }, cb),
+          cb => ipfs.pin.add(fixtures.files[0].cid, { recursive: true }, cb),
+          // a single CID (pinned directly)
+          cb => ipfs.add(fixtures.files[1].data, { pin: false, cidVersion: 0 }, cb),
+          cb => ipfs.pin.add(fixtures.files[1].cid, { recursive: false }, cb)
         ], done)
       }
     })
@@ -87,6 +80,14 @@ module.exports = (createCommon, options) => {
           type: 'recursive',
           hash: fixtures.directory.cid
         })
+        expect(pinset).to.deep.include({
+          type: 'indirect',
+          hash: fixtures.directory.files[0].cid
+        })
+        expect(pinset).to.deep.include({
+          type: 'indirect',
+          hash: fixtures.directory.files[1].cid
+        })
         done()
       })
     })
@@ -95,7 +96,6 @@ module.exports = (createCommon, options) => {
       ipfs.pin.ls((err, pinset) => {
         expect(err).to.not.exist()
         expect(pinset).to.not.be.empty()
-        expect(pinset).to.have.lengthOf(15)
         // check the three "roots"
         expect(pinset).to.deep.include({
           type: 'recursive',
@@ -109,6 +109,14 @@ module.exports = (createCommon, options) => {
           type: 'direct',
           hash: fixtures.files[1].cid
         })
+        expect(pinset).to.deep.include({
+          type: 'indirect',
+          hash: fixtures.directory.files[0].cid
+        })
+        expect(pinset).to.deep.include({
+          type: 'indirect',
+          hash: fixtures.directory.files[1].cid
+        })
         done()
       })
     })
@@ -117,7 +125,6 @@ module.exports = (createCommon, options) => {
       return ipfs.pin.ls()
         .then((pinset) => {
           expect(pinset).to.not.be.empty()
-          expect(pinset).to.have.lengthOf(15)
           // check our three "roots"
           expect(pinset).to.deep.include({
             type: 'recursive',
@@ -131,12 +138,21 @@ module.exports = (createCommon, options) => {
             type: 'direct',
             hash: fixtures.files[1].cid
           })
+          expect(pinset).to.deep.include({
+            type: 'indirect',
+            hash: fixtures.directory.files[0].cid
+          })
+          expect(pinset).to.deep.include({
+            type: 'indirect',
+            hash: fixtures.directory.files[1].cid
+          })
         })
     })
 
     it('should list all direct pins', (done) => {
       ipfs.pin.ls({ type: 'direct' }, (err, pinset) => {
         expect(err).to.not.exist()
+        expect(pinset).to.have.lengthOf(1)
         expect(pinset).to.deep.include({
           type: 'direct',
           hash: fixtures.files[1].cid
@@ -166,11 +182,11 @@ module.exports = (createCommon, options) => {
         })
     })
 
-    it('should throw an error on missing direct pins for a specific path', (done) => {
-      // alice.txt is an indirect pin, so lookup for direct one should throw an error
+    it('should throw an error on missing direct pins for existing path', (done) => {
+      // ipfs.txt is an indirect pin, so lookup for direct one should throw an error
       ipfs.pin.ls(`/ipfs/${fixtures.directory.cid}/files/ipfs.txt`, { type: 'direct' }, (err, pinset) => {
+        expect(err).to.exist()
         expect(pinset).to.not.exist()
-        expect(err).to.not.be.empty()
         expect(err.message).to.be.equal(`path '/ipfs/${fixtures.directory.cid}/files/ipfs.txt' is not pinned`)
         done()
       })
@@ -178,9 +194,9 @@ module.exports = (createCommon, options) => {
 
     it('should throw an error on missing link for a specific path', (done) => {
       ipfs.pin.ls(`/ipfs/${fixtures.directory.cid}/I-DONT-EXIST.txt`, { type: 'direct' }, (err, pinset) => {
+        expect(err).to.exist()
         expect(pinset).to.not.exist()
-        expect(err).to.not.be.empty()
-        expect(err.message).to.be.equal('no link by that name')
+        expect(err.message).to.be.equal(`no link named "I-DONT-EXIST.txt" under ${fixtures.directory.cid}`)
         done()
       })
     })
