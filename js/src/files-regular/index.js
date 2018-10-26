@@ -11,11 +11,10 @@ const tests = {
   catPullStream: require('./cat-pull-stream'),
   get: require('./get'),
   getReadableStream: require('./get-readable-stream'),
-  getPullStream: require('./get-pull-stream')
-  // TODO create tests for ls
-  // ls: require('./ls'),
-  // lsReadableStream: require('./ls-readable-stream'),
-  // lsPullStream: require('./ls-pull-stream')
+  getPullStream: require('./get-pull-stream'),
+  ls: require('./ls'),
+  lsReadableStream: require('./ls-readable-stream'),
+  lsPullStream: require('./ls-pull-stream')
 }
 
 module.exports = createSuite(tests)

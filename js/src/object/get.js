@@ -308,7 +308,7 @@ module.exports = (createCommon, options) => {
         }
       }
 
-      return ipfs.files.add({
+      return ipfs.add({
         path: '',
         content: data
       })
