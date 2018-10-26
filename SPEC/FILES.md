@@ -221,6 +221,75 @@ pull(
 )
 ```
 
+#### `addFromFs`
+
+> Add files or entire directories from the FileSystem to IPFS
+
+##### `Go` **WIP**
+
+##### `JavaScript` - ipfs.addFromFs(path, [option], [callback])
+
+Reads a file or folder from `path` on the filesystem  and adds it to IPFS. Options:
+- **recursive**: If `path` is a directory, use option `{ recursive: true }` to add the directory and all its sub-directories.
+  - **ignore**: To exclude fileglobs from the directory, use option `{ ignore: ['ignore/this/folder/**', 'and/this/file'] }`.
+  - **hidden**: hidden/dot files (files or folders starting with a `.`, for example, `.git/`) are not included by default. To add them, use the option `{ hidden: true }`.
+
+```JavaScript
+ipfs.addFromFs('path/to/a/folder', { recursive: true , ignore: ['subfolder/to/ignore/**']}, (err, result) => {
+  if (err) { throw err }
+  console.log(result)
+})
+```
+
+`result` is an array of objects describing the files that were added, such as:
+
+```js
+[
+  {
+    path: 'test-folder',
+    hash: 'QmRNjDeKStKGTQXnJ2NFqeQ9oW23WcpbmvCVrpDHgDg3T6',
+    size: 2278
+  },
+  // ...
+]
+```
+
+#### `addFromUrl
+
+> Add a file from a URL to IPFS
+
+##### `Go` **WIP**
+
+##### `JavaScript` - ipfs.addFromURL(url, callback)
+
+```JavaScript
+ipfs.addFromURL('http://example.com/', (err, result) => {
+  if (err) {
+    throw err
+  }
+  console.log(result)
+})
+```
+
+#### `addFromUrl`
+
+> Add a file from a stream to IPFS
+
+##### `Go` **WIP**
+
+##### `JavaScript` - ipfs.addFromStream(stream, callback)
+
+This is very similar to `ipfs.files.add({path:'', content: stream})`. It is like the reverse of cat
+
+```JavaScript
+ipfs.addFromStream(<readable-stream>, (err, result) => {
+  if (err) {
+    throw err
+  }
+  console.log(result)
+})
+```
+
 #### `cat`
 
 > Returns a file addressed by a valid IPFS Path.
