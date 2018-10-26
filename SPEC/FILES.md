@@ -2,20 +2,21 @@
 
 > The files API enables users to use the File System abstraction of IPFS. There are two Files API, one at the top level, the original `add`, `cat`, `get` and `ls`, and another behind the [`files`, also known as MFS](https://github.com/ipfs/specs/issues/98). [We are currently going through a revamping process of this APIs to make them more user friendly](https://github.com/ipfs/interface-ipfs-core/issues/284).
 
-- [add](#add)
-- [addReadableStream](#addreadablestream)
-- [addPullStream](#addpullstream)
-- [addFromFs](#addFromFs)
-- [addFromUrl](#addFromFs)
-- [cat](#cat)
-- [catReadableStream](#filescatreadablestream)
-- [catPullStream](#filescatpullstream)
-- [get](#filesget)
-- [getReadableStream](#filesgetreadablestream)
-- [getPullStream](#filesgetpullstream)
-- [ls](#ls)
-- [lsReadableStream](#lsreadablestream)
-- [lsPullStream](#lspullstream)
+- The Regular (top level) API for add, cat, get and ls Files on IPFS
+  - [add](#add)
+  - [addReadableStream](#addreadablestream)
+  - [addPullStream](#addpullstream)
+  - [addFromFs](#addFromFs)
+  - [addFromUrl](#addFromFs)
+  - [cat](#cat)
+  - [catReadableStream](#catreadablestream)
+  - [catPullStream](#catpullstream)
+  - [get](#get)
+  - [getReadableStream](#getreadablestream)
+  - [getPullStream](#getpullstream)
+  - [ls](#ls)
+  - [lsReadableStream](#lsreadablestream)
+  - [lsPullStream](#lspullstream)
 - The Files API, aka MFS (Mutable File System)
   - [files.cp](#filescp)
   - [files.flush](#filesflush)
@@ -174,7 +175,7 @@ stream.end()
 
 A great source of [examples][] can be found in the tests for this API.
 
-#### `files.addPullStream`
+#### `addPullStream`
 
 > Add files and data to IPFS using a [Pull Stream][ps].
 
