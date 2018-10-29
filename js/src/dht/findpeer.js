@@ -41,7 +41,7 @@ module.exports = (createCommon, options) => {
       nodeA.dht.findpeer(nodeB.peerId.id, (err, peer) => {
         expect(err).to.not.exist()
         // TODO upgrade the answer, format is weird
-        expect(peer[0].Responses[0].ID).to.be.equal(nodeB.peerId.id)
+        expect(peer.responses[0].id).to.be.equal(nodeB.peerId.id)
         done()
       })
     })

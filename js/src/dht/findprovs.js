@@ -55,7 +55,7 @@ module.exports = (createCommon, options) => {
       waterfall([
         (cb) => nodeB.object.new('unixfs-dir', cb),
         (dagNode, cb) => {
-          const cidV0 = new CID(dagNode.toJSON().multihash)
+          const cidV0 = new CID(dagNode.toJSON().hash)
           nodeB.dht.provide(cidV0, (err) => cb(err, cidV0))
         },
         (cidV0, cb) => nodeA.dht.findprovs(cidV0, cb),
