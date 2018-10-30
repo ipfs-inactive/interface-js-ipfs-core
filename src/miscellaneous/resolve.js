@@ -88,17 +88,17 @@ module.exports = (createCommon, options) => {
       })
     })
 
-    it('should not resolve an IPFS path non-link', (done) => {
+    it('should resolve up to the last node', (done) => {
       const content = { path: { to: { file: hat() } } }
       const options = { format: 'dag-cbor', hashAlg: 'sha2-256' }
 
       ipfs.dag.put(content, options, (err, cid) => {
         expect(err).to.not.exist()
 
-        const path = `/ipfs/${cid.toBaseEncodedString()}/path/to/file`
-        ipfs.resolve(path, (err, path) => {
-          expect(err).to.exist()
-          expect(err.message).to.equal('found non-link at given path')
+        const path = `/ipld/${cid.toBaseEncodedString()}/path/to/file`
+        ipfs.resolve(path, (err, resolved) => {
+          expect(err).to.not.exist()
+          expect(resolved).to.be(path)
           done()
         })
       })
