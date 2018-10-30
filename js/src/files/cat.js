@@ -136,6 +136,7 @@ module.exports = (createCommon, options) => {
           expect(err).to.exist()
           expect(err.message).to.oneOf([
             'No such file',
+            'no link by that name',
             'no link named "does-not-exist" under Qma4hjFTnCasJ8PVp3mZbZK5g2vGDT4LByLJ7m8ciyRFZP'])
         })
     })
