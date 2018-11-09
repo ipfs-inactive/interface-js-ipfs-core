@@ -38,10 +38,9 @@ module.exports = (createCommon, options) => {
     after((done) => common.teardown(done))
 
     it('should find other peers', (done) => {
-      nodeA.dht.findpeer(nodeB.peerId.id, (err, peer) => {
+      nodeA.dht.findpeer(nodeB.peerId.id, (err, res) => {
         expect(err).to.not.exist()
-        // TODO upgrade the answer, format is weird
-        expect(peer[0].Responses[0].ID).to.be.equal(nodeB.peerId.id)
+        expect(res.Responses[0].Addrs).to.deep.include(nodeB.peerId.addresses[0])
         done()
       })
     })
