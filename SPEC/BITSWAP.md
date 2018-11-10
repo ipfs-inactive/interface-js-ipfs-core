@@ -5,60 +5,59 @@
 
 ### `bitswap.wantlist`
 
-> Returns the wantlist, optionally filtered by peer ID
+> Get the list of wanted CIDs for this peer or another peer on the network.
 
-#### `Go` **WIP**
+#### Go **WIP**
 
-#### `JavaScript` - ipfs.bitswap.wantlist([peerId], [callback])
+#### JavaScript - `ipfs.bitswap.wantlist([peerId])`
 
-`callback` must follow `function (err, list) {}` signature, where `err` is an error if the operation was not successful. `list` is an Object containing the following keys:
+##### Parameters
 
-- `Keys` An array of objects containing the following keys:
-    - `/` A string multihash
+| Name | Type | Description |
+|------|------|-------------|
+| peerId | `String` | (optional) Base 58 encoded Peer ID to get the wantlist for. Default: this node's peer ID |
 
-If no `callback` is passed, a promise is returned.
+##### Returns
 
-**Example:**
+| Type | Description |
+|------|-------------|
+| `Promise<{`<br/>&nbsp;&nbsp;`Keys<Array<Object>>`<br/>`}>` | The list of CIDs wanted by the peer. Each object in the array has a single property "/" a string CID. |
 
-```JavaScript
-ipfs.bitswap.wantlist((err, list) => console.log(list))
+##### Example
 
-// { Keys: [{ '/': 'QmHash' }] }
+```js
+const list = await ipfs.bitswap.wantlist()
+console.log(list) // { Keys: [{ '/': 'QmHash' }] }
+```
 
-ipfs.bitswap.wantlist(peerId, (err, list) => console.log(list))
+Wantlist for a given peer:
 
-// { Keys: [{ '/': 'QmHash' }] }
+```js
+ipfs.bitswap.wantlist('QmZEYeEin6wEB7WNyiT7stYTmbYFGy7BzM7T3hRDzRxTvY')
+console.log(list) // { Keys: [{ '/': 'QmHash' }] }
 ```
 
 #### `bitswap.stat`
 
 > Show diagnostic information on the bitswap agent.
 
-##### `Go` **WIP**
+##### Go **WIP**
 
-##### `JavaScript` - ipfs.bitswap.stat([callback])
+##### JavaScript - `ipfs.bitswap.stat()`
 
 Note: `bitswap.stat` and `stats.bitswap` can be used interchangeably.
 
-`callback` must follow `function (err, stats) {}` signature, where `err` is an error if the operation was not successful. `stats` is an Object containing the following keys:
+##### Returns
 
-- `provideBufLen` is an integer.
-- `wantlist` (array of CIDs)
-- `peers` (array of peer IDs)
-- `blocksReceived` is a [Big Int][1]
-- `dataReceived` is a [Big Int][1]
-- `blocksSent` is a [Big Int][1]
-- `dataSent` is a [Big Int][1]
-- `dupBlksReceived` is a [Big Int][1]
-- `dupDataReceived` is a [Big Int][1]
+| Type | Description |
+|------|-------------|
+| `Promise<{`<br/>&nbsp;&nbsp;`provideBufLen<Number>,`<br/>&nbsp;&nbsp;`wantlist<Array<Object>>,`<br/>&nbsp;&nbsp;`peers<Array<String>>,`<br/>&nbsp;&nbsp;`blocksReceived<`[`Big`][1]`>,`<br/>&nbsp;&nbsp;`dataReceived<`[`Big`][1]`>,`<br/>&nbsp;&nbsp;`blocksSent<`[`Big`][1]`>,`<br/>&nbsp;&nbsp;`dataSent<`[`Big`][1]`>,`<br/>&nbsp;&nbsp;`dupBlksReceived<`[`Big`][1]`>,`<br/>&nbsp;&nbsp;`dupDataReceived<`[`Big`][1]`>,`<br/>`}>` | Diagnostic information on the bitswap agent |
 
-If no `callback` is passed, a promise is returned.
+##### Example
 
-**Example:**
-
-```JavaScript
-ipfs.bitswap.stat((err, stats) => console.log(stats))
-
+```js
+const stats = await ipfs.bitswap.stat()
+console.log(stats)
 // { provideBufLen: 0,
 //   wantlist: [ { '/': 'QmSoLPppuBtQSGwKDZT2M73ULpjvfd3aZ6ha4oFGL1KrGM' } ],
 //   peers:

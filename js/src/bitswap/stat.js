@@ -1,7 +1,6 @@
 /* eslint-env mocha */
 'use strict'
 
-const waterfall = require('async/waterfall')
 const { getDescribe, getIt, expect } = require('../utils/mocha')
 const { expectIsBitswap } = require('../stats/utils')
 
@@ -13,50 +12,33 @@ module.exports = (createCommon, options) => {
   describe('.bitswap.stat', () => {
     let ipfs
 
-    before(function (done) {
+    before(async function () {
       // CI takes longer to instantiate the daemon, so we need to increase the
       // timeout for the before step
       this.timeout(60 * 1000)
 
-      common.setup((err, factory) => {
-        expect(err).to.not.exist()
-        factory.spawnNode((err, node) => {
-          expect(err).to.not.exist()
-          ipfs = node
-          done()
-        })
-      })
+      const factory = await common.setup()
+      ipfs = await factory.spawnNode()
     })
 
-    after((done) => common.teardown(done))
+    after(() => common.teardown())
 
-    it('should get bitswap stats', (done) => {
-      ipfs.bitswap.stat((err, res) => {
-        expectIsBitswap(err, res)
-        done()
-      })
+    it('should get bitswap stats', async () => {
+      const res = await ipfs.bitswap.stat()
+      expectIsBitswap(res)
     })
 
-    it('should get bitswap stats (promised)', () => {
-      return ipfs.bitswap.stat().then((res) => {
-        expectIsBitswap(null, res)
-      })
-    })
-
-    it('should not get bitswap stats when offline', function (done) {
+    it('should not get bitswap stats when offline', async function () {
       this.timeout(60 * 1000)
 
-      waterfall([
-        (cb) => createCommon().setup(cb),
-        (factory, cb) => factory.spawnNode(cb),
-        (node, cb) => node.stop((err) => cb(err, node))
-      ], (err, node) => {
-        expect(err).to.not.exist()
-        node.bitswap.wantlist((err) => {
-          expect(err).to.exist()
-          done()
-        })
-      })
+      const common = createCommon()
+      const factory = await common.setup()
+      const ipfs = await factory.spawnNode()
+      await ipfs.stop()
+
+      // TODO: assert on error message/code
+      await expect(ipfs.bitswap.stat()).to.be.rejected()
+      return common.teardown()
     })
   })
 }

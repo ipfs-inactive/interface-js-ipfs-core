@@ -6,8 +6,7 @@ const isBigInt = (n) => {
   return n.constructor.name === 'Big'
 }
 
-exports.expectIsBitswap = (err, stats) => {
-  expect(err).to.not.exist()
+exports.expectIsBitswap = stats => {
   expect(stats).to.exist()
   expect(stats).to.have.a.property('provideBufLen')
   expect(stats).to.have.a.property('wantlist')
@@ -30,8 +29,7 @@ exports.expectIsBitswap = (err, stats) => {
   expect(isBigInt(stats.dupDataReceived)).to.eql(true)
 }
 
-exports.expectIsBandwidth = (err, stats) => {
-  expect(err).to.not.exist()
+exports.expectIsBandwidth = stats => {
   expect(stats).to.exist()
   expect(stats).to.have.a.property('totalIn')
   expect(stats).to.have.a.property('totalOut')
@@ -43,8 +41,7 @@ exports.expectIsBandwidth = (err, stats) => {
   expect(isBigInt(stats.rateOut)).to.eql(true)
 }
 
-exports.expectIsRepo = (err, res) => {
-  expect(err).to.not.exist()
+exports.expectIsRepo = res => {
   expect(res).to.exist()
   expect(res).to.have.a.property('numObjects')
   expect(res).to.have.a.property('repoSize')
