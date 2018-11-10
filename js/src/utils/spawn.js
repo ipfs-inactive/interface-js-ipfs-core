@@ -1,37 +1,30 @@
 'use strict'
 
-const waterfall = require('async/waterfall')
-const timesSeries = require('async/timesSeries')
-const map = require('async/map')
-
-function identify (node, cb) {
-  node.id((err, id) => {
-    if (err) return cb(err)
-    node.peerId = id
-    cb(null, node)
-  })
+async function identify (node) {
+  node.peerId = await node.id()
+  return node
 }
 
 // Spawn a node, get it's id and set it as `peerId` on the node
-function spawnNodeWithId (factory, callback) {
-  waterfall([(cb) => factory.spawnNode(cb), identify], callback)
+async function spawnNodeWithId (factory) {
+  return identify(await factory.spawnNode())
 }
 
 exports.spawnNodeWithId = spawnNodeWithId
 
 // Spawn n nodes
-function spawnNodes (n, factory, callback) {
-  timesSeries(n, (_, cb) => factory.spawnNode(cb), callback)
+async function spawnNodes (n, factory) {
+  let nodes = []
+  for (let i = 0; i < n; i++) nodes.push(await factory.spawnNode())
+  return nodes
 }
 
 exports.spawnNodes = spawnNodes
 
 // Spawn n nodes, getting their id's and setting them as `peerId` on the nodes
-function spawnNodesWithId (n, factory, callback) {
-  spawnNodes(n, factory, (err, nodes) => {
-    if (err) return callback(err)
-    map(nodes, identify, callback)
-  })
+async function spawnNodesWithId (n, factory) {
+  const nodes = await spawnNodes(n, factory)
+  return Promise.all(nodes.map(node => identify(node)))
 }
 
 exports.spawnNodesWithId = spawnNodesWithId
