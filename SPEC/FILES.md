@@ -6,8 +6,9 @@
   - [add](#add)
   - [addReadableStream](#addreadablestream)
   - [addPullStream](#addpullstream)
-  - [addFromFs](#addFromFs)
-  - [addFromUrl](#addFromFs)
+  - [addFromFs](#addfromfs)
+  - [addFromUrl](#addfromurl)
+  - [addFromStream](#addfromstream)
   - [cat](#cat)
   - [catReadableStream](#catreadablestream)
   - [catPullStream](#catpullstream)
@@ -254,7 +255,7 @@ ipfs.addFromFs('path/to/a/folder', { recursive: true , ignore: ['subfolder/to/ig
 ]
 ```
 
-#### `addFromUrl
+#### `addFromUrl`
 
 > Add a file from a URL to IPFS
 
@@ -271,7 +272,7 @@ ipfs.addFromURL('http://example.com/', (err, result) => {
 })
 ```
 
-#### `addFromUrl`
+#### `addFromStream`
 
 > Add a file from a stream to IPFS
 
@@ -279,7 +280,7 @@ ipfs.addFromURL('http://example.com/', (err, result) => {
 
 ##### `JavaScript` - ipfs.addFromStream(stream, callback)
 
-This is very similar to `ipfs.files.add({path:'', content: stream})`. It is like the reverse of cat
+This is very similar to `ipfs.files.add({path:'', content: stream})`. It is like the reverse of cat.
 
 ```JavaScript
 ipfs.addFromStream(<readable-stream>, (err, result) => {
