@@ -74,7 +74,7 @@ module.exports = (createCommon, options) => {
       })
     })
 
-    it('http', (done) => {
+    it('should add from a HTTP URL', (done) => {
       const data = Buffer.from(`TEST${Date.now()}`)
 
       parallel({
@@ -99,7 +99,7 @@ module.exports = (createCommon, options) => {
       })
     })
 
-    it('https', (done) => {
+    it('should add from a HTTPS URL', (done) => {
       const data = Buffer.from(`TEST${Date.now()}`)
 
       parallel({
@@ -124,7 +124,7 @@ module.exports = (createCommon, options) => {
       })
     })
 
-    it('http with redirection', (done) => {
+    it('should add from a HTTP URL with redirection', (done) => {
       const data = Buffer.from(`TEST${Date.now()}`)
 
       waterfall([
@@ -165,7 +165,7 @@ module.exports = (createCommon, options) => {
       })
     })
 
-    it('https with redirection', (done) => {
+    it('should add from a HTTPS URL with redirection', (done) => {
       const data = Buffer.from(`TEST${Date.now()}`)
 
       waterfall([
@@ -206,7 +206,7 @@ module.exports = (createCommon, options) => {
       })
     })
 
-    it('with only-hash=true', (done) => {
+    it('should add from a URL with only-hash=true', (done) => {
       const handler = (req, res) => {
         res.write(`TEST${Date.now()}`)
         res.end()
@@ -236,7 +236,7 @@ module.exports = (createCommon, options) => {
       })
     })
 
-    it('with wrap-with-directory=true', (done) => {
+    it('should add from a URL with wrap-with-directory=true', (done) => {
       const filename = `TEST${Date.now()}.txt`
       const data = Buffer.from(`TEST${Date.now()}`)
 
@@ -262,7 +262,7 @@ module.exports = (createCommon, options) => {
       })
     })
 
-    it('with wrap-with-directory=true and URL-escaped file name', (done) => {
+    it('should add from a URL with wrap-with-directory=true and URL-escaped file name', (done) => {
       const filename = '320px-Domažlice,_Jiráskova_43_(9102).jpg'
       const data = Buffer.from(`TEST${Date.now()}`)
 
@@ -288,7 +288,7 @@ module.exports = (createCommon, options) => {
       })
     })
 
-    it('with invalid url', (done) => {
+    it('should not add from an invalid url', (done) => {
       ipfs.addFromURL('http://invalid', (err, result) => {
         expect(err.code).to.equal('ENOTFOUND')
         expect(result).to.not.exist()

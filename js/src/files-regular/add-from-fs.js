@@ -35,7 +35,7 @@ module.exports = (createCommon, options) => {
 
     after((done) => common.teardown(done))
 
-    it('a directory', (done) => {
+    it('should add a directory from the file system', (done) => {
       const filesPath = path.join(fixturesPath, 'test-folder')
       ipfs.addFromFs(filesPath, { recursive: true }, (err, result) => {
         expect(err).to.not.exist()
@@ -44,7 +44,7 @@ module.exports = (createCommon, options) => {
       })
     })
 
-    it('a directory with an odd name', (done) => {
+    it('should add a directory from the file system with an odd name', (done) => {
       const filesPath = path.join(fixturesPath, 'weird name folder [v0]')
       ipfs.addFromFs(filesPath, { recursive: true }, (err, result) => {
         expect(err).to.not.exist()
@@ -53,7 +53,7 @@ module.exports = (createCommon, options) => {
       })
     })
 
-    it('add and ignore a directory', (done) => {
+    it('should ignore a directory from the file system', (done) => {
       const filesPath = path.join(fixturesPath, 'test-folder')
       ipfs.addFromFs(filesPath, { recursive: true, ignore: ['files/**'] }, (err, result) => {
         expect(err).to.not.exist()
@@ -62,7 +62,7 @@ module.exports = (createCommon, options) => {
       })
     })
 
-    it('a file', (done) => {
+    it('should add a file from the file system', (done) => {
       const filePath = path.join(fixturesPath, 'testfile.txt')
       ipfs.addFromFs(filePath, (err, result) => {
         expect(err).to.not.exist()
@@ -72,7 +72,7 @@ module.exports = (createCommon, options) => {
       })
     })
 
-    it('a hidden file in a directory', (done) => {
+    it('should add a hidden file in a directory from the file system', (done) => {
       const filesPath = path.join(fixturesPath, 'hidden-files-folder')
       ipfs.addFromFs(filesPath, { recursive: true, hidden: true }, (err, result) => {
         expect(err).to.not.exist()
@@ -83,7 +83,7 @@ module.exports = (createCommon, options) => {
       })
     })
 
-    it('with only-hash=true', function () {
+    it('should add a file from the file system with only-hash=true', function () {
       this.slow(10 * 1000)
 
       const content = String(Math.random() + Date.now())

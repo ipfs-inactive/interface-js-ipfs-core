@@ -32,7 +32,7 @@ module.exports = (createCommon, options) => {
 
     after((done) => common.teardown(done))
 
-    it('same as .add', (done) => {
+    it('should add from a stream', (done) => {
       const testData = loadFixture('js/test/fixtures/15mb.random', 'interface-ipfs-core')
 
       ipfs.addFromStream(into(testData), (err, result) => {
