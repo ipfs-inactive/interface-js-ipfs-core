@@ -14,29 +14,22 @@ module.exports = (createCommon, options) => {
   describe('.block.put', () => {
     let ipfs
 
-    before(function (done) {
+    before(async function () {
       // CI takes longer to instantiate the daemon, so we need to increase the
       // timeout for the before step
       this.timeout(60 * 1000)
 
-      common.setup((err, factory) => {
-        expect(err).to.not.exist()
-        factory.spawnNode((err, node) => {
-          expect(err).to.not.exist()
-          ipfs = node
-          done()
-        })
-      })
+      const factory = await common.setup()
+      ipfs = await factory.spawnNode()
     })
 
-    after((done) => common.teardown(done))
+    after(() => common.teardown())
 
     it('should put a buffer, using defaults', (done) => {
       const expectedHash = 'QmPv52ekjS75L4JmHpXVeuJ5uX2ecSfSZo88NSyxwA3rAQ'
-      const blob = Buffer.from('blorb')
+      const blob = Buffer.from(`blorb${Date.now()}`)
 
-      ipfs.block.put(blob, (err, block) => {
-        expect(err).to.not.exist()
+      const cid = ipfs.block.put(blob)
         expect(block.data).to.be.eql(blob)
         expect(block.cid.multihash).to.eql(multihash.fromB58String(expectedHash))
         done()
