@@ -1,7 +1,7 @@
 'use strict'
 
 exports.filesRegular = require('./files-regular')
-exports.filesMFS = require('./files-MFS')
+exports.filesMFS = require('./files-mfs')
 
 exports.bitswap = require('./bitswap')
 exports.block = require('./block')
