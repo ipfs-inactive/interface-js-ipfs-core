@@ -60,7 +60,7 @@ module.exports = (createCommon, options) => {
         },
         (cidV0, cb) => nodeA.dht.findprovs(cidV0, cb),
         (provs, cb) => {
-          expect(provs.Responses.map((p) => p.ID))
+          expect(provs.responses.map((p) => p.id))
             .to.eql([nodeB.peerId.id])
           cb()
         }
