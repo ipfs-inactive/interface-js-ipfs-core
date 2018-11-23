@@ -57,7 +57,7 @@
     "into-stream": "^4.0.0",
     "is-plain-object": "^2.0.4",
     "multiaddr": "^5.0.0",
-    "multibase": "~0.5.0",
+    "multibase": "~0.6.0",
     "multihashes": "~0.4.14",
     "multihashing-async": "~0.5.1",
     "peer-id": "~0.12.0",
