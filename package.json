@@ -64,7 +64,7 @@
     "pull-stream": "^3.6.9",
     "pump": "^3.0.0"
   },
-  devDependencies: {
+  "devDependencies": {
     "aegir": "^17.0.1"
   },
   "contributors": [
