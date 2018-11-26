@@ -123,7 +123,7 @@ module.exports = (createCommon, options) => {
     it('should not be able to add a string', (done) => {
       const data = `TEST${Date.now()}`
 
-      ipfs.files.add(data, (err) => {
+      ipfs.add(data, (err) => {
         expect(err).to.exist()
         expect(err.message).to.contain('invalid input')
         done()
@@ -133,7 +133,7 @@ module.exports = (createCommon, options) => {
     it('should not be able to add a non-Buffer TypedArray', (done) => {
       const data = Uint8Array.from([Date.now()])
 
-      ipfs.files.add(data, (err) => {
+      ipfs.add(data, (err) => {
         expect(err).to.exist()
         expect(err.message).to.contain('invalid input')
         done()
