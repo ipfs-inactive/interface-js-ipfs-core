@@ -1,19 +1,8 @@
 'use strict'
 
-const {
-  promisify
-} = require('es6-promisify')
-const {
-  util: {
-    cid
-  },
-  DAGNode,
-  DAGLink
-} = require('ipld-dag-pb')
-
-module.exports.calculateCid = promisify((node, cb) => {
-  cid(node, cb)
-})
+const { promisify } = require('es6-promisify')
+const dagPb = require('ipld-dag-pb')
+const { DAGNode, DAGLink } = dagPb
 
 module.exports.createDAGNode = promisify((data, links, cb) => {
   DAGNode.create(data, links, cb)
@@ -29,7 +18,7 @@ module.exports.asDAGLink = promisify((node, name, cb) => {
     name = ''
   }
 
-  cid(node, (err, nodeCid) => {
+  dagPb.util.cid(node, (err, nodeCid) => {
     if (err) {
       return cb(err)
     }
