@@ -14,7 +14,7 @@ module.exports = (createCommon, options) => {
   const common = createCommon()
 
   describe('.pingPullStream', function () {
-    this.timeout(60 * 1000)
+    this.timeout(2 * 60 * 1000)
 
     let ipfsA
     let ipfsB
