@@ -96,13 +96,13 @@ module.exports = (createCommon, options) => {
           asDAGLink(node2, 'some-link', (err, link) => {
             expect(err).to.not.exist()
 
-            DAGNode.addLink(node1a, link, (err, cid) => {
+            DAGNode.addLink(node1a, link, (err, node) => {
               expect(err).to.not.exist()
-              node1bCid = cid
+              node1b = node
 
-              ipfs.object.get(cid, (err, node) => {
+              dagPB.util.cid(node, (err, cid) => {
                 expect(err).to.not.exist()
-                node1b = node
+                node1bCid = cid
                 cb()
               })
             })

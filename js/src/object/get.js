@@ -218,6 +218,7 @@ module.exports = (createCommon, options) => {
             }
 
             node1c = node
+            cb()
           })
         },
         (cb) => {
@@ -302,6 +303,7 @@ module.exports = (createCommon, options) => {
               node.data = Buffer.from(node.data)
             }
             node1b = node
+            cb()
           })
         },
         (cb) => {
