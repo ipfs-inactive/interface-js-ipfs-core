@@ -15,6 +15,7 @@ module.exports = (createCommon, options) => {
   const common = createCommon()
 
   describe('.pingReadableStream', function () {
+    // TODO revisit when https://github.com/ipfs/go-ipfs/issues/5799 is resolved
     this.timeout(2 * 60 * 1000)
 
     let ipfsA
