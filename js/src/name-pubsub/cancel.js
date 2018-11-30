@@ -2,7 +2,8 @@
 /* eslint-env mocha */
 'use strict'
 
-const series = require('async/series')
+const auto = require('async/auto')
+const PeerId = require('peer-id')
 
 const { spawnNodeWithId } = require('../utils/spawn')
 const { getDescribe, getIt, expect } = require('../utils/mocha')
@@ -52,28 +53,33 @@ module.exports = (createCommon, options) => {
 
     it('should cancel a subscription correctly returning true', function (done) {
       this.timeout(300 * 1000)
-      const id = 'QmNP1ASen5ZREtiJTtVD3jhMKhoPb1zppET1tgpjHx2NGA'
-      const ipnsPath = `/ipns/${id}`
 
-      ipfs.name.pubsub.subs((err, res) => {
+      PeerId.create({ bits: 512 }, (err, peerId) => {
         expect(err).to.not.exist()
-        expect(res).to.eql([]) // initally empty
 
-        ipfs.name.resolve(id, (err) => {
-          expect(err).to.exist()
-          series([
-            (cb) => ipfs.name.pubsub.subs(cb),
-            (cb) => ipfs.name.pubsub.cancel(ipnsPath, cb),
-            (cb) => ipfs.name.pubsub.subs(cb)
-          ], (err, res) => {
-            expect(err).to.not.exist()
-            expect(res).to.exist()
-            expect(res[0]).to.be.an('array').that.does.include(ipnsPath)
-            expect(res[1]).to.have.property('canceled')
-            expect(res[1].canceled).to.eql(true)
-            expect(res[2]).to.be.an('array').that.does.not.include(ipnsPath)
+        const id = peerId.toB58String()
+        const ipnsPath = `/ipns/${id}`
 
-            done()
+        ipfs.name.pubsub.subs((err, res) => {
+          expect(err).to.not.exist()
+          expect(res).to.be.an('array').that.does.not.include(ipnsPath)
+
+          ipfs.name.resolve(id, (err) => {
+            expect(err).to.exist()
+            auto({
+              subs1: (cb) => ipfs.name.pubsub.subs(cb),
+              cancel: (cb) => ipfs.name.pubsub.cancel(ipnsPath, cb),
+              subs2: (cb) => ipfs.name.pubsub.subs(cb)
+            }, 1, (err, res) => {
+              expect(err).to.not.exist()
+              expect(res).to.exist()
+              expect(res.subs1).to.be.an('array').that.does.include(ipnsPath)
+              expect(res.cancel).to.have.property('canceled')
+              expect(res.cancel.canceled).to.eql(true)
+              expect(res.subs2).to.be.an('array').that.does.not.include(ipnsPath)
+
+              done()
+            })
           })
         })
       })
