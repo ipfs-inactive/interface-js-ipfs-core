@@ -68,9 +68,9 @@ module.exports = (createCommon, options) => {
             expect(err).to.exist()
             auto({
               subs1: (cb) => ipfs.name.pubsub.subs(cb),
-              cancel: (cb) => ipfs.name.pubsub.cancel(ipnsPath, cb),
-              subs2: (cb) => ipfs.name.pubsub.subs(cb)
-            }, 1, (err, res) => {
+              cancel: ['subs1', (_, cb) => ipfs.name.pubsub.cancel(ipnsPath, cb)],
+              subs2: ['cancel', (_, cb) => ipfs.name.pubsub.subs(cb)]
+            }, (err, res) => {
               expect(err).to.not.exist()
               expect(res).to.exist()
               expect(res.subs1).to.be.an('array').that.does.include(ipnsPath)
