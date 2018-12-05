@@ -59,7 +59,14 @@ function getIt (config) {
     }
 
     if (Array.isArray(config.only)) {
-      if (config.only.includes(name)) return it.only(name, impl) // eslint-disable-line
+      const only = config.only
+        .map((o) => isObject(o) ? o : { name: o })
+        .find((o) => o.name === name)
+
+      if (only) {
+        if (only.reason) name = `${name} (${only.reason})`
+        return it.only(name, impl) // eslint-disable-line
+      }
     }
 
     it(name, impl)
