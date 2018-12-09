@@ -3,6 +3,8 @@
 
 const { fixtures } = require('./utils')
 const { getDescribe, getIt, expect } = require('../utils/mocha')
+const crypto = require('crypto')
+const CID = require('cids')
 
 module.exports = (createCommon, options) => {
   const describe = getDescribe(options)
@@ -99,6 +101,62 @@ module.exports = (createCommon, options) => {
               hash: 'QmVwdDCY4SPGVFnNCiZnX5CtzwWDn6kAM98JXzKxE3kCmn',
               type: 'file' }
           ])
+          done()
+        })
+      })
+    })
+
+    it('should ls files added as CIDv0 with a CIDv1', done => {
+      const randomName = () => crypto.randomBytes(6).toString('hex')
+      const dir = randomName()
+
+      const input = [
+        { path: `${dir}/${randomName()}`, content: crypto.randomBytes(32) },
+        { path: `${dir}/${randomName()}`, content: crypto.randomBytes(32) }
+      ]
+
+      ipfs.add(input, { cidVersion: 0 }, (err, res) => {
+        expect(err).to.not.exist()
+
+        const cidv0 = new CID(res[res.length - 1].hash)
+        expect(cidv0.version).to.equal(0)
+
+        const cidv1 = cidv0.toV1()
+
+        ipfs.ls(cidv1, (err, output) => {
+          expect(err).to.not.exist()
+          expect(output.length).to.equal(input.length)
+          output.forEach(({ hash }) => {
+            expect(res.find(file => file.hash === hash)).to.exist()
+          })
+          done()
+        })
+      })
+    })
+
+    it('should ls files added as CIDv1 with a CIDv0', done => {
+      const randomName = () => crypto.randomBytes(6).toString('hex')
+      const dir = randomName()
+
+      const input = [
+        { path: `${dir}/${randomName()}`, content: crypto.randomBytes(32) },
+        { path: `${dir}/${randomName()}`, content: crypto.randomBytes(32) }
+      ]
+
+      ipfs.add(input, { cidVersion: 1, rawLeaves: false }, (err, res) => {
+        expect(err).to.not.exist()
+
+        const cidv1 = new CID(res[res.length - 1].hash)
+        expect(cidv1.version).to.equal(1)
+
+        const cidv0 = cidv1.toV1()
+
+        ipfs.ls(cidv0, (err, output) => {
+          expect(err).to.not.exist()
+          expect(output.length).to.equal(input.length)
+          output.forEach(({ hash }) => {
+            expect(res.find(file => file.hash === hash)).to.exist()
+          })
           done()
         })
       })
