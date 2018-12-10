@@ -17,7 +17,7 @@
 
 Where `peerId` is a IPFS/libp2p Id from [PeerId](https://github.com/libp2p/js-peer-id) type.
 
-`callback` must follow `function (err, peerInfos) {}` signature, where `err` is an error if the operation was not successful. `peerInfos` is an array of type `[PeerInfo]`. In this case, as we are looking for a particular peer, there will be only one entry. This entry is composed by the peerId, as well as its adresses.
+`callback` must follow `function (err, peerInfo) {}` signature, where `err` is an error if the operation was not successful. `peerInfo` is an object of type `PeerInfo`.
 
 If no `callback` is passed, a promise is returned.
 
@@ -26,10 +26,10 @@ If no `callback` is passed, a promise is returned.
 ```JavaScript
 var id = PeerId.create()
 
-ipfs.dht.findPeer(id, function (err, peerInfos) {
-  // peerInfos will contain the multiaddrs of that peer in the first entry of the array
-  const id = peerInfos[0].id
-  const addrs = peerInfos[0].multiaddrs
+ipfs.dht.findPeer(id, function (err, peerInfo) {
+  // peerInfo will contain the multiaddrs of that peer
+  const id = peerInfo.id
+  const addrs = peerInfo.multiaddrs
 })
 ```
 
@@ -46,7 +46,7 @@ A great source of [examples][] can be found in the tests for this API.
 Where `hash` is a multihash.
 
 `options` an optional object with the following properties
-  - `maxTimeout` - a maximum timeout in milliseconds
+  - `timeout` - a maximum timeout in milliseconds
   - `maxNumProviders` - a maximum number of providers to find
 
 `callback` must follow `function (err, peerInfos) {}` signature, where `err` is an error if the operation was not successful. `peerInfos` is an array of type `[PeerInfo]`. Each entry of this array is composed by the peerId, as well as an array with its adresses.

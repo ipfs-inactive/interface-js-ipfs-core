@@ -47,8 +47,8 @@ module.exports = (createCommon, options) => {
       nodeA.dht.findPeer(nodeB.peerId.id, (err, res) => {
         expect(err).to.not.exist()
 
-        const id = res[0].id.toB58String()
-        const addrs = res[0].multiaddrs.toArray().map((ma) => ma.toString())
+        const id = res.id.toB58String()
+        const addrs = res.multiaddrs.toArray().map((ma) => ma.toString())
 
         expect(id).to.be.eql(nodeB.peerId.id)
         expect(nodeB.peerId.addresses[0]).to.satisfy(checkAll([addrs[0]]))
