@@ -65,7 +65,7 @@ function getIt (config) {
 
       if (only) {
         if (only.reason) name = `${name} (${only.reason})`
-        return it.only(name, impl) // eslint-disable-line
+        return it.only(name, impl) // eslint-disable-line no-only-tests/no-only-tests
       }
     }
 
@@ -73,7 +73,7 @@ function getIt (config) {
   }
 
   _it.skip = it.skip
-  _it.only = it.only // eslint-disable-line
+  _it.only = it.only // eslint-disable-line no-only-tests/no-only-tests
 
   return _it
 }
