@@ -4,7 +4,6 @@
 const multihash = require('multihashes')
 const CID = require('cids')
 const auto = require('async/auto')
-const crypto = require('crypto')
 const { getDescribe, getIt, expect } = require('../utils/mocha')
 
 module.exports = (createCommon, options) => {
@@ -72,7 +71,7 @@ module.exports = (createCommon, options) => {
     })
 
     it('should get a block added as CIDv0 with a CIDv1', done => {
-      const input = crypto.randomBytes(32)
+      const input = Buffer.from(`TEST${Date.now()}`)
 
       ipfs.block.put(input, { version: 0 }, (err, res) => {
         expect(err).to.not.exist()
@@ -91,7 +90,7 @@ module.exports = (createCommon, options) => {
     })
 
     it('should get a block added as CIDv1 with a CIDv0', done => {
-      const input = crypto.randomBytes(32)
+      const input = Buffer.from(`TEST${Date.now()}`)
 
       ipfs.block.put(input, { version: 1 }, (err, res) => {
         expect(err).to.not.exist()

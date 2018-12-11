@@ -5,7 +5,6 @@ const { series, eachSeries } = require('async')
 const dagPB = require('ipld-dag-pb')
 const DAGNode = dagPB.DAGNode
 const dagCBOR = require('ipld-dag-cbor')
-const crypto = require('crypto')
 const Unixfs = require('ipfs-unixfs')
 const CID = require('cids')
 const { spawnNodeWithId } = require('../utils/spawn')
@@ -216,7 +215,7 @@ module.exports = (createCommon, options) => {
     })
 
     it('should get a node added as CIDv0 with a CIDv1', done => {
-      const input = crypto.randomBytes(32)
+      const input = Buffer.from(`TEST${Date.now()}`)
 
       dagPB.DAGNode.create(input, (err, node) => {
         expect(err).to.not.exist()
@@ -237,7 +236,7 @@ module.exports = (createCommon, options) => {
     })
 
     it('should get a node added as CIDv1 with a CIDv0', done => {
-      const input = crypto.randomBytes(32)
+      const input = Buffer.from(`TEST${Date.now()}`)
 
       ipfs.add(input, { cidVersion: 1, rawLeaves: false }, (err, res) => {
         expect(err).to.not.exist()

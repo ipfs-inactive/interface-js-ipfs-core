@@ -3,7 +3,6 @@
 
 const { fixtures } = require('./utils')
 const { getDescribe, getIt, expect } = require('../utils/mocha')
-const crypto = require('crypto')
 const CID = require('cids')
 
 module.exports = (createCommon, options) => {
@@ -107,12 +106,12 @@ module.exports = (createCommon, options) => {
     })
 
     it('should ls files added as CIDv0 with a CIDv1', done => {
-      const randomName = () => crypto.randomBytes(6).toString('hex')
-      const dir = randomName()
+      const randomName = prefix => `${prefix}${Math.round(Math.random() * 1000)}`
+      const dir = randomName('DIR')
 
       const input = [
-        { path: `${dir}/${randomName()}`, content: crypto.randomBytes(32) },
-        { path: `${dir}/${randomName()}`, content: crypto.randomBytes(32) }
+        { path: `${dir}/${randomName('F0')}`, content: Buffer.from(randomName('D0')) },
+        { path: `${dir}/${randomName('F1')}`, content: Buffer.from(randomName('D1')) }
       ]
 
       ipfs.add(input, { cidVersion: 0 }, (err, res) => {
@@ -135,12 +134,12 @@ module.exports = (createCommon, options) => {
     })
 
     it('should ls files added as CIDv1 with a CIDv0', done => {
-      const randomName = () => crypto.randomBytes(6).toString('hex')
-      const dir = randomName()
+      const randomName = prefix => `${prefix}${Math.round(Math.random() * 1000)}`
+      const dir = randomName('DIR')
 
       const input = [
-        { path: `${dir}/${randomName()}`, content: crypto.randomBytes(32) },
-        { path: `${dir}/${randomName()}`, content: crypto.randomBytes(32) }
+        { path: `${dir}/${randomName('F0')}`, content: Buffer.from(randomName('D0')) },
+        { path: `${dir}/${randomName('F1')}`, content: Buffer.from(randomName('D1')) }
       ]
 
       ipfs.add(input, { cidVersion: 1, rawLeaves: false }, (err, res) => {

@@ -5,7 +5,6 @@ const { fixtures } = require('./utils')
 const bs58 = require('bs58')
 const parallel = require('async/parallel')
 const CID = require('cids')
-const crypto = require('crypto')
 const { getDescribe, getIt, expect } = require('../utils/mocha')
 
 module.exports = (createCommon, options) => {
@@ -78,7 +77,7 @@ module.exports = (createCommon, options) => {
     })
 
     it('should cat a file added as CIDv0 with a CIDv1', done => {
-      const input = crypto.randomBytes(32)
+      const input = Buffer.from(`TEST${Date.now()}`)
 
       ipfs.add(input, { cidVersion: 0 }, (err, res) => {
         expect(err).to.not.exist()
@@ -97,7 +96,7 @@ module.exports = (createCommon, options) => {
     })
 
     it('should cat a file added as CIDv1 with a CIDv0', done => {
-      const input = crypto.randomBytes(32)
+      const input = Buffer.from(`TEST${Date.now()}`)
 
       ipfs.add(input, { cidVersion: 1, rawLeaves: false }, (err, res) => {
         expect(err).to.not.exist()
