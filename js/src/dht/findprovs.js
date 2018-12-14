@@ -2,7 +2,6 @@
 'use strict'
 
 const multihashing = require('multihashing-async')
-const Crypto = require('crypto')
 const waterfall = require('async/waterfall')
 const CID = require('cids')
 const { spawnNodesWithId } = require('../utils/spawn')
@@ -10,7 +9,7 @@ const { getDescribe, getIt, expect } = require('../utils/mocha')
 const { connect } = require('../utils/swarm')
 
 function fakeCid (cb) {
-  const bytes = Crypto.randomBytes(Math.round(Math.random() * 1000))
+  const bytes = Buffer.from(`TEST${Date.now()}`)
   multihashing(bytes, 'sha2-256', (err, mh) => {
     if (err) {
       cb(err)
@@ -24,7 +23,7 @@ module.exports = (createCommon, options) => {
   const it = getIt(options)
   const common = createCommon()
 
-  describe('.dht.findprovs', function () {
+  describe('.dht.findProvs', function () {
     let nodeA
     let nodeB
 
@@ -47,18 +46,21 @@ module.exports = (createCommon, options) => {
       })
     })
 
-    after((done) => common.teardown(done))
+    after(function (done) {
+      this.timeout(50 * 1000)
+
+      common.teardown(done)
+    })
 
     it('should provide from one node and find it through another node', function (done) {
       this.timeout(80 * 1000)
 
       waterfall([
         (cb) => nodeB.object.new('unixfs-dir', cb),
-        (dagNode, cb) => {
-          const cidV0 = new CID(dagNode.toJSON().multihash)
-          nodeB.dht.provide(cidV0, (err) => cb(err, cidV0))
+        (cid, cb) => {
+          nodeB.dht.provide(cid, (err) => cb(err, cid))
         },
-        (cidV0, cb) => nodeA.dht.findprovs(cidV0, cb),
+        (cid, cb) => nodeA.dht.findProvs(cid, cb),
         (provs, cb) => {
           expect(provs.map((p) => p.id.toB58String()))
             .to.eql([nodeB.peerId.id])
@@ -73,7 +75,7 @@ module.exports = (createCommon, options) => {
       }
       waterfall([
         (cb) => fakeCid(cb),
-        (cidV0, cb) => nodeA.dht.findprovs(cidV0, options, (err) => {
+        (cidV0, cb) => nodeA.dht.findProvs(cidV0, options, (err) => {
           expect(err).to.exist()
           cb(null)
         })

@@ -1,10 +1,69 @@
+<a name="0.92.0"></a>
+# [0.92.0](https://github.com/ipfs/interface-ipfs-core/compare/v0.91.1...v0.92.0) (2018-12-12)
+
+
+### Bug Fixes
+
+* addFromURL case ([#415](https://github.com/ipfs/interface-ipfs-core/issues/415)) ([f54422d](https://github.com/ipfs/interface-ipfs-core/commit/f54422d))
+
+
+
+<a name="0.91.1"></a>
+## [0.91.1](https://github.com/ipfs/interface-ipfs-core/compare/v0.91.0...v0.91.1) (2018-12-11)
+
+
+### Bug Fixes
+
+* change find provs options test ([#416](https://github.com/ipfs/interface-ipfs-core/issues/416)) ([3c08aa2](https://github.com/ipfs/interface-ipfs-core/commit/3c08aa2))
+
+
+
+<a name="0.91.0"></a>
+# [0.91.0](https://github.com/ipfs/interface-ipfs-core/compare/v0.90.0...v0.91.0) (2018-12-10)
+
+
+### Bug Fixes
+
+* another typo ([87bcd68](https://github.com/ipfs/interface-ipfs-core/commit/87bcd68))
+* typos ([e7b8697](https://github.com/ipfs/interface-ipfs-core/commit/e7b8697))
+* update dht responses ([#389](https://github.com/ipfs/interface-ipfs-core/issues/389)) ([c4bea6f](https://github.com/ipfs/interface-ipfs-core/commit/c4bea6f))
+* Updated link in README ([#411](https://github.com/ipfs/interface-ipfs-core/issues/411)) ([81a5798](https://github.com/ipfs/interface-ipfs-core/commit/81a5798))
+
+
+
+<a name="0.90.0"></a>
+# [0.90.0](https://github.com/ipfs/interface-ipfs-core/compare/v0.89.0...v0.90.0) (2018-12-05)
+
+
+
+<a name="0.89.0"></a>
+# [0.89.0](https://github.com/ipfs/interface-ipfs-core/compare/v0.88.0...v0.89.0) (2018-12-03)
+
+
+### Bug Fixes
+
+* code blocks for the code ([36cf442](https://github.com/ipfs/interface-ipfs-core/commit/36cf442))
+* ipns over pubsub tests ([#395](https://github.com/ipfs/interface-ipfs-core/issues/395)) ([e872b8a](https://github.com/ipfs/interface-ipfs-core/commit/e872b8a))
+
+
+
+<a name="0.88.0"></a>
+# [0.88.0](https://github.com/ipfs/interface-ipfs-core/compare/v0.87.0...v0.88.0) (2018-11-27)
+
+
+
+<a name="0.87.0"></a>
+# [0.87.0](https://github.com/ipfs/interface-ipfs-core/compare/v0.86.0...v0.87.0) (2018-11-26)
+
+
+
 <a name="0.86.0"></a>
 # [0.86.0](https://github.com/ipfs/interface-ipfs-core/compare/v0.85.0...v0.86.0) (2018-11-12)
 
 
 ### Features
 
-* move regular files api to top level, add addFromFs and addFromUrl ([#378](https://github.com/ipfs/interface-ipfs-core/issues/378)) ([3dc7278](https://github.com/ipfs/interface-ipfs-core/commit/3dc7278))
+* move regular files api to top level, add addFromFs and addFromURL ([#378](https://github.com/ipfs/interface-ipfs-core/issues/378)) ([3dc7278](https://github.com/ipfs/interface-ipfs-core/commit/3dc7278))
 
 
 
@@ -1024,6 +1083,3 @@ Signed-off-by: Alan Shaw <alan@tableflip.io>
 ### Bug Fixes
 
 * remove superfluous console.logs ([442ea74](https://github.com/ipfs/interface-ipfs-core/commit/442ea74))
-
-
-

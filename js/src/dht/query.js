@@ -35,7 +35,11 @@ module.exports = (createCommon, options) => {
       })
     })
 
-    after((done) => common.teardown(done))
+    after(function (done) {
+      this.timeout(50 * 1000)
+
+      common.teardown(done)
+    })
 
     it('should return the other node in the query', function (done) {
       const timeout = 150 * 1000
@@ -55,7 +59,7 @@ module.exports = (createCommon, options) => {
         if (skipped) return
         clearTimeout(timeoutId)
         expect(err).to.not.exist()
-        expect(peers.map((p) => p.ID)).to.include(nodeB.peerId.id)
+        expect(peers.map((p) => p.id.toB58String())).to.include(nodeB.peerId.id)
         done()
       })
     })
