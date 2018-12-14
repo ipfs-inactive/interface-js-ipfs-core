@@ -177,7 +177,7 @@ module.exports = (createCommon, options) => {
       })
     })
 
-    it.only('should ls files by path', done => {
+    it('should ls files by path', done => {
       const dir = randomName('DIR')
 
       const input = [
