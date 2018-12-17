@@ -12,7 +12,7 @@ module.exports = (createCommon, options) => {
   const it = getIt(options)
   const common = createCommon()
 
-  describe.only('.addFromFs', function () {
+  describe('.addFromFs', function () {
     this.timeout(40 * 1000)
 
     const fixturesPath = path.join(__dirname, '../../test/fixtures')
