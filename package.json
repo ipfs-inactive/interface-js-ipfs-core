@@ -37,7 +37,6 @@
   "homepage": "https://github.com/ipfs/interface-ipfs-core#readme",
   "dependencies": {
     "async": "^2.6.1",
-    "big.js": "^5.2.2",
     "bl": "^2.1.2",
     "bs58": "^4.0.1",
     "chai": "^4.2.0",
