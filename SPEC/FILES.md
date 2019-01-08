@@ -1090,7 +1090,7 @@ Where:
 
 - `path` is an optional string to show listing for (default: `/`)
 - `options` is an optional Object that might contain the following keys:
-  - `long` is a Boolean value to decide whether or not to populate `type`, `size` and `hash` (default: false)
+  - `l` is a Boolean value to decide whether or not to populate `type`, `size` and `hash` (default: false)
   - `cidBase` is which number base to use to format hashes - e.g. `base32`, `base64` etc (default: `base58btc`)
   - `sort` is a Boolean value, if true entries will be sorted by filename (default: false)
 - `callback` is an optional function with the signature `function (error, files) {}`, where `error` may be an Error that occured if the operation was not successful and `files` is an array containing Objects that contain the following keys:
