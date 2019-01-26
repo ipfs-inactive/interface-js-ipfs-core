@@ -44,6 +44,38 @@ module.exports = (createCommon, options) => {
       })
     })
 
+    it('should add a symlink to a file', (done) => {
+      const filePath = path.join(fixturesPath, 'symlinks', 'ipfs.txt-link')
+      ipfs.addFromFs(filePath, (err, files) => {
+        expect(err).to.not.exist()
+
+        const file = files.find(r => r.path === 'ipfs.txt-link')
+        expect(file).to.exist()
+
+        ipfs.cat(file.hash, (err, data) => {
+          expect(err).to.not.exist()
+          expect(data.toString()).to.eql('IPFS\n')
+          done()
+        })
+      })
+    })
+
+    it('should add a symlink to a directory', (done) => {
+      const dirPath = path.join(fixturesPath, 'symlinks', 'real-dir-link')
+      ipfs.addFromFs(dirPath, { recursive: true }, (err, files) => {
+        expect(err).to.not.exist()
+
+        const file = files.find(r => r.path === 'real-dir-link/real-file.txt')
+        expect(file).to.exist()
+
+        ipfs.cat(file.hash, (err, data) => {
+          expect(err).to.not.exist()
+          expect(data.toString()).to.eql('A real file\n')
+          done()
+        })
+      })
+    })
+
     it('should add a directory from the file system with an odd name', (done) => {
       const filesPath = path.join(fixturesPath, 'weird name folder [v0]')
       ipfs.addFromFs(filesPath, { recursive: true }, (err, result) => {
