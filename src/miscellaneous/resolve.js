@@ -95,10 +95,34 @@ module.exports = (createCommon, options) => {
       ipfs.dag.put(content, options, (err, cid) => {
         expect(err).to.not.exist()
 
-        const path = `/ipld/${cid.toBaseEncodedString()}/path/to/file`
+        const path = `/ipfs/${cid}/path/to/file`
         ipfs.resolve(path, (err, resolved) => {
           expect(err).to.not.exist()
-          expect(resolved).to.be(path)
+          expect(resolved).to.equal(path)
+          done()
+        })
+      })
+    })
+
+    it('should resolve up to the last node across multiple nodes', (done) => {
+      const options = { format: 'dag-cbor', hashAlg: 'sha2-256' }
+
+      waterfall([
+        cb => {
+          const content = { node: { with: { file: hat() } } }
+          ipfs.dag.put(content, options, cb)
+        },
+        (childCid, cb) => {
+          const content = { path: { to: childCid } }
+          ipfs.dag.put(content, options, (err, parentCid) => cb(err, { childCid, parentCid }))
+        }
+      ], (err, res) => {
+        expect(err).to.not.exist()
+
+        const path = `/ipfs/${res.parentCid}/path/to/node/with/file`
+        ipfs.resolve(path, (err, resolved) => {
+          expect(err).to.not.exist()
+          expect(resolved).to.equal(`/ipfs/${res.childCid}/node/with/file`)
           done()
         })
       })
