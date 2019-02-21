@@ -57,10 +57,15 @@ module.exports = (createCommon, options) => {
         )
       })
     })
-    it('should subscribe and unsubscribe with no handler', (done) => {
+
+    it('should subscribe 10 handlers and unsunscribe once with no reference to the handlers', (done) => {
+      const count = 10
       const someTopic = getTopic()
-      const handler = (msg) => {}
-      ipfs.pubsub.subscribe(someTopic, handler, (err) => {
+
+      timesSeries(count, (_, cb) => {
+        const handler = (msg) => {}
+        ipfs.pubsub.subscribe(someTopic, handler, (err) => cb(err))
+      }, (err) => {
         expect(err).to.not.exist()
         ipfs.pubsub.unsubscribe(someTopic)
         setTimeout(() => {
