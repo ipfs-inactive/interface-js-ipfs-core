@@ -50,9 +50,9 @@ A great source of [examples][] can be found in the tests for this API.
 
 If no `callback` is passed, a [promise][] is returned.
 
-This works like `EventEmitter.removeListener`, as that only the `handler` passed to a `subscribe` call before is removed from listening. The underlying subscription will only be canceled once all listeners for a topic have been removed.
-The other options is to use this method with only `topic` as input, without the need to keep a reference to the `handler` function. 
-This works like `EventEmitter.remoteAllListeners`, removes all listeners from the given topic. 
+If the `topic` and `handler` are provided, the `handler` will no longer receive updates for the `topic`. This behaves like `EventEmitter.removeListener`. If the `handler` is not equivalent to the `handler` provided on `subscribe`, no action will be taken.
+
+If **only** the `topic` param is provided, unsubscribe will remove **all** handlers for the `topic`. This behaves like `EventEmitter.remoteAllListeners`. Use this if you would like to no longer receive any updates for the `topic`.
 
 **Example:**
 
