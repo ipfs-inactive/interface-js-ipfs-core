@@ -51,6 +51,8 @@ A great source of [examples][] can be found in the tests for this API.
 If no `callback` is passed, a [promise][] is returned.
 
 This works like `EventEmitter.removeListener`, as that only the `handler` passed to a `subscribe` call before is removed from listening. The underlying subscription will only be canceled once all listeners for a topic have been removed.
+The other options is to use this method with only `topic` as input, without the need to keep a reference to the `handler` function. 
+This works like `EventEmitter.remoteAllListeners`, removes all listeners from the given topic. 
 
 **Example:**
 
@@ -74,6 +76,25 @@ ipfs.pubsub.subscribe(topic, receiveMsg, (err) => {
 
       console.log(`unsubscribed from ${topic}`)
     })
+  }, 1000)
+})
+```
+
+Or removing all listeners: 
+```JavaScript
+const topic = 'fruit-of-the-day'
+const receiveMsg = (msg) => console.log(msg.toString())
+
+ipfs.pubsub.subscribe(topic, receiveMsg, (err) => {
+  if (err) {
+    return console.error(`failed to subscribe to ${topic}`, err)
+  }
+
+  console.log(`subscribed to ${topic}`)
+
+  setTimeout(() => {
+    // Will unsubscribe ALL handlers for the given topic
+    ipfs.pubsub.unsubscribe(topic);
   }, 1000)
 })
 ```

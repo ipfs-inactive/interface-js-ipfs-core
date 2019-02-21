@@ -57,5 +57,21 @@ module.exports = (createCommon, options) => {
         )
       })
     })
+    it('should subscribe and unsubscribe with no handler', (done) => {
+      const someTopic = getTopic()
+      const handler = (msg) => {}
+      ipfs.pubsub.subscribe(someTopic, handler, (err) => {
+        expect(err).to.not.exist()
+        ipfs.pubsub.unsubscribe(someTopic)
+        setTimeout(() => {
+          // Assert unsubscribe worked
+          ipfs.pubsub.ls((err, topics) => {
+            expect(err).to.not.exist()
+            expect(topics).to.eql([])
+            done()
+          })
+        }, 500)
+      })
+    })
   })
 }
