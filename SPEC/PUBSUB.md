@@ -48,7 +48,7 @@ A great source of [examples][] can be found in the tests for this API.
 - `handler: (msg) => {}` - The handler to remove.
 - `callback: (Error) => {}` (Optional) Called once the unsubscribe is done.
 
-If no `callback` is passed, a [promise][] is returned.
+If a **handler is passed** and no `callback` is passed, a [promise][] is returned.
 
 If the `topic` and `handler` are provided, the `handler` will no longer receive updates for the `topic`. This behaves like `EventEmitter.removeListener`. If the `handler` is not equivalent to the `handler` provided on `subscribe`, no action will be taken.
 
