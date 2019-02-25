@@ -85,17 +85,9 @@ Or removing all listeners:
 const topic = 'fruit-of-the-day'
 const receiveMsg = (msg) => console.log(msg.toString())
 
-ipfs.pubsub.subscribe(topic, receiveMsg, (err) => {
-  if (err) {
-    return console.error(`failed to subscribe to ${topic}`, err)
-  }
-
-  console.log(`subscribed to ${topic}`)
-
-  setTimeout(() => {
-    // Will unsubscribe ALL handlers for the given topic
-    ipfs.pubsub.unsubscribe(topic);
-  }, 1000)
+ipfs.pubsub.subscribe(topic, receiveMsg).then(() => {
+  // Will unsubscribe ALL handlers for the given topic
+  ipfs.pubsub.unsubscribe(topic);
 })
 ```
 
