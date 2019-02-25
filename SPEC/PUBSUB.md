@@ -48,11 +48,17 @@ A great source of [examples][] can be found in the tests for this API.
 - `handler: (msg) => {}` - The handler to remove.
 - `callback: (Error) => {}` (Optional) Called once the unsubscribe is done.
 
-If a **handler is passed** and no `callback` is passed, a [promise][] is returned.
+If no `callback` is passed, a [promise][] is returned.
 
-If the `topic` and `handler` are provided, the `handler` will no longer receive updates for the `topic`. This behaves like `EventEmitter.removeListener`. If the `handler` is not equivalent to the `handler` provided on `subscribe`, no action will be taken.
+If the `topic` and `handler` are provided, the `handler` will no longer receive updates for the `topic`. This behaves like [EventEmitter.removeListener](https://nodejs.org/dist/latest/docs/api/events.html#events_emitter_removelistener_eventname_listener). If the `handler` is not equivalent to the `handler` provided on `subscribe`, no action will be taken.
 
-If **only** the `topic` param is provided, unsubscribe will remove **all** handlers for the `topic`. This behaves like `EventEmitter.remoteAllListeners`. Use this if you would like to no longer receive any updates for the `topic`.
+If **only** the `topic` param is provided, unsubscribe will remove **all** handlers for the `topic`. This behaves like [EventEmitter.removeAllListeners](https://nodejs.org/dist/latest/docs/api/events.html#events_emitter_removealllisteners_eventname). Use this if you would like to no longer receive any updates for the `topic`.
+
+**WARNING:** Unsubscribe is an async operation, but removing **all** handlers for a topic can only be done using the Promises API (due to the difficulty in distinguishing between a "handler" and a "callback" - they are both functions). If you _need_ to know when unsubscribe has completed you must use `await` or `.then` on the return value from 
+
+```JavaScript
+ipfs.pubsub.unsubscribe('topic')
+```
 
 **Example:**
 
@@ -85,10 +91,10 @@ Or removing all listeners:
 const topic = 'fruit-of-the-day'
 const receiveMsg = (msg) => console.log(msg.toString())
 
-ipfs.pubsub.subscribe(topic, receiveMsg).then(() => {
-  // Will unsubscribe ALL handlers for the given topic
-  ipfs.pubsub.unsubscribe(topic);
-})
+await ipfs.pubsub.subscribe(topic, receiveMsg);
+
+// Will unsubscribe ALL handlers for the given topic
+await ipfs.pubsub.unsubscribe(topic);
 ```
 
 A great source of [examples][] can be found in the tests for this API.

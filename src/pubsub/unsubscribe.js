@@ -58,23 +58,15 @@ module.exports = (createCommon, options) => {
       })
     })
 
-    it('should subscribe 10 handlers and unsunscribe once with no reference to the handlers', (done) => {
+    it('should subscribe 10 handlers and unsunscribe once with no reference to the handlers', async () => {
       const count = 10
       const someTopic = getTopic()
-
-      timesSeries(count, (_, cb) => {
-        const handler = (msg) => {}
-        ipfs.pubsub.subscribe(someTopic, handler, (err) => cb(err))
-      }, (err) => {
-        expect(err).to.not.exist()
-        ipfs.pubsub.unsubscribe(someTopic)
-        // Assert unsubscribe worked
-        ipfs.pubsub.ls((err, topics) => {
-          expect(err).to.not.exist()
-          expect(topics).to.eql([])
-          done()
-        })
-      })
+      for (let i = 0; i < count; i++) {
+        await ipfs.pubsub.subscribe(someTopic, (msg) => {})
+      }
+      await ipfs.pubsub.unsubscribe(someTopic)
+      const topics = await ipfs.pubsub.ls()
+      expect(topics).to.eql([])
     })
   })
 }
