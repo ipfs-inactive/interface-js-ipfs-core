@@ -68,14 +68,12 @@ module.exports = (createCommon, options) => {
       }, (err) => {
         expect(err).to.not.exist()
         ipfs.pubsub.unsubscribe(someTopic)
-        setTimeout(() => {
-          // Assert unsubscribe worked
-          ipfs.pubsub.ls((err, topics) => {
-            expect(err).to.not.exist()
-            expect(topics).to.eql([])
-            done()
-          })
-        }, 500)
+        // Assert unsubscribe worked
+        ipfs.pubsub.ls((err, topics) => {
+          expect(err).to.not.exist()
+          expect(topics).to.eql([])
+          done()
+        })
       })
     })
   })
