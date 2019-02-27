@@ -32,26 +32,26 @@ module.exports = (createCommon, options) => {
     after((done) => common.teardown(done))
 
     it('should put a buffer, using defaults', (done) => {
-      const expectedHash = 'QmPv52ekjS75L4JmHpXVeuJ5uX2ecSfSZo88NSyxwA3rAQ'
+      const expectedHash = 'bafybeiaxnnnb7qz2focittuqq3ya25q7rcv3bqynnczfzako47346wosmu'
       const blob = Buffer.from('blorb')
 
       ipfs.block.put(blob, (err, block) => {
         expect(err).to.not.exist()
         expect(block.data).to.be.eql(blob)
-        expect(block.cid.multihash).to.eql(multihash.fromB58String(expectedHash))
+        expect(block.cid.toString()).to.eql(expectedHash)
         done()
       })
     })
 
     it('should put a buffer, using CID', (done) => {
-      const expectedHash = 'QmPv52ekjS75L4JmHpXVeuJ5uX2ecSfSZo88NSyxwA3rAQ'
+      const expectedHash = 'bafybeiaxnnnb7qz2focittuqq3ya25q7rcv3bqynnczfzako47346wosmu'
       const cid = new CID(expectedHash)
       const blob = Buffer.from('blorb')
 
-      ipfs.block.put(blob, { cid: cid }, (err, block) => {
+      ipfs.block.put(blob, { cid }, (err, block) => {
         expect(err).to.not.exist()
         expect(block.data).to.be.eql(blob)
-        expect(block.cid.multihash).to.eql(multihash.fromB58String(expectedHash))
+        expect(block.cid.toString()).to.eql(expectedHash)
         done()
       })
     })
@@ -74,14 +74,14 @@ module.exports = (createCommon, options) => {
     })
 
     it('should put a Block instance', (done) => {
-      const expectedHash = 'QmPv52ekjS75L4JmHpXVeuJ5uX2ecSfSZo88NSyxwA3rAQ'
+      const expectedHash = 'bafybeiaxnnnb7qz2focittuqq3ya25q7rcv3bqynnczfzako47346wosmu'
       const cid = new CID(expectedHash)
       const b = new Block(Buffer.from('blorb'), cid)
 
       ipfs.block.put(b, (err, block) => {
         expect(err).to.not.exist()
         expect(block.data).to.eql(Buffer.from('blorb'))
-        expect(block.cid.multihash).to.eql(multihash.fromB58String(expectedHash))
+        expect(block.cid.toString()).to.eql(expectedHash)
         done()
       })
     })
