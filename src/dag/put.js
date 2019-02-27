@@ -107,6 +107,7 @@ module.exports = (createCommon, options) => {
     it('should set defaults when calling put without options', (done) => {
       ipfs.dag.put(cborNode, (err, cid) => {
         expect(err).to.not.exist()
+        expect(cid.version).to.equal(1)
         expect(cid.codec).to.equal('dag-cbor')
         expect(multihash.decode(cid.multihash).name).to.equal('sha2-256')
         done()
@@ -116,6 +117,7 @@ module.exports = (createCommon, options) => {
     it('should set defaults when calling put without options (promised)', () => {
       return ipfs.dag.put(cborNode)
         .then((cid) => {
+          expect(cid.version).to.equal(1)
           expect(cid.codec).to.equal('dag-cbor')
           expect(multihash.decode(cid.multihash).name).to.equal('sha2-256')
         })
@@ -133,7 +135,17 @@ module.exports = (createCommon, options) => {
       })
     })
 
-    it.skip('should put by passing the cid instead of format and hashAlg', (done) => {})
+    it('should put by passing the cid instead of format and hashAlg', (done) => {
+      dagCBOR.util.cid(cborNode, (err, cid) => {
+        expect(err).to.not.exist()
+
+        ipfs.dag.put(cborNode, { cid }, (err, _cid) => {
+          expect(err).to.not.exist()
+          expect(cid.equals(_cid)).to.be.true()
+          done()
+        })
+      })
+    })
 
     // TODO it.skip('Promises support', (done) => {})
   })
