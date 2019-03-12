@@ -41,7 +41,7 @@ module.exports = (createCommon, options) => {
       ], done)
     })
 
-    it('should cat with a base58 string encoded multihash', (done) => {
+    it('should cat with a base32 string encoded CID', (done) => {
       ipfs.cat(fixtures.smallFile.cid, (err, data) => {
         expect(err).to.not.exist()
         expect(data.toString()).to.contain('Plz add me!')
@@ -49,15 +49,15 @@ module.exports = (createCommon, options) => {
       })
     })
 
-    it('should cat with a base58 string encoded multihash (promised)', () => {
+    it('should cat with a base32 string encoded CID (promised)', () => {
       return ipfs.cat(fixtures.smallFile.cid)
         .then((data) => {
           expect(data.toString()).to.contain('Plz add me!')
         })
     })
 
-    it('should cat with a Buffer multihash', (done) => {
-      const cid = Buffer.from(bs58.decode(fixtures.smallFile.cid))
+    it('should cat with a Buffer CID', (done) => {
+      const cid = new CID(fixtures.smallFile.cid).buffer
 
       ipfs.cat(cid, (err, data) => {
         expect(err).to.not.exist()

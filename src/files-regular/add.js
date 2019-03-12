@@ -43,8 +43,7 @@ module.exports = (createCommon, options) => {
         const file = filesAdded[0]
         expect(file.hash).to.equal(fixtures.smallFile.cid)
         expect(file.path).to.equal(fixtures.smallFile.cid)
-        // file.size counts the overhead by IPLD nodes and unixfs protobuf
-        expect(file.size).greaterThan(fixtures.smallFile.data.length)
+        expect(file.size).to.equal(fixtures.smallFile.data.length)
         done()
       })
     })
@@ -141,7 +140,7 @@ module.exports = (createCommon, options) => {
     })
 
     it('should add readable stream', (done) => {
-      const expectedCid = 'QmVv4Wz46JaZJeH5PMV4LGbRiiMKEmszPYY3g6fjGnVXBS'
+      const expectedCid = 'bafkreiata6mq425fzikf5m26temcvg7mizjrxrkn35swuybmpah2ajan5y'
 
       const rs = new Readable()
       rs.push(Buffer.from('some data'))
@@ -153,14 +152,14 @@ module.exports = (createCommon, options) => {
         expect(filesAdded).to.be.length(1)
         const file = filesAdded[0]
         expect(file.path).to.equal(expectedCid)
-        expect(file.size).to.equal(17)
+        expect(file.size).to.equal(9)
         expect(file.hash).to.equal(expectedCid)
         done()
       })
     })
 
     it('should add array of objects with readable stream content', (done) => {
-      const expectedCid = 'QmVv4Wz46JaZJeH5PMV4LGbRiiMKEmszPYY3g6fjGnVXBS'
+      const expectedCid = 'bafkreiata6mq425fzikf5m26temcvg7mizjrxrkn35swuybmpah2ajan5y'
 
       const rs = new Readable()
       rs.push(Buffer.from('some data'))
@@ -174,40 +173,40 @@ module.exports = (createCommon, options) => {
         expect(filesAdded).to.be.length(1)
         const file = filesAdded[0]
         expect(file.path).to.equal('data.txt')
-        expect(file.size).to.equal(17)
+        expect(file.size).to.equal(9)
         expect(file.hash).to.equal(expectedCid)
         done()
       })
     })
 
     it('should add pull stream', (done) => {
-      const expectedCid = 'QmRf22bZar3WKmojipms22PkXH1MZGmvsqzQtuSvQE3uhm'
+      const expectedCid = 'bafkreie7q3iidccmpvszul7kudcvvuavuo7u6gzlbobczuk5nqk3b4akba'
 
       ipfs.add(pull.values([Buffer.from('test')]), (err, res) => {
         if (err) return done(err)
         expect(res).to.have.length(1)
-        expect(res[0]).to.deep.equal({ path: expectedCid, hash: expectedCid, size: 12 })
+        expect(res[0]).to.deep.equal({ path: expectedCid, hash: expectedCid, size: 4 })
         done()
       })
     })
 
     it('should add pull stream (promised)', () => {
-      const expectedCid = 'QmRf22bZar3WKmojipms22PkXH1MZGmvsqzQtuSvQE3uhm'
+      const expectedCid = 'bafkreie7q3iidccmpvszul7kudcvvuavuo7u6gzlbobczuk5nqk3b4akba'
 
       return ipfs.add(pull.values([Buffer.from('test')]))
         .then((res) => {
           expect(res).to.have.length(1)
-          expect(res[0]).to.deep.equal({ path: expectedCid, hash: expectedCid, size: 12 })
+          expect(res[0]).to.deep.equal({ path: expectedCid, hash: expectedCid, size: 4 })
         })
     })
 
     it('should add array of objects with pull stream content (promised)', () => {
-      const expectedCid = 'QmRf22bZar3WKmojipms22PkXH1MZGmvsqzQtuSvQE3uhm'
+      const expectedCid = 'bafkreie7q3iidccmpvszul7kudcvvuavuo7u6gzlbobczuk5nqk3b4akba'
 
       return ipfs.add([{ content: pull.values([Buffer.from('test')]) }])
         .then((res) => {
           expect(res).to.have.length(1)
-          expect(res[0]).to.deep.equal({ path: expectedCid, hash: expectedCid, size: 12 })
+          expect(res[0]).to.deep.equal({ path: expectedCid, hash: expectedCid, size: 4 })
         })
     })
 
