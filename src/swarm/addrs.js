@@ -35,18 +35,18 @@ module.exports = (createCommon, options) => {
     after((done) => common.teardown(done))
 
     it('should get a list of node addresses', (done) => {
-      ipfsA.swarm.addrs((err, multiaddrs) => {
+      ipfsA.swarm.addrs((err, peerInfos) => {
         expect(err).to.not.exist()
-        expect(multiaddrs).to.not.be.empty()
-        expect(multiaddrs).to.be.an('array')
-        multiaddrs.forEach(m => expect(PeerInfo.isPeerInfo(m)).to.be.true())
+        expect(peerInfos).to.not.be.empty()
+        expect(peerInfos).to.be.an('array')
+        peerInfos.forEach(m => expect(PeerInfo.isPeerInfo(m)).to.be.true())
         done()
       })
     })
 
     it('should get a list of node addresses (promised)', () => {
-      return ipfsA.swarm.addrs().then((multiaddrs) => {
-        expect(multiaddrs).to.have.length.above(0)
+      return ipfsA.swarm.addrs().then((peerInfos) => {
+        expect(peerInfos).to.have.length.above(0)
       })
     })
   })
