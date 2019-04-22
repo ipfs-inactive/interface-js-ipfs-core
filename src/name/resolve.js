@@ -13,7 +13,7 @@ module.exports = (createCommon, options) => {
   const it = getIt(options)
   const common = createCommon()
 
-  describe('.name.resolve', function () {
+  describe('.name.resolve offline', function () {
     const keyName = hat()
     let ipfs
     let nodeId
@@ -45,14 +45,14 @@ module.exports = (createCommon, options) => {
 
       const value = fixture.cid
 
-      ipfs.name.publish(value, (err, res) => {
+      ipfs.name.publish(value, { 'allow-offline': true }, (err, res) => {
         expect(err).to.not.exist()
         expect(res).to.exist()
 
         ipfs.name.resolve(nodeId, (err, res) => {
           expect(err).to.not.exist()
           expect(res).to.exist()
-          expect(res.path).to.equal(`/ipfs/${value}`)
+          expect(res).to.equal(`/ipfs/${value}`)
 
           done()
         })
@@ -62,28 +62,31 @@ module.exports = (createCommon, options) => {
     it('should not get the entry if its validity time expired', function (done) {
       this.timeout(50 * 1000)
 
-      const value = fixture.cid
       const publishOptions = {
         resolve: true,
-        lifetime: '1ms',
+        lifetime: '100ms',
         ttl: '10s',
-        key: 'self'
+        key: 'self',
+        'allow-offline': true
       }
 
-      ipfs.name.publish(value, publishOptions, (err, res) => {
+      ipfs.add(Buffer.from('should not get the entry if its validity time expired'), (err, r) => {
         expect(err).to.not.exist()
-        expect(res).to.exist()
+        ipfs.name.publish(r[0].path, publishOptions, (err, res) => {
+          expect(err).to.not.exist()
+          expect(res).to.exist()
 
-        // guarantee that the record has an expired validity.
-        setTimeout(function () {
-          ipfs.name.resolve(nodeId, (err, res) => {
-            expect(err).to.exist()
-            expect(err.message).to.equal('record has expired')
-            expect(res).to.not.exist()
+          // guarantee that the record has an expired validity.
+          setTimeout(function () {
+            ipfs.name.resolve(nodeId, (err, res) => {
+              // go only has 1 possible error https://github.com/ipfs/go-ipfs/blob/master/namesys/interface.go#L51
+              // so here we just expect an Error and don't match the error type to expiration
+              expect(err).to.exist()
 
-            done()
-          })
-        }, 1)
+              done()
+            })
+          }, 500)
+        })
       })
     })
 
@@ -95,7 +98,8 @@ module.exports = (createCommon, options) => {
         resolve: false,
         lifetime: '24h',
         ttl: '10s',
-        key: 'self'
+        key: 'self',
+        'allow-offline': true
       }
 
       // Generate new key
@@ -125,13 +129,32 @@ module.exports = (createCommon, options) => {
             ipfs.name.resolve(keyId, resolveOptions, (err, res) => {
               expect(err).to.not.exist()
               expect(res).to.exist()
-              expect(res.path).to.equal(`/ipfs/${value}`)
+              expect(res).to.equal(`/ipfs/${value}`)
 
               done()
             })
           })
         })
       })
+    })
+
+    it('should resolve ipfs.io', async () => {
+      const r = await ipfs.name.resolve('ipfs.io', { recursive: false })
+      return expect(r.substr(0, 6)).to.eq('/ipns/')
+    })
+
+    it('should resolve /ipns/ipfs.io recursive', async () => {
+      const r = await ipfs.name.resolve('ipfs.io', { recursive: true })
+
+      return expect(r.substr(0, 6)).to.eql('/ipfs/')
+    })
+
+    it('should fail to resolve /ipns/ipfs.a', async () => {
+      try {
+        await ipfs.name.resolve('ipfs.a')
+      } catch (err) {
+        expect(err).to.exist()
+      }
     })
   })
 }
