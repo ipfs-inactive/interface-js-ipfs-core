@@ -21,7 +21,9 @@ const tests = {
   refs: require('./refs'),
   refsReadableStream: require('./refs-readable-stream'),
   refsPullStream: require('./refs-pull-stream'),
-  refsLocal: require('./refs-local')
+  refsLocal: require('./refs-local'),
+  refsLocalPullStream: require('./refs-local-pull-stream'),
+  refsLocalReadableStream: require('./refs-local-readable-stream')
 }
 
 module.exports = createSuite(tests)
