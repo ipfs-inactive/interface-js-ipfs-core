@@ -75,7 +75,7 @@ module.exports = (createCommon, suiteName, ipfsRefs, options) => {
 
           // Check there was no error and the refs match what was expected
           expect(err).to.not.exist()
-          expect(refs.map(r => r.Ref)).to.eql(expected)
+          expect(refs.map(r => r.ref)).to.eql(expected)
 
           // Clear any pending timeout
           clearTimeout(timeout)

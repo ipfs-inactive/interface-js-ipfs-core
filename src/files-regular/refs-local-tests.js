@@ -48,7 +48,7 @@ module.exports = (createCommon, suiteName, ipfsRefsLocal, options) => {
         ipfsRefsLocal(ipfs)((err, refs) => {
           expect(err).to.not.exist()
 
-          const cids = refs.map(r => r.Ref)
+          const cids = refs.map(r => r.ref)
           expect(cids).to.include('QmVwdDCY4SPGVFnNCiZnX5CtzwWDn6kAM98JXzKxE3kCmn')
           expect(cids).to.include('QmR4nFjTu18TyANgC65ArNWp5Yaab1gPzQ4D8zp7Kx3vhr')
 
