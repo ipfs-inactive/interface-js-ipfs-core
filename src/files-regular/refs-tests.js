@@ -1,7 +1,7 @@
 /* eslint-env mocha */
 'use strict'
 
-const async = require('async')
+const map = require('async/map')
 const { getDescribe, getIt, expect } = require('../utils/mocha')
 
 module.exports = (createCommon, suiteName, ipfsRefs, options) => {
@@ -297,7 +297,7 @@ function loadContent (ipfs, node, callback) {
   if (typeof node === 'object') {
     const entries = Object.entries(node)
     const sorted = entries.sort((a, b) => a[0] > b[0] ? 1 : a[0] < b[0] ? -1 : 0)
-    async.map(sorted, ([name, child], cb) => {
+    map(sorted, ([name, child], cb) => {
       loadContent(ipfs, child, (err, cid) => {
         cb(err, { name, cid: cid && cid.toString() })
       })
