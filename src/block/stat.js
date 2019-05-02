@@ -1,7 +1,6 @@
 /* eslint-env mocha */
 'use strict'
 
-const CID = require('cids')
 const auto = require('async/auto')
 const { getDescribe, getIt, expect } = require('../utils/mocha')
 
@@ -12,7 +11,7 @@ module.exports = (createCommon, options) => {
 
   describe('.block.stat', () => {
     const data = Buffer.from('blorb')
-    let ipfs, hash
+    let ipfs, cid
 
     before(function (done) {
       // CI takes longer to instantiate the daemon, so we need to increase the
@@ -26,7 +25,7 @@ module.exports = (createCommon, options) => {
       }, (err, res) => {
         if (err) return done(err)
         ipfs = res.ipfs
-        hash = res.block.cid.multihash
+        cid = res.block.cid
         done()
       })
     })
@@ -34,8 +33,6 @@ module.exports = (createCommon, options) => {
     after((done) => common.teardown(done))
 
     it('should stat by CID', (done) => {
-      const cid = new CID(hash)
-
       ipfs.block.stat(cid, (err, stats) => {
         expect(err).to.not.exist()
         expect(stats).to.have.property('key')

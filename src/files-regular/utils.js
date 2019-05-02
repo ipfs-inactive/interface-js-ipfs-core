@@ -4,7 +4,7 @@ const loadFixture = require('aegir/fixtures')
 
 exports.fixtures = Object.freeze({
   directory: Object.freeze({
-    cid: 'QmVvjDy7yF7hdnqE8Hrf4MHo5ABDtb5AbX6hWbD3Y42bXP',
+    cid: 'bafybeiaqxngbqbr5erl2ux2rfuoipy3b6caefjodi3gshpi3u7nsqruvuq',
     files: Object.freeze({
       'pp.txt': loadFixture('test/fixtures/test-folder/pp.txt', 'interface-ipfs-core'),
       'holmes.txt': loadFixture('test/fixtures/test-folder/holmes.txt', 'interface-ipfs-core'),
@@ -15,11 +15,11 @@ exports.fixtures = Object.freeze({
     })
   }),
   smallFile: Object.freeze({
-    cid: 'Qma4hjFTnCasJ8PVp3mZbZK5g2vGDT4LByLJ7m8ciyRFZP',
+    cid: 'bafkreidffqfydlguosmmyebv5rp72m45tbpbq6segnkosa45kjfnduix6u',
     data: loadFixture('test/fixtures/testfile.txt', 'interface-ipfs-core')
   }),
   bigFile: Object.freeze({
-    cid: 'Qme79tX2bViL26vNjPsF3DP1R9rMKMvnPYJiKTTKPrXJjq',
+    cid: 'bafybeih2sk5etf4biw7mcmzximj4zz5yite4lhqowiq2pfdwiz55qgsiqu',
     data: loadFixture('test/fixtures/15mb.random', 'interface-ipfs-core')
   }),
   sslOpts: Object.freeze({

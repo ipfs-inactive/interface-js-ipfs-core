@@ -228,7 +228,7 @@ module.exports = (createCommon, options) => {
       dagPB.DAGNode.create(input, (err, node) => {
         expect(err).to.not.exist()
 
-        ipfs.dag.put(node, { format: 'dag-pb', hashAlg: 'sha2-256' }, (err, cid) => {
+        ipfs.dag.put(node, { format: 'dag-pb', hashAlg: 'sha2-256', version: 0 }, (err, cid) => {
           expect(err).to.not.exist()
           expect(cid.version).to.equal(0)
 

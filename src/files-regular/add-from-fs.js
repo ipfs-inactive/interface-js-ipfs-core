@@ -78,7 +78,7 @@ module.exports = (createCommon, options) => {
         expect(err).to.not.exist()
         expect(result.length).to.be.above(10)
         expect(result.map(object => object.path)).to.include('hidden-files-folder/.hiddenTest.txt')
-        expect(result.map(object => object.hash)).to.include('QmdbAjVmLRdpFyi8FFvjPfhTGB2cVXvWLuK7Sbt38HXrtt')
+        expect(result.map(object => object.hash)).to.include('bafkreieapodbusibovh26gwruowy7rchsgmoxwtwnfxsmjpbpgwh2guazu')
         done()
       })
     })

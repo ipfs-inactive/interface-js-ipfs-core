@@ -70,7 +70,7 @@ module.exports = (createCommon, options) => {
     })
 
     it('should add with object chunks and pull stream content', (done) => {
-      const expectedCid = 'QmRf22bZar3WKmojipms22PkXH1MZGmvsqzQtuSvQE3uhm'
+      const expectedCid = 'bafkreie7q3iidccmpvszul7kudcvvuavuo7u6gzlbobczuk5nqk3b4akba'
 
       pull(
         pull.values([{ content: pull.values([Buffer.from('test')]) }]),
@@ -78,7 +78,7 @@ module.exports = (createCommon, options) => {
         pull.collect((err, res) => {
           if (err) return done(err)
           expect(res).to.have.length(1)
-          expect(res[0]).to.deep.equal({ path: expectedCid, hash: expectedCid, size: 12 })
+          expect(res[0]).to.deep.equal({ path: expectedCid, hash: expectedCid, size: 4 })
           done()
         })
       )
