@@ -51,7 +51,6 @@ module.exports = (createCommon, options) => {
 
         ipfs.name.resolve(nodeId, (err, res) => {
           expect(err).to.not.exist()
-          expect(res).to.exist()
           expect(res).to.equal(`/ipfs/${value}`)
 
           done()
@@ -146,15 +145,11 @@ module.exports = (createCommon, options) => {
     it('should resolve /ipns/ipfs.io recursive', async () => {
       const r = await ipfs.name.resolve('ipfs.io', { recursive: true })
 
-      return expect(r.substr(0, 6)).to.eql('/ipfs/')
+      return expect(r.substr(0, 6)).to.eq('/ipfs/')
     })
 
     it('should fail to resolve /ipns/ipfs.a', async () => {
-      try {
-        await ipfs.name.resolve('ipfs.a')
-      } catch (err) {
-        expect(err).to.exist()
-      }
+      return expect(ipfs.name.resolve('ipfs.a')).to.be.rejected()
     })
   })
 }
