@@ -20,10 +20,6 @@ module.exports = (createCommon, options) => {
     let keyId
 
     before(function (done) {
-      // CI takes longer to instantiate the daemon, so we need to increase the
-      // timeout for the before step
-      this.timeout(60 * 1000)
-
       common.setup((err, factory) => {
         expect(err).to.not.exist()
 
@@ -41,8 +37,6 @@ module.exports = (createCommon, options) => {
     after((done) => common.teardown(done))
 
     it('should resolve a record with the default params after a publish', function (done) {
-      this.timeout(50 * 1000)
-
       const value = fixture.cid
 
       ipfs.name.publish(value, { 'allow-offline': true }, (err, res) => {
@@ -59,8 +53,6 @@ module.exports = (createCommon, options) => {
     })
 
     it('should not get the entry if its validity time expired', function (done) {
-      this.timeout(50 * 1000)
-
       const publishOptions = {
         resolve: true,
         lifetime: '100ms',
@@ -90,8 +82,6 @@ module.exports = (createCommon, options) => {
     })
 
     it('should recursively resolve to an IPFS hash', function (done) {
-      this.timeout(100 * 1000)
-
       const value = fixture.cid
       const publishOptions = {
         resolve: false,
@@ -137,15 +127,33 @@ module.exports = (createCommon, options) => {
       })
     })
 
+    it('should resolve /ipns/<hash>/remainder/file.txt', async () => {
+      const add = await ipfs.add(Buffer.from('fake remainder'))
+      await ipfs.name.publish(add[0].path, { 'allow-offline': true })
+
+      const resolve = await ipfs.name.resolve(`/ipns/${nodeId}/remainder/file.txt`)
+
+      return expect(resolve).to.match(/\/ipfs\/.+\/remainder\/file.txt$/)
+    })
+
     it('should resolve ipfs.io', async () => {
       const r = await ipfs.name.resolve('ipfs.io', { recursive: false })
-      return expect(r.substr(0, 6)).to.eq('/ipns/')
+      return expect(r).to.match(/\/ipns\/.+$/)
+    })
+
+    it('should resolve ipfs.io with remainder', async () => {
+      const r = await ipfs.name.resolve('/ipns/ipfs.io/images/ipfs-logo.svg', { recursive: false })
+      return expect(r).to.match(/\/ipns\/.+\/images\/ipfs-logo.svg$/)
     })
 
     it('should resolve /ipns/ipfs.io recursive', async () => {
       const r = await ipfs.name.resolve('ipfs.io', { recursive: true })
+      return expect(r).to.match(/\/ipfs\/.+$/)
+    })
 
-      return expect(r.substr(0, 6)).to.eq('/ipfs/')
+    it('should resolve /ipns/ipfs.io recursive with remainder', async () => {
+      const r = await ipfs.name.resolve('/ipns/ipfs.io/images/ipfs-logo.svg', { recursive: true })
+      return expect(r).to.match(/\/ipfs\/.+\/images\/ipfs-logo.svg$/)
     })
 
     it('should fail to resolve /ipns/ipfs.a', async () => {
