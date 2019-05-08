@@ -53,6 +53,13 @@ module.exports = (createCommon, options) => {
       })
     })
 
+    it('should publish correctly with the lifetime option and resolve', async () => {
+      const [{ path }] = await ipfs.add(Buffer.from('should publish correctly with the lifetime option and resolve'))
+      await ipfs.name.publish(path, { 'allow-offline': true, resolve: false, lifetime: '2h' })
+
+      return expect(ipfs.name.resolve(`/ipns/${nodeId}`)).to.become(`/ipfs/${path}`)
+    })
+
     it('should publish correctly when the file was not added but resolve is disabled', function (done) {
       this.timeout(50 * 1000)
 
