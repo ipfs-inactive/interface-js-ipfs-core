@@ -46,7 +46,7 @@ Include this badge in your readme if you make a new module that implements inter
 ![](/img/badge.svg)
 
 ```md
-[![IPFS Core API Compatible](https://cdn.rawgit.com/ipfs/interface-ipfs-core/master/img/badge.svg)](https://github.com/ipfs/interface-ipfs-core) [![Greenkeeper badge](https://badges.greenkeeper.io/ipfs/interface-js-ipfs-core.svg)](https://greenkeeper.io/)
+[![IPFS Core API Compatible](https://cdn.rawgit.com/ipfs/interface-ipfs-core/master/img/badge.svg)](https://github.com/ipfs/interface-ipfs-core)
 ```
 
 ## Install
