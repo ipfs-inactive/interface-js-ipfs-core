@@ -58,14 +58,22 @@ module.exports = (createCommon, options) => {
 
           cb()
         },
-        (cb) => dagPB.util.cid(nodePb).then(cid => { cidPb = cid }).catch(cb),
+        (cb) => {
+          dagPB.util.cid(dagPB.util.serialize(nodePb))
+            .then(cid => { cidPb = cid })
+            .then(cb)
+            .catch(cb)
+        },
         (cb) => {
           nodeCbor = {
             someData: 'I am inside a Cbor object',
             pb: cidPb
           }
 
-          dagPB.util.cid(nodeCbor).then(cid => { cidCbor = cid }).catch(cb)
+          dagCBOR.util.cid(dagCBOR.util.serialize(nodeCbor))
+            .then(cid => { cidCbor = cid })
+            .then(cb)
+            .catch(cb)
         },
         (cb) => {
           eachSeries([

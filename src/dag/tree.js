@@ -43,7 +43,11 @@ module.exports = (createCommon, options) => {
       series([
         (cb) => {
           nodePb = dagPB.DAGNode.create(Buffer.from('I am inside a Protobuf'))
-          dagPB.util.cid(nodePb).then(cid => { cidPb = cid }).then(cb).catch(cb)
+
+          dagPB.util.cid(dagPB.util.serialize(nodePb))
+            .then(cid => { cidPb = cid })
+            .then(cb)
+            .catch(cb)
         },
         (cb) => {
           nodeCbor = {
@@ -51,7 +55,10 @@ module.exports = (createCommon, options) => {
             pb: cidPb
           }
 
-          dagCBOR.util.cid(nodeCbor).then(cid => { cidCbor = cid }).then(cb).catch(cb)
+          dagCBOR.util.cid(dagPB.util.serialize(nodeCbor))
+            .then(cid => { cidCbor = cid })
+            .then(cb)
+            .catch(cb)
         },
         (cb) => {
           eachSeries([
