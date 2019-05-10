@@ -1,8 +1,7 @@
 /* eslint-env mocha */
 'use strict'
 
-const dagPB = require('ipld-dag-pb')
-const DAGNode = dagPB.DAGNode
+const { DAGNode } = require('ipld-dag-pb')
 const dagCBOR = require('ipld-dag-cbor')
 const CID = require('cids')
 const multihash = require('multihashes')
@@ -38,14 +37,10 @@ module.exports = (createCommon, options) => {
     let pbNode
     let cborNode
 
-    before((done) => {
+    before(() => {
       const someData = Buffer.from('some data')
 
-      DAGNode.create(someData, (err, node) => {
-        expect(err).to.not.exist()
-        pbNode = node
-        done()
-      })
+      pbNode = DAGNode.create(someData)
 
       cborNode = {
         data: someData
@@ -88,11 +83,10 @@ module.exports = (createCommon, options) => {
         expect(err).to.not.exist()
         expect(cid).to.exist()
         expect(CID.isCID(cid)).to.equal(true)
-        dagCBOR.util.cid(cborNode, (err, _cid) => {
-          expect(err).to.not.exist()
-          expect(cid.buffer).to.eql(_cid.buffer)
-          done()
-        })
+        dagCBOR.util.cid(cborNode)
+          .then(_cid => expect(cid.buffer).to.eql(_cid.buffer))
+          .then(done)
+          .catch(done)
       })
     })
 

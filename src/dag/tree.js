@@ -42,18 +42,8 @@ module.exports = (createCommon, options) => {
     before(function (done) {
       series([
         (cb) => {
-          dagPB.DAGNode.create(Buffer.from('I am inside a Protobuf'), (err, node) => {
-            expect(err).to.not.exist()
-            nodePb = node
-            cb()
-          })
-        },
-        (cb) => {
-          dagPB.util.cid(nodePb, (err, cid) => {
-            expect(err).to.not.exist()
-            cidPb = cid
-            cb()
-          })
+          nodePb = dagPB.DAGNode.create(Buffer.from('I am inside a Protobuf'))
+          dagPB.util.cid(nodePb).then(cid => { cidPb = cid }).then(cb).catch(cb)
         },
         (cb) => {
           nodeCbor = {
@@ -61,11 +51,7 @@ module.exports = (createCommon, options) => {
             pb: cidPb
           }
 
-          dagCBOR.util.cid(nodeCbor, (err, cid) => {
-            expect(err).to.not.exist()
-            cidCbor = cid
-            cb()
-          })
+          dagCBOR.util.cid(nodeCbor).then(cid => { cidCbor = cid }).then(cb).catch(cb)
         },
         (cb) => {
           eachSeries([
