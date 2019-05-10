@@ -84,7 +84,7 @@ module.exports = (createCommon, options) => {
         expect(cid).to.exist()
         expect(CID.isCID(cid)).to.equal(true)
         dagCBOR.util.cid(dagCBOR.util.serialize(cborNode))
-          .then(_cid => expect(cid.buffer).to.eql(_cid.buffer))
+          .then(_cid => { expect(cid.buffer).to.eql(_cid.buffer) })
           .then(done)
           .catch(done)
       })

@@ -127,7 +127,7 @@ module.exports = (createCommon, options) => {
         const node = result.value
 
         dagPB.util.cid(dagPB.util.serialize(node))
-          .then((cid) => expect(cid).to.eql(cidPb))
+          .then(cid => { expect(cid).to.eql(cidPb) })
           .then(done)
           .catch(done)
       })
@@ -151,7 +151,7 @@ module.exports = (createCommon, options) => {
         const node = result.value
 
         dagCBOR.util.cid(dagCBOR.util.serialize(node))
-          .then(cid => expect(cid).to.eql(cidCbor))
+          .then(cid => { expect(cid).to.eql(cidCbor) })
           .then(done)
           .catch(done)
       })
@@ -186,7 +186,7 @@ module.exports = (createCommon, options) => {
         const node = result.value
 
         dagCBOR.util.cid(dagCBOR.util.serialize(node))
-          .then(cid => expect(cid).to.eql(cidCbor))
+          .then(cid => { expect(cid).to.eql(cidCbor) })
           .then(done)
           .catch(done)
       })
