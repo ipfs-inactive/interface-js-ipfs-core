@@ -2,14 +2,9 @@
 'use strict'
 
 const dagPB = require('ipld-dag-pb')
-const DAGNode = dagPB.DAGNode
+const { DAGNode } = dagPB
 const series = require('async/series')
 const { getDescribe, getIt, expect } = require('../../utils/mocha')
-const {
-  calculateCid,
-  createDAGNode,
-  addLinkToDAGNode
-} = require('../utils')
 
 module.exports = (createCommon, options) => {
   const describe = getDescribe(options)
@@ -39,37 +34,23 @@ module.exports = (createCommon, options) => {
     after((done) => common.teardown(done))
 
     it('should add a link to an existing node', (done) => {
-      let testNodeCid
-      let node1bCid
-      let node1a
-      let node1b
-      let node2
-      let node2Cid
-
       const obj = {
         Data: Buffer.from('patch test object'),
         Links: []
       }
+
+      let testNodeCid
+      let node1bCid
+      const node1a = DAGNode.create(obj.Data, obj.Links)
+      let node1b
+      const node2 = DAGNode.create(Buffer.from('some other node'))
+      let node2Cid
 
       series([
         (cb) => {
           ipfs.object.put(obj, (err, cid) => {
             expect(err).to.not.exist()
             testNodeCid = cid
-            cb()
-          })
-        },
-        (cb) => {
-          DAGNode.create(obj.Data, obj.Links, (err, node) => {
-            expect(err).to.not.exist()
-            node1a = node
-            cb()
-          })
-        },
-        (cb) => {
-          DAGNode.create(Buffer.from('some other node'), (err, node) => {
-            expect(err).to.not.exist()
-            node2 = node
             cb()
           })
         },
@@ -83,23 +64,20 @@ module.exports = (createCommon, options) => {
           })
         },
         (cb) => {
-          DAGNode.addLink(node1a, {
-            name: 'link-to-node',
-            size: node2.toJSON().size,
-            cid: node2Cid
-          }, (err, node) => {
-            expect(err).to.not.exist()
-            node1b = node
-
-            dagPB.util.cid(node, (err, cid) => {
-              expect(err).to.not.exist()
-              node1bCid = cid
-              cb()
+          DAGNode
+            .addLink(node1a, {
+              name: 'link-to-node',
+              size: node2.toJSON().size,
+              cid: node2Cid
             })
-          })
+            .then(node => { node1b = node })
+            .then(() => dagPB.util.cid(dagPB.util.serialize(node1b), { cidVersion: 0 }))
+            .then(cid => { node1bCid = cid })
+            .then(cb)
+            .catch(cb)
         },
         (cb) => {
-          ipfs.object.patch.addLink(testNodeCid, node1b.links[0], (err, cid) => {
+          ipfs.object.patch.addLink(testNodeCid, node1b.Links[0], (err, cid) => {
             expect(err).to.not.exist()
             expect(node1bCid).to.eql(cid)
             cb()
@@ -145,15 +123,15 @@ module.exports = (createCommon, options) => {
 
       const parentCid = await ipfs.object.put(obj)
       const parent = await ipfs.object.get(parentCid)
-      const childCid = await ipfs.object.put(await createDAGNode(Buffer.from('some other node'), []))
+      const childCid = await ipfs.object.put(DAGNode.create(Buffer.from('some other node')))
       const child = await ipfs.object.get(childCid)
-      const newParent = await addLinkToDAGNode(parent, {
+      const newParent = await DAGNode.addLink(parent, {
         name: 'link-to-node',
         size: child.size,
         cid: childCid
       })
-      const newParentCid = await calculateCid(newParent)
-      const nodeFromObjectPatchCid = await ipfs.object.patch.addLink(parentCid, newParent.links[0])
+      const newParentCid = await dagPB.util.cid(dagPB.util.serialize(newParent), { cidVersion: 0 })
+      const nodeFromObjectPatchCid = await ipfs.object.patch.addLink(parentCid, newParent.Links[0])
 
       expect(newParentCid).to.eql(nodeFromObjectPatchCid)
     })

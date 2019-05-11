@@ -1,8 +1,7 @@
 /* eslint-env mocha */
 'use strict'
 
-const dagPB = require('ipld-dag-pb')
-const DAGNode = dagPB.DAGNode
+const { DAGNode } = require('ipld-dag-pb')
 const series = require('async/series')
 const hat = require('hat')
 const { getDescribe, getIt, expect } = require('../utils/mocha')
@@ -67,15 +66,15 @@ module.exports = (createCommon, options) => {
 
             // because js-ipfs-api can't infer if the
             // returned Data is Buffer or String
-            if (typeof node2.data === 'string') {
-              node2.data = Buffer.from(node2.data)
+            if (typeof node2.Data === 'string') {
+              node2.Data = Buffer.from(node2.Data)
             }
             cb()
           })
         },
         (cb) => {
-          expect(node1.data).to.eql(node2.data)
-          expect(node1.links).to.eql(node2.links)
+          expect(node1.Data).to.deep.equal(node2.Data)
+          expect(node1.Links).to.deep.equal(node2.Links)
           cb()
         }
       ], done)
@@ -93,12 +92,12 @@ module.exports = (createCommon, options) => {
 
       // because js-ipfs-api can't infer if the
       // returned Data is Buffer or String
-      if (typeof node2.data === 'string') {
-        node2.data = Buffer.from(node2.data)
+      if (typeof node2.Data === 'string') {
+        node2.Data = Buffer.from(node2.Data)
       }
 
-      expect(node1.data).to.deep.equal(node2.data)
-      expect(node1.links).to.deep.equal(node2.links)
+      expect(node1.Data).to.deep.equal(node2.Data)
+      expect(node1.Links).to.deep.equal(node2.Links)
     })
 
     it('should get object by multihash string', (done) => {
@@ -130,16 +129,16 @@ module.exports = (createCommon, options) => {
             expect(err).to.not.exist()
             // because js-ipfs-api can't infer if the
             // returned Data is Buffer or String
-            if (typeof node.data === 'string') {
-              node.data = Buffer.from(node.data)
+            if (typeof node.Data === 'string') {
+              node.Data = Buffer.from(node.Data)
             }
             node2 = node
             cb()
           })
         },
         (cb) => {
-          expect(node1.data).to.eql(node2.data)
-          expect(node1.links).to.eql(node2.links)
+          expect(node1.Data).to.deep.equal(node2.Data)
+          expect(node1.Links).to.deep.equal(node2.Links)
           cb()
         }
       ], done)
@@ -157,12 +156,12 @@ module.exports = (createCommon, options) => {
 
       // because js-ipfs-api can't infer if the
       // returned Data is Buffer or String
-      if (typeof node2.data === 'string') {
-        node2.data = Buffer.from(node2.data)
+      if (typeof node2.Data === 'string') {
+        node2.Data = Buffer.from(node2.Data)
       }
 
-      expect(node1.data).to.deep.equal(node2.data)
-      expect(node1.links).to.deep.equal(node2.links)
+      expect(node1.Data).to.deep.equal(node2.Data)
+      expect(node1.Links).to.deep.equal(node2.Links)
     })
 
     it('should get object with links by multihash string', (done) => {
@@ -174,31 +173,16 @@ module.exports = (createCommon, options) => {
 
       series([
         (cb) => {
-          DAGNode.create(Buffer.from('Some data 1'), (err, node) => {
-            expect(err).to.not.exist()
-            node1a = node
-
-            cb()
-          })
+          node1a = DAGNode.create(Buffer.from('Some data 1'))
+          node2 = DAGNode.create(Buffer.from('Some data 2'))
+          cb()
         },
         (cb) => {
-          DAGNode.create(Buffer.from('Some data 2'), (err, node) => {
-            expect(err).to.not.exist()
-            node2 = node
-
-            cb()
-          })
-        },
-        (cb) => {
-          asDAGLink(node2, 'some-link', (err, link) => {
-            expect(err).to.not.exist()
-
-            DAGNode.addLink(node1a, link, (err, node) => {
-              expect(err).to.not.exist()
-              node1b = node
-              cb()
-            })
-          })
+          asDAGLink(node2, 'some-link')
+            .then(link => DAGNode.addLink(node1a, link))
+            .then(node => { node1b = node })
+            .then(cb)
+            .catch(cb)
         },
         (cb) => {
           ipfs.object.put(node1b, (err, cid) => {
@@ -213,8 +197,8 @@ module.exports = (createCommon, options) => {
 
             // because js-ipfs-api can't infer if the
             // returned Data is Buffer or String
-            if (typeof node.data === 'string') {
-              node.data = Buffer.from(node.data)
+            if (typeof node.Data === 'string') {
+              node.Data = Buffer.from(node.Data)
             }
 
             node1c = node
@@ -222,7 +206,7 @@ module.exports = (createCommon, options) => {
           })
         },
         (cb) => {
-          expect(node1a.data).to.eql(node1c.data)
+          expect(node1a.Data).to.eql(node1c.Data)
           cb()
         }
       ], done)
@@ -257,15 +241,15 @@ module.exports = (createCommon, options) => {
             // because js-ipfs-api can't infer if the
             // returned Data is Buffer or String
             if (typeof node.data === 'string') {
-              node.data = Buffer.from(node.data)
+              node.Data = Buffer.from(node.Data)
             }
             node1b = node
             cb()
           })
         },
         (cb) => {
-          expect(node1a.data).to.eql(node1b.data)
-          expect(node1a.links).to.eql(node1b.links)
+          expect(node1a.Data).to.eql(node1b.Data)
+          expect(node1a.Links).to.eql(node1b.Links)
           cb()
         }
       ], done)
@@ -299,16 +283,16 @@ module.exports = (createCommon, options) => {
             expect(err).to.not.exist()
             // because js-ipfs-api can't infer if the
             // returned Data is Buffer or String
-            if (typeof node.data === 'string') {
-              node.data = Buffer.from(node.data)
+            if (typeof node.Data === 'string') {
+              node.Data = Buffer.from(node.Data)
             }
             node1b = node
             cb()
           })
         },
         (cb) => {
-          expect(node1a.data).to.eql(node1b.data)
-          expect(node1a.links).to.eql(node1b.links)
+          expect(node1a.Data).to.eql(node1b.Data)
+          expect(node1a.Links).to.eql(node1b.Links)
           cb()
         }
       ], done)
@@ -342,7 +326,7 @@ module.exports = (createCommon, options) => {
           return ipfs.object.get(result[0].hash)
         })
         .then((node) => {
-          const meta = UnixFs.unmarshal(node.data)
+          const meta = UnixFs.unmarshal(node.Data)
 
           expect(meta.fileSize()).to.equal(data.length)
         })

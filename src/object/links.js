@@ -50,7 +50,7 @@ module.exports = (createCommon, options) => {
 
           ipfs.object.links(cid, (err, links) => {
             expect(err).to.not.exist()
-            expect(node.links).to.deep.equal(links)
+            expect(node.Links).to.deep.equal(links)
             done()
           })
         })
@@ -67,46 +67,24 @@ module.exports = (createCommon, options) => {
       const node = await ipfs.object.get(cid)
       const links = await ipfs.object.links(cid)
 
-      expect(node.links).to.eql(links)
+      expect(node.Links).to.eql(links)
     })
 
     it('should get links by multihash', (done) => {
-      let node1a
+      const node1a = DAGNode.create(Buffer.from('Some data 1'))
       let node1b
       let node1bCid
-      let node2
+      const node2 = DAGNode.create(Buffer.from('Some data 2'))
 
       series([
         (cb) => {
-          DAGNode.create(Buffer.from('Some data 1'), (err, node) => {
-            expect(err).to.not.exist()
-            node1a = node
-
-            cb()
-          })
-        },
-        (cb) => {
-          DAGNode.create(Buffer.from('Some data 2'), (err, node) => {
-            expect(err).to.not.exist()
-            node2 = node
-            cb()
-          })
-        },
-        (cb) => {
-          asDAGLink(node2, 'some-link', (err, link) => {
-            expect(err).to.not.exist()
-
-            DAGNode.addLink(node1a, link, (err, node) => {
-              expect(err).to.not.exist()
-              node1b = node
-
-              dagPB.util.cid(node, (err, cid) => {
-                expect(err).to.not.exist()
-                node1bCid = cid
-                cb()
-              })
-            })
-          })
+          asDAGLink(node2, 'some-link')
+            .then(link => DAGNode.addLink(node1a, link))
+            .then(node => { node1b = node })
+            .then(() => dagPB.util.cid(dagPB.util.serialize(node1b)))
+            .then(cid => { node1bCid = cid })
+            .then(cb)
+            .catch(cb)
         },
         (cb) => {
           ipfs.object.put(node1b, (cb))
@@ -114,7 +92,11 @@ module.exports = (createCommon, options) => {
         (cb) => {
           ipfs.object.links(node1bCid, (err, links) => {
             expect(err).to.not.exist()
-            expect(node1b.links[0].toJSON()).to.eql(links[0].toJSON())
+            expect({
+              cid: node1b.Links[0].Hash.toString(),
+              name: node1b.Links[0].Name,
+              size: node1b.Links[0].Tsize
+            }).to.eql(links[0].toJSON())
             cb()
           })
         }
@@ -135,7 +117,7 @@ module.exports = (createCommon, options) => {
 
           ipfs.object.links(cid.buffer, { enc: 'base58' }, (err, links) => {
             expect(err).to.not.exist()
-            expect(node.links).to.deep.equal(links)
+            expect(node.Links).to.deep.equal(links)
             done()
           })
         })
@@ -156,7 +138,7 @@ module.exports = (createCommon, options) => {
 
           ipfs.object.links(cid.toBaseEncodedString(), { enc: 'base58' }, (err, links) => {
             expect(err).to.not.exist()
-            expect(node.links).to.deep.equal(links)
+            expect(node.Links).to.deep.equal(links)
             done()
           })
         })

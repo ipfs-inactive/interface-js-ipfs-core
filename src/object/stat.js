@@ -2,8 +2,7 @@
 /* eslint-disable max-nested-callbacks */
 'use strict'
 
-const dagPB = require('ipld-dag-pb')
-const DAGNode = dagPB.DAGNode
+const { DAGNode } = require('ipld-dag-pb')
 const series = require('async/series')
 const { getDescribe, getIt, expect } = require('../utils/mocha')
 const { asDAGLink } = require('./utils')
@@ -82,38 +81,18 @@ module.exports = (createCommon, options) => {
     })
 
     it('should get stats for object with links by multihash', (done) => {
-      let node1a
+      const node1a = DAGNode.create(Buffer.from('Some data 1'))
       let node1b
       let node1bCid
-      let node2
+      let node2 = DAGNode.create(Buffer.from('Some data 2'))
 
       series([
         (cb) => {
-          DAGNode.create(Buffer.from('Some data 1'), (err, node) => {
-            expect(err).to.not.exist()
-            node1a = node
-            cb()
-          })
-        },
-        (cb) => {
-          DAGNode.create(Buffer.from('Some data 2'), (err, node) => {
-            expect(err).to.not.exist()
-            node2 = node
-            cb()
-          })
-        },
-        (cb) => {
-          asDAGLink(node2, 'some-link', (err, link) => {
-            expect(err).to.not.exist()
-
-            DAGNode.addLink(node1a, link, (err, node) => {
-              expect(err).to.not.exist()
-
-              node1b = node
-
-              cb()
-            })
-          })
+          asDAGLink(node2, 'some-link')
+            .then(link => DAGNode.addLink(node1a, link))
+            .then(node => { node1b = node })
+            .then(cb)
+            .catch(cb)
         },
         (cb) => {
           ipfs.object.put(node1b, (err, cid) => {
