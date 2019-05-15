@@ -3,6 +3,7 @@
 
 const map = require('async/map')
 const { getDescribe, getIt, expect } = require('../utils/mocha')
+const loadFixture = require('aegir/fixtures')
 
 module.exports = (createCommon, suiteName, ipfsRefs, options) => {
   const describe = getDescribe(options)
@@ -125,20 +126,20 @@ function getMockObjects () {
   return {
     animals: {
       land: {
-        'african.txt': ['elephant', 'rhinocerous'],
-        'americas.txt': ['ñandu', 'tapir'],
-        'australian.txt': ['emu', 'kangaroo']
+        'african.txt': loadFixture('test/fixtures/refs-test/animals/land/african.txt', 'interface-ipfs-core'),
+        'americas.txt': loadFixture('test/fixtures/refs-test/animals/land/americas.txt', 'interface-ipfs-core'),
+        'australian.txt': loadFixture('test/fixtures/refs-test/animals/land/australian.txt', 'interface-ipfs-core')
       },
       sea: {
-        'atlantic.txt': ['dolphin', 'whale'],
-        'indian.txt': ['cuttlefish', 'octopus']
+        'atlantic.txt': loadFixture('test/fixtures/refs-test/animals/sea/atlantic.txt', 'interface-ipfs-core'),
+        'indian.txt': loadFixture('test/fixtures/refs-test/animals/sea/indian.txt', 'interface-ipfs-core')
       }
     },
     fruits: {
-      'tropical.txt': ['banana', 'pineapple']
+      'tropical.txt': loadFixture('test/fixtures/refs-test/fruits/tropical.txt', 'interface-ipfs-core')
     },
-    'atlantic-animals': ['dolphin', 'whale'],
-    'mushroom.txt': ['mushroom']
+    'atlantic-animals': loadFixture('test/fixtures/refs-test/atlantic-animals', 'interface-ipfs-core'),
+    'mushroom.txt': loadFixture('test/fixtures/refs-test/mushroom.txt', 'interface-ipfs-core')
   }
 }
 
@@ -354,7 +355,7 @@ function loadPbContent (ipfs, node, callback) {
 function loadDagContent (ipfs, node, callback) {
   const store = {
     putData: (data, cb) => {
-      ipfs.add(Buffer.from(data), (err, res) => {
+      ipfs.add(data, (err, res) => {
         if (err) {
           return callback(err)
         }
@@ -373,8 +374,8 @@ function loadDagContent (ipfs, node, callback) {
 }
 
 function loadContent (ipfs, store, node, callback) {
-  if (Array.isArray(node)) {
-    return store.putData(node.join('\n'), callback)
+  if (Buffer.isBuffer(node)) {
+    return store.putData(node, callback)
   }
 
   if (typeof node === 'object') {
