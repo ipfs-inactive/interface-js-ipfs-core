@@ -357,7 +357,7 @@ function loadDagContent (ipfs, node, callback) {
     putData: (data, cb) => {
       ipfs.add(data, (err, res) => {
         if (err) {
-          return callback(err)
+          return cb(err)
         }
         return cb(null, res[0].hash)
       })
