@@ -31,11 +31,15 @@ module.exports = (createCommon, options) => {
 
     after((done) => common.teardown(done))
 
-    // This test should be changed to the recursive logic when recursive === true is the default
     it('should resolve a record default options', async () => {
       const [{ path }] = await ipfs.add(Buffer.from('should resolve a record default options'))
+
+      const { id: keyId } = await ipfs.key.gen('key-name-default', { type: 'rsa', size: 2048 })
+
       await ipfs.name.publish(path, { 'allow-offline': true })
-      return expect(ipfs.name.resolve(`/ipns/${nodeId}`))
+      await ipfs.name.publish(`/ipns/${nodeId}`, { 'allow-offline': true, key: 'key-name-default' })
+
+      return expect(ipfs.name.resolve(`/ipns/${keyId}`))
         .to.become(`/ipfs/${path}`)
     })
 
@@ -58,12 +62,16 @@ module.exports = (createCommon, options) => {
         .to.become(`/ipfs/${path}`)
     })
 
-    // This test should be changed to the recursive logic when recursive === true is the default
     it('should resolve a record default options with remainder', async () => {
-      const [{ path }] = await ipfs.add(Buffer.from('should resolve a record with the default params with remainder'))
+      const [{ path }] = await ipfs.add(Buffer.from('should resolve a record default options with remainder'))
+
+      const { id: keyId } = await ipfs.key.gen('key-name-remainder-default', { type: 'rsa', size: 2048 })
+
       await ipfs.name.publish(path, { 'allow-offline': true })
-      return expect(ipfs.name.resolve(`/ipns/${nodeId}/remainder/file.txt`))
-        .to.become(`/ipfs/${path}/remainder/file.txt`)
+      await ipfs.name.publish(`/ipns/${nodeId}`, { 'allow-offline': true, key: 'key-name-remainder-default' })
+
+      return expect(ipfs.name.resolve(`/ipns/${keyId}/remainder/file.txt`))
+        .to.be.eventually.equal(`/ipfs/${path}/remainder/file.txt`)
     })
 
     it('should resolve a record recursive === false with remainder', async () => {
@@ -122,10 +130,9 @@ module.exports = (createCommon, options) => {
 
     after((done) => common.teardown(done))
 
-    // This test should be changed to the recursive logic when recursive === true is the default
     it('should resolve /ipns/ipfs.io', async () => {
       return expect(ipfs.name.resolve('/ipns/ipfs.io'))
-        .to.eventually.match(/\/ipns\/.+$/)
+        .to.eventually.match(/\/ipfs\/.+$/)
     })
 
     it('should resolve /ipns/ipfs.io recursive === false', async () => {
@@ -138,10 +145,9 @@ module.exports = (createCommon, options) => {
         .to.eventually.match(/\/ipfs\/.+$/)
     })
 
-    // This test should be changed to the recursive logic when recursive === true is the default
     it('should resolve /ipns/ipfs.io with remainder', async () => {
       return expect(ipfs.name.resolve('/ipns/ipfs.io/images/ipfs-logo.svg'))
-        .to.eventually.match(/\/ipns\/.+\/images\/ipfs-logo.svg$/)
+        .to.eventually.match(/\/ipfs\/.+\/images\/ipfs-logo.svg$/)
     })
 
     it('should resolve /ipns/ipfs.io with remainder recursive === false', async () => {
