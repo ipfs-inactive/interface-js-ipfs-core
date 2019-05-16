@@ -1,7 +1,7 @@
 /* eslint-env mocha */
 'use strict'
 
-const map = require('async/map')
+const mapSeries = require('async/mapSeries')
 const { getDescribe, getIt, expect } = require('../utils/mocha')
 const loadFixture = require('aegir/fixtures')
 
@@ -381,7 +381,7 @@ function loadContent (ipfs, store, node, callback) {
   if (typeof node === 'object') {
     const entries = Object.entries(node)
     const sorted = entries.sort((a, b) => a[0] > b[0] ? 1 : a[0] < b[0] ? -1 : 0)
-    map(sorted, ([name, child], cb) => {
+    mapSeries(sorted, ([name, child], cb) => {
       loadContent(ipfs, store, child, (err, cid) => {
         cb(err, { name, cid: cid && cid.toString() })
       })
