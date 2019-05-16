@@ -66,7 +66,7 @@ module.exports = (createCommon, options) => {
         expect(err).to.not.exist()
         ipfs.config.get(key, function (err, result) {
           expect(err).to.not.exist()
-          expect(parseInt(result)).to.equal(val)
+          expect(result).to.equal(val)
           done()
         })
       })
