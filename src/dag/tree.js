@@ -42,18 +42,20 @@ module.exports = (createCommon, options) => {
     before(function (done) {
       series([
         (cb) => {
-          dagPB.DAGNode.create(Buffer.from('I am inside a Protobuf'), (err, node) => {
-            expect(err).to.not.exist()
-            nodePb = node
-            cb()
-          })
+          try {
+            nodePb = dagPB.DAGNode.create(Buffer.from('I am inside a Protobuf'))
+          } catch (err) {
+            return cb(err)
+          }
+
+          cb()
         },
         (cb) => {
-          dagPB.util.cid(nodePb, (err, cid) => {
-            expect(err).to.not.exist()
-            cidPb = cid
-            cb()
-          })
+          dagPB.util.cid(dagPB.util.serialize(nodePb))
+            .then(cid => {
+              cidPb = cid
+              cb()
+            }, cb)
         },
         (cb) => {
           nodeCbor = {
@@ -61,11 +63,11 @@ module.exports = (createCommon, options) => {
             pb: cidPb
           }
 
-          dagCBOR.util.cid(nodeCbor, (err, cid) => {
-            expect(err).to.not.exist()
-            cidCbor = cid
-            cb()
-          })
+          dagCBOR.util.cid(dagCBOR.util.serialize(nodeCbor))
+            .then(cid => {
+              cidCbor = cid
+              cb()
+            }, cb)
         },
         (cb) => {
           eachSeries([
