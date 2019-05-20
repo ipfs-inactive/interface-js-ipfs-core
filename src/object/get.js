@@ -304,7 +304,7 @@ module.exports = (createCommon, options) => {
             expect(err).to.not.exist()
             // because js-ipfs-api can't infer if the
             // returned Data is Buffer or String
-            if (typeof node.data === 'string') {
+            if (typeof node.Data === 'string') {
               node = DAGNode.create(Buffer.from(node.Data), node.Links, node.size)
             }
             node1b = node
