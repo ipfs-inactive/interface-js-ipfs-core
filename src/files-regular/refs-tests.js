@@ -111,10 +111,10 @@ module.exports = (createCommon, suiteName, ipfsRefs, options) => {
           'QmdBcHbK7uDQav8YrHsfKju3EKn48knxjd96KRMFs3gtS9',
           'QmeX96opBHZHLySMFoNiWS5msxjyX6rqtr3Rr1u7uxn7zJ',
           'Qmf8MwTnY7VdcnF8WcoJ3GB24NmNd1HsGzuEWCtUYDP38x',
-          'zdpuAkqPgGuEFBFLcixZyFezWw3bsGUWVS6W7c8YhV5sdAc6E',
-          'zdpuArVVBgigTbs6FdyqFFWUSsXymdruTtCVoboc91L3WTXi1',
-          'zdpuAsrruPqzPDYs9c1FGNR5Wuyx8on64no6z62SRPv3viHGL',
-          'zdpuAxTXSfaHaZNed3JG2WvcYNgd64v27ztB2zknrz5noPhz5'
+          'bafyreiagelcmhfn33zuslkdo7fkes3dzcr2nju6meh75zm6vqklfqiojam',
+          'bafyreic2f6adq5tqnbrvwiqc3jkz2cf4tz3cz2rp6plpij2qaoufgsxwmi',
+          'bafyreidoqtyvflv5v4c3gd3izxvpq4flke55ayurbrnhsxh7z5wwjc6v6e',
+          'bafyreifs2ub2lnq6n2quqbi3zb5homs5iqlmm77b3am252cqzxiu7phwpy'
         ])
 
         done()
