@@ -115,7 +115,7 @@ module.exports = (createCommon, options) => {
     it('should get tree with CID recursive (accross different formats)', (done) => {
       ipfs.dag.tree(cidCbor, { recursive: true }, (err, paths) => {
         expect(err).to.not.exist()
-        expect(paths).to.eql([
+        expect(paths).to.have.members([
           'pb',
           'someData',
           'pb/Links',
@@ -128,7 +128,7 @@ module.exports = (createCommon, options) => {
     it('should get tree with CID and path recursive', (done) => {
       ipfs.dag.tree(cidCbor, 'pb', { recursive: true }, (err, paths) => {
         expect(err).to.not.exist()
-        expect(paths).to.eql([
+        expect(paths).to.have.members([
           'Links',
           'Data'
         ])
