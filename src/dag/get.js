@@ -242,7 +242,7 @@ module.exports = (createCommon, options) => {
 
         ipfs.dag.get(cidv1, (err, output) => {
           expect(err).to.not.exist()
-          expect(output.value.data).to.eql(input)
+          expect(output.value.Data).to.eql(input)
           done()
         })
       })
@@ -261,7 +261,7 @@ module.exports = (createCommon, options) => {
 
         ipfs.dag.get(cidv0, (err, output) => {
           expect(err).to.not.exist()
-          expect(Unixfs.unmarshal(output.value.data).data).to.eql(input)
+          expect(Unixfs.unmarshal(output.value.Data).data).to.eql(input)
           done()
         })
       })
