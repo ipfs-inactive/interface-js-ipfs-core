@@ -4,6 +4,7 @@
 const mapSeries = require('async/mapSeries')
 const { getDescribe, getIt, expect } = require('../utils/mocha')
 const loadFixture = require('aegir/fixtures')
+const CID = require('cids')
 
 module.exports = (createCommon, suiteName, ipfsRefs, options) => {
   const describe = getDescribe(options)
@@ -365,7 +366,7 @@ function loadDagContent (ipfs, node, callback) {
     putLinks: (links, cb) => {
       const obj = {}
       for (const { name, cid } of links) {
-        obj[name] = { '/': cid }
+        obj[name] = new CID(cid)
       }
       ipfs.dag.put(obj, cb)
     }
