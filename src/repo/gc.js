@@ -73,9 +73,9 @@ module.exports = (createCommon, options) => {
       // Run garbage collection
       await ipfs.repo.gc()
 
-      // The list of local blocks should now be the same as at the start
+      // The list of local blocks should no longer contain the hash
       const refsAfterUnpinAndGc = await ipfs.refs.local()
-      expect(refsAfterUnpinAndGc).to.eql(refsBeforeAdd)
+      expect(refsAfterUnpinAndGc.map(r => r.ref)).not.includes(hash)
     })
 
     it('should clean up removed MFS files', async () => {
@@ -108,9 +108,9 @@ module.exports = (createCommon, options) => {
       // Run garbage collection
       await ipfs.repo.gc()
 
-      // The list of local blocks should now be the same as at the start
+      // The list of local blocks should no longer contain the hash
       const refsAfterUnpinAndGc = await ipfs.refs.local()
-      expect(refsAfterUnpinAndGc).to.eql(refsBeforeAdd)
+      expect(refsAfterUnpinAndGc.map(r => r.ref)).not.includes(hash)
     })
 
     it('should clean up block only after unpinned and removed from MFS', async () => {
@@ -165,9 +165,11 @@ module.exports = (createCommon, options) => {
       // Run garbage collection
       await ipfs.repo.gc()
 
-      // The list of local blocks should now be the same as at the start
+      // The list of local blocks should no longer contain the hashes
       const refsAfterUnpinAndGc = await ipfs.refs.local()
-      expect(refsAfterUnpinAndGc).to.eql(refsBeforeAdd)
+      const hashesAfterUnpinAndGc = refsAfterUnpinAndGc.map(r => r.ref)
+      expect(hashesAfterUnpinAndGc).not.includes(mfsFileHash)
+      expect(hashesAfterUnpinAndGc).not.includes(dataHash)
     })
 
     it('should clean up indirectly pinned data after recursive pin removal', async () => {
@@ -223,9 +225,11 @@ module.exports = (createCommon, options) => {
       // Run garbage collection
       await ipfs.repo.gc()
 
-      // The list of local blocks should now be the same as at the start
+      // The list of local blocks should no longer contain the hashes
       const refsAfterUnpinAndGc = await ipfs.refs.local()
-      expect(refsAfterUnpinAndGc).to.eql(refsBeforeAdd)
+      const hashesAfterUnpinAndGc = refsAfterUnpinAndGc.map(r => r.ref)
+      expect(hashesAfterUnpinAndGc).not.includes(objHash)
+      expect(hashesAfterUnpinAndGc).not.includes(dataHash)
     })
   })
 }
