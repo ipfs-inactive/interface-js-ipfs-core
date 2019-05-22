@@ -4,6 +4,7 @@
 * [swarm.connect](#swarmconnect)
 * [swarm.disconnect](#swarmdisconnect)
 * [swarm.peers](#swarmpeers)
+* [swarm.localAddrs](#swarmlocaladdrs)
 * [swarm.filters.add](#swarmfiltersadd)
 * [swarm.filters.rm](#swarmfiltersrm)
 
@@ -71,6 +72,29 @@ If no `callback` is passed, a promise is returned.
 
 ```JavaScript
 ipfs.swarm.disconnect(addr, function (err) {})
+```
+
+A great source of [examples][] can be found in the tests for this API.
+
+#### `swarm.localAddrs`
+
+> Local addresses this node is listening on.
+
+##### `ipfs.swarm.localAddrs([callback])`
+
+`callback` must follow `function (err, multiAddrs) {}` signature, where `err` is an error if the operation was not successful. `multiAddrs` will be an array of [`MultiAddr`](https://github.com/multiformats/js-multiaddr).
+
+If no `callback` is passed, a promise is returned.
+
+**Example:**
+
+```JavaScript
+ipfs.swarm.localAddrs(function (err, multiAddrs) {
+  if (err) {
+    throw err
+  }
+  console.log(multiAddrs)
+})
 ```
 
 A great source of [examples][] can be found in the tests for this API.
