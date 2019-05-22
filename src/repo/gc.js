@@ -1,21 +1,8 @@
 /* eslint-env mocha */
 'use strict'
 
-const { promisify } = require('es6-promisify')
 const { getDescribe, getIt, expect } = require('../utils/mocha')
-const { DAGNode, DAGLink } = require('ipld-dag-pb')
-
-const createDAGNode = promisify((data, links, cb) => {
-  DAGNode.create(data, links, cb)
-})
-
-const createDAGLink = promisify((name, size, cid, cb) => {
-  DAGLink.create(name, size, cid, cb)
-})
-
-const addDAGLink = promisify((node, link, cb) => {
-  DAGNode.addLink(node, link, cb)
-})
+const { DAGNode } = require('ipld-dag-pb')
 
 module.exports = (createCommon, options) => {
   const describe = getDescribe(options)
@@ -195,9 +182,11 @@ module.exports = (createCommon, options) => {
       await ipfs.pin.rm(dataHash)
 
       // Create a link to the data from an object
-      const link = await createDAGLink('p', addRes[0].size, dataHash)
-      const node = await createDAGNode(Buffer.from('fruit'))
-      const obj = await addDAGLink(node, link)
+      const obj = await DAGNode.create(Buffer.from('fruit'), [{
+        Name: 'p',
+        Hash: dataHash,
+        TSize: addRes[0].size
+      }])
 
       // Put the object into IPFS
       const objHash = (await ipfs.object.put(obj)).toString()
