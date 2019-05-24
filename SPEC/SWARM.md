@@ -3,10 +3,10 @@
 * [swarm.addrs](#swarmaddrs)
 * [swarm.connect](#swarmconnect)
 * [swarm.disconnect](#swarmdisconnect)
-* [swarm.peers](#swarmpeers)
 * [swarm.localAddrs](#swarmlocaladdrs)
-* [swarm.filters.add](#swarmfiltersadd)
-* [swarm.filters.rm](#swarmfiltersrm)
+* [swarm.peers](#swarmpeers)
+* [swarm.filters.add](#swarmfiltersadd) (not implemented yet)
+* [swarm.filters.rm](#swarmfiltersrm) (not implemented yet)
 
 #### `swarm.addrs`
 
