@@ -56,7 +56,7 @@ If no `content` is passed, then the path is treated as an empty directory
 
 `options` is an optional object argument that might include the following keys:
 
-- cid-version (integer, default 0): the CID version to use when storing the data (storage keys are based on the CID, including it's version)
+- cidVersion (integer, default 0): the CID version to use when storing the data (storage keys are based on the CID, including it's version)
 - progress (function): a function that will be called with the byte length of chunks as a file is added to ipfs.
 - recursive (boolean): for when a Path is passed, this option can be enabled to add recursively all the files.
 - hashAlg || hash (string): multihash hashing algorithm to use. (default: `sha2-256`) [The list of all possible values]( https://github.com/multiformats/js-multihash/blob/master/src/constants.js#L5-L343)
@@ -144,7 +144,7 @@ Returns a Readable Stream of class Duplex, where objects can be written of the f
 
 `options` is an optional object argument that might include the following keys:
 
-- cid-version (integer, default 0): the CID version to use when storing the data (storage keys are based on the CID, including it's version)
+- cidVersion (integer, default 0): the CID version to use when storing the data (storage keys are based on the CID, including it's version)
 - progress (function): a function that will be called with the byte length of chunks as a file is added to ipfs.
 - hashAlg || hash (string): multihash hashing algorithm to use. (default: `sha2-256`) [The list of all possible values]( https://github.com/multiformats/js-multihash/blob/master/src/constants.js#L5-L343)
 - wrapWithDirectory (boolean): adds a wrapping node around the content
@@ -192,7 +192,7 @@ Returns a Pull Stream, where objects can be written of the forms
 
 `options` is an optional object argument that might include the following keys:
 
-- cid-version (integer, default 0): the CID version to use when storing the data (storage keys are based on the CID, including it's version)
+- cidVersion (integer, default 0): the CID version to use when storing the data (storage keys are based on the CID, including it's version)
 - progress (function): a function that will be called with the byte length of chunks as a file is added to ipfs.
 - hashAlg || hash (string): multihash hashing algorithm to use. (default: `sha2-256`) [The list of all possible values]( https://github.com/multiformats/js-multihash/blob/master/src/constants.js#L5-L343)
 - wrapWithDirectory (boolean): adds a wrapping node around the content
@@ -942,7 +942,7 @@ Where:
   - `parents` is a Boolean value to decide whether or not to make the parent directories if they don't exist (default: false)
   - `length` is an Integer with the maximum number of bytes to read (default: Read all bytes from `content`)
   - `raw-leaves`: if true, DAG leaves will contain raw file data and not be wrapped in a protobuf (boolean, default false)
-  - `cid-version`: the CID version to use when storing the data (storage keys are based on the CID, including it's version) (integer, default 0)
+  - `cidVersion`: the CID version to use when storing the data (storage keys are based on the CID, including it's version) (integer, default 0)
 - `callback` is an optional function with the signature `function (error) {}`, where `error` may be an Error that occured if the operation was not successful
 
 If no `callback` is passed, a promise is returned.
