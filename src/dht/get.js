@@ -3,7 +3,6 @@
 
 const hat = require('hat')
 const waterfall = require('async/waterfall')
-const retry = require('async/retry')
 const { spawnNodesWithId } = require('../utils/spawn')
 const { getDescribe, getIt, expect } = require('../utils/mocha')
 const { connect } = require('../utils/swarm')
