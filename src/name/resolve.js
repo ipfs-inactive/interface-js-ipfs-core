@@ -130,41 +130,41 @@ module.exports = (createCommon, options) => {
 
     after((done) => common.teardown(done))
 
-    it('should resolve /ipns/ipfs.io', async () => {
+    it('should resolve /ipns/ipfs.io', () => {
       return expect(ipfs.name.resolve('/ipns/ipfs.io'))
         .to.eventually.match(/\/ipfs\/.+$/)
     })
 
-    it('should resolve /ipns/ipfs.io recursive === false', async () => {
+    it('should resolve /ipns/ipfs.io recursive === false', () => {
       return expect(ipfs.name.resolve('/ipns/ipfs.io', { recursive: false }))
         .to.eventually.match(/\/ipns\/.+$/)
     })
 
-    it('should resolve /ipns/ipfs.io recursive === true', async () => {
+    it('should resolve /ipns/ipfs.io recursive === true', () => {
       return expect(ipfs.name.resolve('/ipns/ipfs.io', { recursive: true }))
         .to.eventually.match(/\/ipfs\/.+$/)
     })
 
-    it('should resolve /ipns/ipfs.io with remainder', async () => {
+    it('should resolve /ipns/ipfs.io with remainder', () => {
       return expect(ipfs.name.resolve('/ipns/ipfs.io/images/ipfs-logo.svg'))
         .to.eventually.match(/\/ipfs\/.+\/images\/ipfs-logo.svg$/)
     })
 
-    it('should resolve /ipns/ipfs.io with remainder recursive === false', async () => {
+    it('should resolve /ipns/ipfs.io with remainder recursive === false', () => {
       return expect(ipfs.name.resolve('/ipns/ipfs.io/images/ipfs-logo.svg', { recursive: false }))
         .to.eventually.match(/\/ipns\/.+\/images\/ipfs-logo.svg$/)
     })
 
-    it('should resolve /ipns/ipfs.io with remainder  recursive === true', async () => {
+    it('should resolve /ipns/ipfs.io with remainder  recursive === true', () => {
       return expect(ipfs.name.resolve('/ipns/ipfs.io/images/ipfs-logo.svg', { recursive: true }))
         .to.eventually.match(/\/ipfs\/.+\/images\/ipfs-logo.svg$/)
     })
 
-    it('should fail to resolve /ipns/ipfs.a', async () => {
+    it('should fail to resolve /ipns/ipfs.a', () => {
       return expect(ipfs.name.resolve('ipfs.a')).to.be.rejected()
     })
 
-    it('should resolve ipns path with hamt-shard recursive === true', async () => {
+    it('should resolve ipns path with hamt-shard recursive === true', () => {
       return expect(ipfs.name.resolve('/ipns/tr.wikipedia-on-ipfs.org/wiki/Anasayfa.html', { recursive: true }))
         .to.eventually.match(/\/ipfs\/.+$/)
     })
