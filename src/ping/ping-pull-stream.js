@@ -59,7 +59,7 @@ module.exports = (createCommon, options) => {
       )
     })
 
-    it.skip('should fail when pinging an unknown peer over pull stream: go-ipfs return success with text: Looking up peer QmUmaEnH1uMmvckMZbh3yShaasvELPW4ZLPWnB4entMTEn', (done) => {
+    it('should fail when pinging an unknown peer over pull stream', (done) => {
       const unknownPeerId = 'QmUmaEnH1uMmvckMZbh3yShaasvELPW4ZLPWnB4entMTEn'
       const count = 2
       pull(

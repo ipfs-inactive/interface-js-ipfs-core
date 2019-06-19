@@ -52,7 +52,7 @@ module.exports = (createCommon, options) => {
       })
     })
 
-    it.skip('should fail when pinging a peer that is not available: go-ipfs returns success', (done) => {
+    it('should fail when pinging a peer that is not available', (done) => {
       const notAvailablePeerId = 'QmUmaEnH1uMmvckMZbh3yShaasvELPW4ZLPWnB4entMTEn'
       const count = 2
 

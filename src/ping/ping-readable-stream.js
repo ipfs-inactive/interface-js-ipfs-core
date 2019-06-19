@@ -67,7 +67,7 @@ module.exports = (createCommon, options) => {
       )
     })
 
-    it.skip('should fail when pinging peer that is not available over readable stream: go-ipfs returns success', (done) => {
+    it('should fail when pinging peer that is not available over readable stream', (done) => {
       const unknownPeerId = 'QmUmaEnH1uMmvckMZbh3yShaasvELPW4ZLPWnB4entMTEn'
 
       pump(
