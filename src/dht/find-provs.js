@@ -57,13 +57,13 @@ module.exports = (createCommon, options) => {
       this.timeout(10 * 1000)
       parallel([
         (cb) => nodeB.object.new('unixfs-dir', cb),
-        (cb) => nodeC.object.new('unixfs-dir', cb),
+        (cb) => nodeC.object.new('unixfs-dir', cb)
       ], (err, cids) => {
         if (err) return done(err)
         providedCid = cids[0]
         parallel([
           (cb) => nodeB.dht.provide(providedCid, cb),
-          (cb) => nodeC.dht.provide(providedCid, cb),
+          (cb) => nodeC.dht.provide(providedCid, cb)
         ], done)
       })
     })
@@ -83,7 +83,7 @@ module.exports = (createCommon, options) => {
           const providerIds = provs.map((p) => p.id.toB58String())
           expect(providerIds).to.have.members([
             nodeB.peerId.id,
-            nodeC.peerId.id,
+            nodeC.peerId.id
           ])
           cb()
         }
