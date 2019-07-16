@@ -31,7 +31,9 @@ module.exports = (createCommon, options) => {
 
     after((done) => common.teardown(done))
 
-    it('should resolve a record default options', async () => {
+    it('should resolve a record default options', async function () {
+      this.timeout(20 * 1000)
+
       const [{ path }] = await ipfs.add(Buffer.from('should resolve a record default options'))
 
       const { id: keyId } = await ipfs.key.gen('key-name-default', { type: 'rsa', size: 2048 })
@@ -50,7 +52,9 @@ module.exports = (createCommon, options) => {
         .to.eq(`/ipfs/${path}`)
     })
 
-    it('should resolve a record recursive === true', async () => {
+    it('should resolve a record recursive === true', async function () {
+      this.timeout(20 * 1000)
+
       const [{ path }] = await ipfs.add(Buffer.from('should resolve a record recursive === true'))
 
       const { id: keyId } = await ipfs.key.gen('key-name', { type: 'rsa', size: 2048 })
@@ -62,7 +66,9 @@ module.exports = (createCommon, options) => {
         .to.eq(`/ipfs/${path}`)
     })
 
-    it('should resolve a record default options with remainder', async () => {
+    it('should resolve a record default options with remainder', async function () {
+      this.timeout(20 * 1000)
+
       const [{ path }] = await ipfs.add(Buffer.from('should resolve a record default options with remainder'))
 
       const { id: keyId } = await ipfs.key.gen('key-name-remainder-default', { type: 'rsa', size: 2048 })
@@ -81,7 +87,9 @@ module.exports = (createCommon, options) => {
         .to.eq(`/ipfs/${path}/remainder/file.txt`)
     })
 
-    it('should resolve a record recursive === true with remainder', async () => {
+    it('should resolve a record recursive === true with remainder', async function () {
+      this.timeout(20 * 1000)
+
       const [{ path }] = await ipfs.add(Buffer.from('should resolve a record recursive = true with remainder'))
 
       const { id: keyId } = await ipfs.key.gen('key-name-remainder', { type: 'rsa', size: 2048 })
