@@ -117,13 +117,13 @@ module.exports = (createCommon, options) => {
   describe('.name.resolve dns', function () {
     const common = createCommon()
     let ipfs
-    this.retries(3)
+    this.retries(5)
 
     before(function (done) {
       common.setup((err, factory) => {
         expect(err).to.not.exist()
 
-        spawnNodeWithId(factory, (err, node) => {
+        factory.spawnNode((err, node) => {
           expect(err).to.not.exist()
 
           ipfs = node
