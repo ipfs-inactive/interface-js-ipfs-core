@@ -32,8 +32,8 @@ module.exports = (createCommon, options) => {
 
     after((done) => common.teardown(done))
 
-    // Browser/worker has max ~6 open HTTP requests to the same origin
-    const count = isBrowser || isWebWorker ? 6 : 10
+    // Browser/worker has max ~5 open HTTP requests to the same origin
+    const count = isBrowser || isWebWorker ? 5 : 10
 
     it(`should subscribe and unsubscribe ${count} times`, async () => {
       const someTopic = getTopic()
