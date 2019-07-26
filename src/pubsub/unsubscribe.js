@@ -4,6 +4,7 @@
 const { isBrowser, isWebWorker } = require('ipfs-utils/src/env')
 const { getTopic } = require('./utils')
 const { getDescribe, getIt, expect } = require('../utils/mocha')
+const delay = require('../utils/delay')
 
 module.exports = (createCommon, options) => {
   const describe = getDescribe(options)
@@ -47,6 +48,7 @@ module.exports = (createCommon, options) => {
         await ipfs.pubsub.unsubscribe(someTopic, handlers[i])
       }
 
+      await delay(100)
       const topics = await ipfs.pubsub.ls()
       expect(topics).to.eql([])
     })
@@ -57,6 +59,8 @@ module.exports = (createCommon, options) => {
         await ipfs.pubsub.subscribe(someTopic, (msg) => {})
       }
       await ipfs.pubsub.unsubscribe(someTopic)
+
+      await delay(100)
       const topics = await ipfs.pubsub.ls()
       expect(topics).to.eql([])
     })
