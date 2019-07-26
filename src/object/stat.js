@@ -81,7 +81,7 @@ module.exports = (createCommon, options) => {
       expect(expected).to.deep.equal(stats)
     })
 
-    it('should pass on the opts', (done) => {
+    it('should respect timeout option', (done) => {
       const testObj = {
         Data: Buffer.from('get test object'),
         Links: []
