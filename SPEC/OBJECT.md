@@ -198,7 +198,6 @@ A great source of [examples][] can be found in the tests for this API.
 
 `options` is a optional argument of type object, that can contain the following properties:
 
-- `enc`, The encoding type the output should beencoded with (json, xml, or text), if any.
 - `timeout`, A timeout to pass to the IPFS daemon so the request expires after a certain amount of time without any response. NOTE: not yet supported in JS IPFS.
 
 `callback` must follow `function (err, stats) {}` signature, where `err` is an error if the operation was not successful and `stats` is an Object with following format:
