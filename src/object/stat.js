@@ -80,26 +80,26 @@ module.exports = (createCommon, options) => {
 
       expect(expected).to.deep.equal(stats)
     })
-    
+
     it('should pass on the opts', (done) => {
       const testObj = {
         Data: Buffer.from('get test object'),
         Links: []
       }
 
-      ipfs.object.put(testObj, (err, cid) => {
+      ipfs.object.put(testObj, (err) => {
         expect(err).to.not.exist()
-        const timeout = 2;
-        const startTime = new Date();
-        const badCid = 'QmNggDXca24S6cMPEYHZjeuc4QRmofkRrAEqVL3MzzzzzZ';
+        const timeout = 2
+        const startTime = new Date()
+        const badCid = 'QmNggDXca24S6cMPEYHZjeuc4QRmofkRrAEqVL3MzzzzzZ'
 
-        //we can test that we are passing in opts by testing the timeout option for a CID that doesn't exist
-        ipfs.object.stat(badCid, {timeout: `${timeout}s`}, (err, stats) => {
-          let timeForRequest = (new Date () - startTime)/1000;
-          console.log(err);
-          expect(err.message).to.equal("failed to get block for QmNggDXca24S6cMPEYHZjeuc4QRmofkRrAEqVL3MzzzzzZ: context deadline exceeded");
+        // we can test that we are passing in opts by testing the timeout option for a CID that doesn't exist
+        ipfs.object.stat(badCid, { timeout: `${timeout}s` }, (err, stats) => {
+          const timeForRequest = (new Date() - startTime) / 1000
+          expect(err).to.exist()
+          expect(err.message).to.equal('failed to get block for QmNggDXca24S6cMPEYHZjeuc4QRmofkRrAEqVL3MzzzzzZ: context deadline exceeded')
           expect(stats).to.not.exist()
-          expect(timeForRequest).to.not.lessThan(timeout);
+          expect(timeForRequest).to.not.lessThan(timeout)
           done()
         })
       })
