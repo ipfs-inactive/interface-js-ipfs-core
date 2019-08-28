@@ -49,12 +49,12 @@ module.exports.createServer = (opts) => {
     const { pathname } = new URL(`https://127.0.0.1${req.url}`)
     if (pathname.startsWith('/echo/')) {
       // Respond with text passed in URL after /echo/
-      const [ , text ] = pathname.split('/echo/')
+      const [, text] = pathname.split('/echo/')
       res.setHeader('Content-Type', 'text/plain')
       res.write(decodeURIComponent(text))
     } else if (req.url.startsWith('/302/')) {
       // Return a redirect to a passed URL
-      const [ , location ] = pathname.split('/302/')
+      const [, location] = pathname.split('/302/')
       const url = decodeURI(location)
       res.statusCode = 302
       res.setHeader('Location', url)
