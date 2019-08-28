@@ -4,7 +4,7 @@
 const http = require('http')
 const https = require('https')
 const URL = require('url').URL || self.URL
-const { isBrowser, isWebWorker } = require('ipfs-utils/src/env')
+const { isNode } = require('ipfs-utils/src/env')
 
 const loadFixture = require('aegir/fixtures')
 const sslOpts = Object.freeze({
@@ -14,8 +14,6 @@ const sslOpts = Object.freeze({
 
 const httpPort = 11080
 const httpsPort = 11443
-module.exports.httpPort = httpPort
-module.exports.httpsPort = httpsPort
 
 // Create a mock of remote HTTP server that can return arbitrary text in response
 // or redirect to other URL. Used in tests of ipfs.addFromURL etc
@@ -25,7 +23,7 @@ module.exports.createServer = (opts) => {
 
   // Web browser is not able to start HTTP server
   // We return noop here and start it from Node via .aegir.js/hooks/browser/pre|post instead (eg. in js-ipfs)
-  if (isBrowser || isWebWorker) {
+  if (!isNode) {
     const noopServer = {
       start: (cb) => cb(),
       stop: (cb) => cb(),
@@ -75,7 +73,7 @@ module.exports.createServer = (opts) => {
       cb = opts
       opts = {}
     }
-    return server.listen(Object.assign({ port: defaultPort }, opts), cb)
+    return server.listen(Object.assign({ port: defaultPort, host: '127.0.0.1' }, opts), cb)
   }
 
   server.stop = (cb) => server.close(cb)

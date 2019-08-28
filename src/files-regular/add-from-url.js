@@ -4,7 +4,7 @@
 const { getDescribe, getIt, expect } = require('../utils/mocha')
 const parallel = require('async/parallel')
 const EchoHttpServer = require('../utils/echo-http-server')
-const { isBrowser, isWebWorker } = require('ipfs-utils/src/env')
+const { isNode } = require('ipfs-utils/src/env')
 
 const httpServer = EchoHttpServer.createServer()
 const httpsServer = EchoHttpServer.createServer({ secure: true })
@@ -68,7 +68,7 @@ module.exports = (createCommon, options) => {
     })
 
     it('should add from a HTTPS URL', function (done) {
-      if (isBrowser || isWebWorker) return this.skip() // unable to do self-signed HTTPS in browser
+      if (!isNode) return this.skip() // unable to do self-signed HTTPS in browser
       const text = `TEST${Date.now()}`
       const url = httpsServer.echoUrl(text)
       parallel({
@@ -105,7 +105,7 @@ module.exports = (createCommon, options) => {
     })
 
     it('should add from a HTTPS URL with redirection', function (done) {
-      if (isBrowser || isWebWorker) return this.skip() // unable to do self-signed HTTPS in browser
+      if (!isNode) return this.skip() // unable to do self-signed HTTPS in browser
       const text = `TEST${Date.now()}`
       const url = httpsServer.echoUrl(text) + '?foo=bar#buzz'
       const redirectUrl = httpsServer.redirectUrl(url)
