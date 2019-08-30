@@ -32,7 +32,8 @@ module.exports = (createCommon, options) => {
 
     after((done) => common.teardown(done))
 
-    it('should publish message from string', () => {
+    // TODO : skip until js-ipfs supports js-libp2p that adds this
+    it.skip('should publish message from string', () => {
       const topic = getTopic()
       return ipfs.pubsub.publish(topic, 'hello friend')
     })
