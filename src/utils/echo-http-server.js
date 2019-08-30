@@ -2,38 +2,15 @@
 'use strict'
 
 const http = require('http')
-const https = require('https')
 const URL = require('url').URL || self.URL
-const { isNode } = require('ipfs-utils/src/env')
 
-const loadFixture = require('aegir/fixtures')
-const sslOpts = Object.freeze({
-  key: loadFixture('test/fixtures/ssl/privkey.pem', 'interface-ipfs-core'),
-  cert: loadFixture('test/fixtures/ssl/cert.pem', 'interface-ipfs-core')
-})
-
-const httpPort = 11080
-const httpsPort = 11443
+const defaultPort = 11080
 
 // Create a mock of remote HTTP server that can return arbitrary text in response
 // or redirect to other URL. Used in tests of ipfs.addFromURL etc
-module.exports.createServer = (opts) => {
-  const secure = opts && opts.secure
-  const defaultPort = secure ? httpsPort : httpPort
-
-  // Web browser is not able to start HTTP server
-  // We return noop here and start it from Node via .aegir.js/hooks/browser/pre|post instead (eg. in js-ipfs)
-  if (!isNode) {
-    const noopServer = {
-      start: (cb) => cb(),
-      stop: (cb) => cb(),
-      url: () => `${secure ? 'https' : 'http'}://127.0.0.1:${defaultPort}`,
-      echoUrl: (text) => `${noopServer.url()}/echo/${encodeURIComponent(text)}`,
-      redirectUrl: (url) => `${noopServer.url()}/302/${encodeURI(url)}`
-    }
-    return Object.freeze(noopServer)
-  }
-
+// It needs to be available to tests run in browsers:
+// start it from Node via .aegir.js/hooks/browser/pre|post (example in js-ipfs)
+module.exports.createServer = () => {
   const handler = (req, res) => {
     // Relaxed CORS to enable use in tests in web browser with fetch
     res.setHeader('Access-Control-Allow-Origin', '*')
@@ -64,9 +41,7 @@ module.exports.createServer = (opts) => {
     res.end()
   }
 
-  const server = secure
-    ? https.createServer(sslOpts, handler)
-    : http.createServer(handler)
+  const server = http.createServer(handler)
 
   server.start = (opts, cb) => {
     if (typeof opts === 'function') {
@@ -78,9 +53,10 @@ module.exports.createServer = (opts) => {
 
   server.stop = (cb) => server.close(cb)
 
-  server.url = () => `${secure ? 'https' : 'http'}://127.0.0.1:${server.address().port}`
-  server.echoUrl = (text) => `${server.url()}/echo/${encodeURIComponent(text)}`
-  server.redirectUrl = (url) => `${server.url()}/302/${encodeURI(url)}`
-
   return server
 }
+
+module.exports.defaultPort = defaultPort
+module.exports.url = `http://127.0.0.1:${module.exports.defaultPort}`
+module.exports.echoUrl = (text) => `${module.exports.url}/echo/${encodeURIComponent(text)}`
+module.exports.redirectUrl = (url) => `${module.exports.url}/302/${encodeURI(url)}`
