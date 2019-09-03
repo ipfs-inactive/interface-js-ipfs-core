@@ -54,7 +54,7 @@
     "is-plain-object": "^3.0.0",
     "it-pushable": "^1.2.1",
     "libp2p-crypto": "~0.16.0",
-    "multiaddr": "^6.0.0",
+    "multiaddr": "^7.0.0",
     "multibase": "~0.6.0",
     "multihashes": "~0.4.14",
     "multihashing-async": "~0.6.0",
