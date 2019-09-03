@@ -76,7 +76,7 @@ module.exports = (createCommon, options) => {
       const filesPath = path.join(fixturesPath, 'hidden-files-folder')
       ipfs.addFromFs(filesPath, { recursive: true, hidden: true }, (err, result) => {
         expect(err).to.not.exist()
-        expect(result.length).to.be.above(10)
+        expect(result.length).to.be(10)
         expect(result.map(object => object.path)).to.include('hidden-files-folder/.hiddenTest.txt')
         expect(result.map(object => object.hash)).to.include('QmdbAjVmLRdpFyi8FFvjPfhTGB2cVXvWLuK7Sbt38HXrtt')
         done()
