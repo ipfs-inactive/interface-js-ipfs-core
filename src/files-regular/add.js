@@ -4,7 +4,6 @@
 const { fixtures } = require('./utils')
 const Readable = require('readable-stream').Readable
 const pull = require('pull-stream')
-const path = require('path')
 const expectTimeout = require('../utils/expect-timeout')
 const { getDescribe, getIt, expect } = require('../utils/mocha')
 const { supportsFileReader } = require('ipfs-utils/src/supports')
