@@ -2,7 +2,7 @@
 'use strict'
 
 const { getDescribe, getIt, expect } = require('../utils/mocha')
-const parallel = require('async/parallel')
+const series = require('async/series')
 const { echoUrl, redirectUrl } = require('../utils/echo-http-server')
 
 module.exports = (createCommon, options) => {
@@ -34,7 +34,7 @@ module.exports = (createCommon, options) => {
     it('should add from a HTTP URL', (done) => {
       const text = `TEST${Date.now()}`
       const url = echoUrl(text)
-      parallel({
+      series({
         result: (cb) => ipfs.addFromURL(url, cb),
         expectedResult: (cb) => ipfs.add(Buffer.from(text), cb)
       }, (err, { result, expectedResult }) => {
@@ -52,7 +52,7 @@ module.exports = (createCommon, options) => {
       const text = `TEST${Date.now()}`
       const url = echoUrl(text) + '?foo=bar#buzz'
 
-      parallel({
+      series({
         result: (cb) => ipfs.addFromURL(redirectUrl(url), cb),
         expectedResult: (cb) => ipfs.add(Buffer.from(text), cb)
       }, (err, { result, expectedResult }) => {
@@ -91,7 +91,7 @@ module.exports = (createCommon, options) => {
       const filename = `TEST${Date.now()}.txt` // also acts as data
       const url = echoUrl(filename) + '?foo=bar#buzz'
       const addOpts = { wrapWithDirectory: true }
-      parallel({
+      series({
         result: (cb) => ipfs.addFromURL(url, addOpts, cb),
         expectedResult: (cb) => ipfs.add([{ path: filename, content: Buffer.from(filename) }], addOpts, cb)
       }, (err, { result, expectedResult }) => {
@@ -107,7 +107,7 @@ module.exports = (createCommon, options) => {
       const filename = `320px-Domažlice,_Jiráskova_43_(${Date.now()}).jpg` // also acts as data
       const url = echoUrl(filename) + '?foo=bar#buzz'
       const addOpts = { wrapWithDirectory: true }
-      parallel({
+      series({
         result: (cb) => ipfs.addFromURL(url, addOpts, cb),
         expectedResult: (cb) => ipfs.add([{ path: filename, content: Buffer.from(filename) }], addOpts, cb)
       }, (err, { result, expectedResult }) => {
