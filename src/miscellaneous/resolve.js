@@ -43,9 +43,6 @@ module.exports = (createCommon, options) => {
           expect(err).to.not.exist()
           node.id((err, id) => {
             expect(err).to.not.exist()
-            node.peerId = id
-            ipfs = node
-            nodeId = node.peerId.id
             done()
           })
         })
