@@ -14,6 +14,7 @@ module.exports = (createCommon, options) => {
   const common = createCommon()
 
   describe('.bitswap.wantlist', () => {
+    this.timeout(100 * 1000)
     let ipfsA
     let ipfsB
     const key = 'QmUBdnXXPyoDFXj3Hj39dNJ5VkN3QFRskXxcGaYFBB8CNR'
@@ -21,7 +22,6 @@ module.exports = (createCommon, options) => {
     before(function (done) {
       // CI takes longer to instantiate the daemon, so we need to increase the
       // timeout for the before step
-      this.timeout(60 * 1000)
 
       common.setup((err, factory) => {
         expect(err).to.not.exist()
@@ -41,7 +41,6 @@ module.exports = (createCommon, options) => {
     })
 
     after(function (done) {
-      this.timeout(30 * 1000)
       common.teardown(done)
     })
 
@@ -57,8 +56,6 @@ module.exports = (createCommon, options) => {
     })
 
     it('should not get the wantlist when offline', function (done) {
-      this.timeout(60 * 1000)
-
       waterfall([
         (cb) => createCommon().setup(cb),
         (factory, cb) => factory.spawnNode(cb),
