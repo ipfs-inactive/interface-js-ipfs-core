@@ -18,38 +18,18 @@ module.exports = (createCommon, options) => {
   describe('.resolve', function () {
     this.timeout(80 * 1000)
     let ipfs
-    // let nodeId
-
-    // before(function (done) {
-    //   common.setup((err, factory) => {
-    //     console.log('TCL: factory', factory)
-    //     expect(err).to.not.exist()
-    //     spawnNodeWithId(factory, (err, node) => {
-    //       expect(err).to.not.exist()
-
-    //       ipfs = node
-    //       nodeId = node.peerId.id
-    //       console.log('TCL: nodeId', nodeId)
-    //       done()
-    //     })
-    //   })
-    // })
+    let nodeId
 
     before(function (done) {
-      // CI takes longer to instantiate the daemon, so we need to increase the
-      // timeout for the before step
-      this.timeout(60 * 1000)
-
       common.setup((err, factory) => {
+        console.log('TCL: factory', factory)
         expect(err).to.not.exist()
-        factory.spawnNode((err, node) => {
+        spawnNodeWithId(factory, (err, node) => {
           expect(err).to.not.exist()
-          ipfs = node
-          node.id((err, id) => {
-            expect(err).to.not.exist()
-            node.peerId = id
-          })
 
+          ipfs = node
+          nodeId = node.peerId.id
+          console.log('TCL: nodeId', nodeId)
           done()
         })
       })
