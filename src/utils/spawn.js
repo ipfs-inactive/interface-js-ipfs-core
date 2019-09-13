@@ -14,7 +14,10 @@ function identify (node, cb) {
 
 // Spawn a node, get it's id and set it as `peerId` on the node
 function spawnNodeWithId (factory, callback) {
-  waterfall([(cb) => factory.spawnNode(cb), identify], callback)
+  waterfall([
+    (cb) => factory.spawnNode(cb),
+    identify
+  ], callback)
 }
 
 exports.spawnNodeWithId = spawnNodeWithId
