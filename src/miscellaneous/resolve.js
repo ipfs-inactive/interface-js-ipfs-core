@@ -15,18 +15,21 @@ module.exports = (createCommon, options) => {
   const it = getIt(options)
   const common = createCommon()
 
-  describe('.resolve', () => {
+  describe('.resolve', function () {
+    this.timeout(20000)
     let ipfs
     let nodeId
 
     before(function (done) {
       common.setup((err, factory) => {
+        console.log('TCL: factory', factory)
         expect(err).to.not.exist()
         spawnNodeWithId(factory, (err, node) => {
           expect(err).to.not.exist()
 
           ipfs = node
           nodeId = node.peerId.id
+          console.log('TCL: nodeId', nodeId)
           done()
         })
       })
