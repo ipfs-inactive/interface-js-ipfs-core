@@ -44,6 +44,7 @@ module.exports = (createCommon, options) => {
           node.id((err, id) => {
             expect(err).to.not.exist()
             ipfs = node
+            nodeId = id.id
             done()
           })
         })
