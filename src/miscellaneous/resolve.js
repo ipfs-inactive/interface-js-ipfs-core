@@ -46,6 +46,7 @@ module.exports = (createCommon, options) => {
             node.peerId = id
             ipfs = node
             nodeId = node.peerId.id
+            done()
           })
         })
       })
