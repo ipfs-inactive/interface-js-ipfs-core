@@ -13,7 +13,7 @@ module.exports = (createCommon, options) => {
   const it = getIt(options)
   const common = createCommon()
 
-  describe('.bitswap.wantlist', () => {
+  describe('.bitswap.wantlist', function () {
     this.timeout(100 * 1000)
     let ipfsA
     let ipfsB
