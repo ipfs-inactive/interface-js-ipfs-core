@@ -20,17 +20,33 @@ module.exports = (createCommon, options) => {
     let ipfs
     let nodeId
 
+    // before(function (done) {
+    //   common.setup((err, factory) => {
+    //     console.log('TCL: factory', factory)
+    //     expect(err).to.not.exist()
+    //     spawnNodeWithId(factory, (err, node) => {
+    //       expect(err).to.not.exist()
+
+    //       ipfs = node
+    //       nodeId = node.peerId.id
+    //       console.log('TCL: nodeId', nodeId)
+    //       done()
+    //     })
+    //   })
+    // })
+
     before(function (done) {
       common.setup((err, factory) => {
         console.log('TCL: factory', factory)
         expect(err).to.not.exist()
-        spawnNodeWithId(factory, (err, node) => {
+        factory.spawnNode((err, node) => {
           expect(err).to.not.exist()
-
-          ipfs = node
-          nodeId = node.peerId.id
-          console.log('TCL: nodeId', nodeId)
-          done()
+          node.id((err, id) => {
+            expect(err).to.not.exist()
+            node.peerId = id
+            ipfs = node
+            nodeId = node.peerId.id
+          })
         })
       })
     })
