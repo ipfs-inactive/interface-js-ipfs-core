@@ -9,6 +9,8 @@ const multibase = require('multibase')
 const { spawnNodeWithId } = require('../utils/spawn')
 const { connect } = require('../utils/swarm')
 const { getDescribe, getIt, expect } = require('../utils/mocha')
+const IPFSFactory = require('ipfsd-ctl')
+const ipfsd = IPFSFactory.create({})
 
 module.exports = (createCommon, options) => {
   const describe = getDescribe(options)
@@ -34,20 +36,11 @@ module.exports = (createCommon, options) => {
     //   })
     // })
 
-    before(function (done) {
-      common.setup((err, factory) => {
-        console.log('TCL: factory', factory)
-        expect(err).to.not.exist()
-        factory.spawnNode((err, node) => {
-          expect(err).to.not.exist()
-          node.id((err, id) => {
-            expect(err).to.not.exist()
-            ipfs = node
-            nodeId = id.id
-            done()
-          })
-        })
-      })
+    before(async function () {
+      const node = await ipfsd({ initOptions: { profile: 'test' } })
+      ipfs = node
+      nodeId = await node.id().id
+      console.log('TCL: nodeId', nodeId)
     })
 
     after(common.teardown)
