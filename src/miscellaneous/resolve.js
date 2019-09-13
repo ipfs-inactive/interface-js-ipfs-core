@@ -45,6 +45,11 @@ module.exports = (createCommon, options) => {
         factory.spawnNode((err, node) => {
           expect(err).to.not.exist()
           ipfs = node
+          node.id((err, id) => {
+            expect(err).to.not.exist()
+            node.peerId = id
+          })
+
           done()
         })
       })
