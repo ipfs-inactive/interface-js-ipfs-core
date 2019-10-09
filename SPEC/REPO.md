@@ -20,7 +20,7 @@ Where:
 - `err` is an Error if the whole GC operation was not successful.
 - `res` is an array of objects that contains the following properties
   - `err` is an Error if it was not possible to GC a particular block.
-  - `cid` is the [CID][cid] of the block that was Garbage Collected.
+  - `multihash` is the [multihashes][] of the block that was Garbage Collected.
 
 If no `callback` is passed, a promise is returned.
 
@@ -84,4 +84,4 @@ ipfs.repo.version((err, version) => console.log(version))
 ```
 
 [1]: https://github.com/MikeMcl/bignumber.js/
-[cid]: https://www.npmjs.com/package/cids
+[multihashes]: https://www.npmjs.com/package/multihashes
