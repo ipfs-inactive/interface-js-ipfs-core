@@ -8,7 +8,7 @@
 
 > Adds an IPFS object to the pinset and also stores it to the IPFS repo. pinset is the set of hashes currently pinned (not gc'able).
 
-##### `ipfs.pin.add(hash, [options], [callback])`
+##### `ipfs.pin.add(hash, [options])`
 
 Where:
 
@@ -16,7 +16,13 @@ Where:
 - `options` is an object that can contain the following keys
   - 'recursive' - Recursively pin the object linked. Type: bool. Default: `true`
 
-`callback` must follow `function (err, res) {}` signature, where `err` is an error if the operation was not successful. `res` is an array of objects that represent the files that were pinned. Example:
+**Returns**
+
+| Type | Description |
+| -------- | -------- |
+| `Promise<Array>` | An array of objects that represent the files that were pinned |
+
+an array of objects is returned, each of the form:
 
 ```JavaScript
 {
@@ -24,19 +30,20 @@ Where:
 }
 ```
 
-If no `callback` is passed, a promise is returned.
-
 **Example:**
 
 ```JavaScript
-ipfs.pin.add(hash, function (err) {})
+const pinset = await ipfs.pin.add(hash)
+console.log(pinset)
 ```
+
+A great source of [examples][] can be found in the tests for this API.
 
 #### `pin.ls`
 
 > List all the objects pinned to local storage or under a specific hash.
 
-##### `ipfs.pin.ls([hash], [options], [callback])`
+##### `ipfs.pin.ls([hash], [options])`
 
 Where:
 
@@ -44,19 +51,19 @@ Where:
 - `options` is an object that can contain the following keys:
   - 'type' - Return also the type of pin (direct, indirect or recursive)
 
-`callback` must follow `function (err, pinset) {}` signature, where `err` is an error if the operation was not successful. `pinset` is an array of objects with keys `hash` and `type`.
+**Returns**
 
-If no `callback` is passed, a promise is returned.
+| Type | Description |
+| -------- | -------- |
+| `Promise<Array>` | An array of current pinned objects |
+
+an array of objects with keys `hash` and `type` is returned.
 
 **Example:**
 
 ```JavaScript
-ipfs.pin.ls(function (err, pinset) {
-  if (err) {
-    throw err
-  }
-  console.log(pinset)
-})
+const pinset = await ipfs.pin.ls()
+console.log(pinset)
 ```
 
 A great source of [examples][] can be found in the tests for this API.
@@ -65,26 +72,25 @@ A great source of [examples][] can be found in the tests for this API.
 
 > Remove a hash from the pinset
 
-##### `ipfs.pin.rm(hash, [options], [callback])`
+##### `ipfs.pin.rm(hash, [options])`
 
 Where:
 - `hash` is a multihash.
 - `options` is an object that can contain the following keys
   - 'recursive' - Recursively unpin the object linked. Type: bool. Default: `true`
 
-`callback` must follow `function (err) {}` signature, where `err` is an error if the operation was not successful.
+**Returns**
 
-If no `callback` is passed, a promise is returned.
+| Type | Description |
+| -------- | -------- |
+| `Promise<Array>` | An array of unpinned objects |
 
 **Example:**
 
 ```JavaScript
-ipfs.pin.rm(hash, function (err, pinset) {
-  if (err) {
-    throw err
-  }
-  console.log(pinset) prints the hashes that were unpinned
-})
+const pinset = await ipfs.pin.rm(hash)
+console.log(pinset)
+// prints the hashes that were unpinned
 ```
 
 A great source of [examples][] can be found in the tests for this API.
