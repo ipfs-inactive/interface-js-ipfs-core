@@ -27,6 +27,7 @@ module.exports = (common, options) => {
   const it = getIt(options)
 
   describe('.dht.findProvs', function () {
+    this.timeout(60 * 1000)
     let nodeA
     let nodeB
     let nodeC
@@ -45,7 +46,6 @@ module.exports = (common, options) => {
 
     let providedCid
     before('add providers for the same cid', function (done) {
-      this.timeout(10 * 1000)
       parallel([
         (cb) => nodeB.object.new('unixfs-dir', cb),
         (cb) => nodeC.object.new('unixfs-dir', cb)
@@ -60,8 +60,6 @@ module.exports = (common, options) => {
     })
 
     it('should be able to find providers', function (done) {
-      this.timeout(20 * 1000)
-
       waterfall([
         (cb) => nodeA.dht.findProvs(providedCid, cb),
         (provs, cb) => {
