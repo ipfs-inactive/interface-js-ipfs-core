@@ -13,28 +13,21 @@ module.exports = (common, options) => {
   const it = getIt(options)
 
   describe('.stop', () => {
-    let ipfs
-
-    before(async () => {
-      ipfs = await common.setup()
-    })
-
-    after(() => common.teardown())
-
     // must be last test to run
-    it('should stop the node', function (done) {
+    it('should stop the node', async function () {
       this.timeout(10 * 1000)
+      const ipfs = await common.node()
 
-      ipfs.stop((err) => {
-        expect(err).to.not.exist()
+      await ipfs.stop()
 
+      try {
         // Trying to stop an already stopped node should return an error
         // as the node can't respond to requests anymore
-        ipfs.stop((err) => {
-          expect(err).to.exist()
-          done()
-        })
-      })
+        await ipfs.stop()
+        expect.fail()
+      } catch (err) {
+        expect(err).to.exist()
+      }
     })
   })
 }
