@@ -35,10 +35,7 @@ module.exports = (common, options) => {
     })
 
     it('should get the wantlist by peer ID for a diffreent node', (done) => {
-      ipfsB.id((err, info) => {
-        expect(err).to.not.exist()
-        waitForWantlistKey(ipfsA, key, { peerId: info.id }, done)
-      })
+      waitForWantlistKey(ipfsA, key, { peerId: ipfsB.peerId.id }, done)
     })
 
     it('should not get the wantlist when offline', async () => {
