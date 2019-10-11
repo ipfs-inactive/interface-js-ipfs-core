@@ -6,7 +6,6 @@ const pushable = require('it-pushable')
 const { collect } = require('streaming-iterables')
 const { waitForPeers, getTopic } = require('./utils')
 const { getDescribe, getIt, expect } = require('../utils/mocha')
-const { connect } = require('../utils/swarm')
 const delay = require('../utils/delay')
 
 /** @typedef { import("ipfsd-ctl").TestsInterface } TestsInterface */
@@ -156,7 +155,7 @@ module.exports = (common, options) => {
         }
 
         const ipfs2Addr = ipfs2.peerId.addresses.find((a) => a.includes('127.0.0.1'))
-        connect(ipfs1, ipfs2Addr, done)
+        ipfs1.swarm.connect(ipfs2Addr, done)
       })
 
       it('should receive messages from a different node', async () => {
