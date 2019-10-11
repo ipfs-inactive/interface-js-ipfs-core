@@ -6,10 +6,14 @@ const pull = require('pull-stream')
 const { getDescribe, getIt, expect } = require('../utils/mocha')
 const pullToPromise = require('pull-to-promise')
 
-module.exports = (createCommon, options) => {
+/** @typedef { import("ipfsd-ctl").TestsInterface } TestsInterface */
+/**
+ * @param {TestsInterface} common
+ * @param {Object} options
+ */
+module.exports = (common, options) => {
   const describe = getDescribe(options)
   const it = getIt(options)
-  const common = createCommon()
 
   describe('.addPullStream', function () {
     this.timeout(40 * 1000)

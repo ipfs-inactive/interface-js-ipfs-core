@@ -13,21 +13,21 @@ async function fakeCid () {
   return new CID(0, 'dag-pb', mh)
 }
 
-module.exports = (createCommon, options) => {
+/** @typedef { import("ipfsd-ctl").TestsInterface } TestsInterface */
+/**
+ * @param {TestsInterface} common
+ * @param {Object} options
+ */
+module.exports = (common, options) => {
   const describe = getDescribe(options)
   const it = getIt(options)
-  const common = createCommon()
 
   describe('.dht.findProvs', () => {
     let nodeA
     let nodeB
     let nodeC
 
-    before(async function () {
-      // CI takes longer to instantiate the daemon, so we need to increase the
-      // timeout for the before step
-      this.timeout(60 * 1000)
-
+    before(async () => {
       nodeA = await common.setup()
       nodeB = await common.setup()
       nodeC = await common.setup()

@@ -7,10 +7,14 @@ const CID = require('cids')
 
 const randomName = prefix => `${prefix}${Math.round(Math.random() * 1000)}`
 
-module.exports = (createCommon, options) => {
+/** @typedef { import("ipfsd-ctl").TestsInterface } TestsInterface */
+/**
+ * @param {TestsInterface} common
+ * @param {Object} options
+ */
+module.exports = (common, options) => {
   const describe = getDescribe(options)
   const it = getIt(options)
-  const common = createCommon()
 
   describe('.ls', function () {
     this.timeout(40 * 1000)

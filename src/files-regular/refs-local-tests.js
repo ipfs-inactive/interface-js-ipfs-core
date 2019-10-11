@@ -4,10 +4,16 @@
 const { fixtures } = require('./utils')
 const { getDescribe, getIt, expect } = require('../utils/mocha')
 
-module.exports = (createCommon, suiteName, ipfsRefsLocal, options) => {
+/** @typedef { import("ipfsd-ctl").TestsInterface } TestsInterface */
+/**
+ * @param {TestsInterface} common
+ * @param {*} suiteName
+ * @param {*} ipfsRefsLocal
+ * @param {Object} options
+ */
+module.exports = (common, suiteName, ipfsRefsLocal, options) => {
   const describe = getDescribe(options)
   const it = getIt(options)
-  const common = createCommon()
 
   describe(suiteName, function () {
     this.timeout(40 * 1000)

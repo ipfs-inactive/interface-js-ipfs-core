@@ -7,10 +7,16 @@ const { getDescribe, getIt, expect } = require('../utils/mocha')
 const loadFixture = require('aegir/fixtures')
 const CID = require('cids')
 
-module.exports = (createCommon, suiteName, ipfsRefs, options) => {
+/** @typedef { import("ipfsd-ctl").TestsInterface } TestsInterface */
+/**
+ * @param {TestsInterface} common
+ * @param {*} suiteName
+ * @param {*} ipfsRefs
+ * @param {Object} options
+ */
+module.exports = (common, suiteName, ipfsRefs, options) => {
   const describe = getDescribe(options)
   const it = getIt(options)
-  const common = createCommon()
 
   describe(suiteName, function () {
     this.timeout(40 * 1000)

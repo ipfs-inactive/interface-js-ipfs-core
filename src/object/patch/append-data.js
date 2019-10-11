@@ -3,10 +3,14 @@
 
 const { getDescribe, getIt, expect } = require('../../utils/mocha')
 
-module.exports = (createCommon, options) => {
+/** @typedef { import("ipfsd-ctl").TestsInterface } TestsInterface */
+/**
+ * @param {TestsInterface} common
+ * @param {Object} options
+ */
+module.exports = (common, options) => {
   const describe = getDescribe(options)
   const it = getIt(options)
-  const common = createCommon()
 
   describe('.object.patch.appendData', function () {
     this.timeout(80 * 1000)

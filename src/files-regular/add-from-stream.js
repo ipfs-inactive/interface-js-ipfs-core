@@ -5,10 +5,14 @@ const { Readable } = require('readable-stream')
 const { getDescribe, getIt, expect } = require('../utils/mocha')
 const { fixtures } = require('./utils')
 
-module.exports = (createCommon, options) => {
+/** @typedef { import("ipfsd-ctl").TestsInterface } TestsInterface */
+/**
+ * @param {TestsInterface} common
+ * @param {Object} options
+ */
+module.exports = (common, options) => {
   const describe = getDescribe(options)
   const it = getIt(options)
-  const common = createCommon()
 
   describe('.addFromStream', function () {
     this.timeout(40 * 1000)

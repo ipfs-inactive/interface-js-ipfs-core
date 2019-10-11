@@ -5,10 +5,14 @@ const pullToPromise = require('pull-to-promise')
 const { getDescribe, getIt, expect } = require('../utils/mocha')
 const { isPong } = require('./utils.js')
 
-module.exports = (createCommon, options) => {
+/** @typedef { import("ipfsd-ctl").TestsInterface } TestsInterface */
+/**
+ * @param {TestsInterface} common
+ * @param {Object} options
+ */
+module.exports = (common, options) => {
   const describe = getDescribe(options)
   const it = getIt(options)
-  const common = createCommon()
 
   describe('.pingPullStream', function () {
     this.timeout(60 * 1000)

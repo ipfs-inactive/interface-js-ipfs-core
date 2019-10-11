@@ -7,10 +7,14 @@ const { waitForPeers, getTopic } = require('./utils')
 const { getDescribe, getIt, expect } = require('../utils/mocha')
 const delay = require('delay')
 
-module.exports = (createCommon, options) => {
+/** @typedef { import("ipfsd-ctl").TestsInterface } TestsInterface */
+/**
+ * @param {TestsInterface} common
+ * @param {Object} options
+ */
+module.exports = (common, options) => {
   const describe = getDescribe(options)
   const it = getIt(options)
-  const common = createCommon()
 
   describe('.pubsub.subscribe', function () {
     this.timeout(80 * 1000)
@@ -28,6 +32,8 @@ module.exports = (createCommon, options) => {
       ipfs1 = await common.setup()
       ipfs2 = await common.setup()
     })
+
+    after(() => common.teardown())
 
     beforeEach(() => {
       topic = getTopic()

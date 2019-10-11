@@ -8,10 +8,14 @@ const expectTimeout = require('../utils/expect-timeout')
 const { getDescribe, getIt, expect } = require('../utils/mocha')
 const { supportsFileReader } = require('ipfs-utils/src/supports')
 
-module.exports = (createCommon, options) => {
+/** @typedef { import("ipfsd-ctl").TestsInterface } TestsInterface */
+/**
+ * @param {TestsInterface} common
+ * @param {Object} options
+ */
+module.exports = (common, options) => {
   const describe = getDescribe(options)
   const it = getIt(options)
-  const common = createCommon()
 
   describe('.add', function () {
     this.timeout(40 * 1000)

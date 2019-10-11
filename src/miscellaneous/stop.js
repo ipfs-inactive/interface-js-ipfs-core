@@ -3,15 +3,20 @@
 
 const { getDescribe, getIt, expect } = require('../utils/mocha')
 
-module.exports = (createCommon, options) => {
+/** @typedef { import("ipfsd-ctl").TestsInterface } TestsInterface */
+/**
+ * @param {TestsInterface} common
+ * @param {Object} options
+ */
+module.exports = (common, options) => {
   const describe = getDescribe(options)
   const it = getIt(options)
-  const common = createCommon()
 
-  describe('.stop', () => {
-    it('should stop the node', async function () {
-      this.timeout(10 * 1000)
-      const ipfs = await common.setup()
+  describe('.stop', function () {
+    this.timeout(60 * 1000)
+
+    it('should stop the node', async () => {
+      const ipfs = await common.node()
 
       await ipfs.stop()
 

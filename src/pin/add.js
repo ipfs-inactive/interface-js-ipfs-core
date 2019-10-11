@@ -4,21 +4,20 @@
 const { fixtures } = require('./utils')
 const { getDescribe, getIt, expect } = require('../utils/mocha')
 
-module.exports = (createCommon, options) => {
+/** @typedef { import("ipfsd-ctl").TestsInterface } TestsInterface */
+/**
+ * @param {TestsInterface} common
+ * @param {Object} options
+ */
+module.exports = (common, options) => {
   const describe = getDescribe(options)
   const it = getIt(options)
-  const common = createCommon()
 
   describe('.pin.add', function () {
     this.timeout(50 * 1000)
 
     let ipfs
-
-    before(async function () {
-      // CI takes longer to instantiate the daemon, so we need to increase the
-      // timeout for the before step
-      this.timeout(60 * 1000)
-
+    before(async () => {
       ipfs = await common.setup()
       await Promise.all(fixtures.files.map(file => {
         return ipfs.add(file.data, { pin: false })

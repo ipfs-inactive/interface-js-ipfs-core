@@ -5,10 +5,14 @@ const hat = require('hat')
 const { getTopic } = require('./utils')
 const { getDescribe, getIt } = require('../utils/mocha')
 
-module.exports = (createCommon, options) => {
+/** @typedef { import("ipfsd-ctl").TestsInterface } TestsInterface */
+/**
+ * @param {TestsInterface} common
+ * @param {Object} options
+ */
+module.exports = (common, options) => {
   const describe = getDescribe(options)
   const it = getIt(options)
-  const common = createCommon()
 
   describe('.pubsub.publish', function () {
     this.timeout(80 * 1000)

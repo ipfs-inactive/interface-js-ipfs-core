@@ -6,10 +6,14 @@ const { getDescribe, getIt, expect } = require('../utils/mocha')
 const invalidArg = 'this/Is/So/Invalid/'
 const validIp4 = '/ip4/104.236.176.52/tcp/4001/ipfs/QmSoLnSGccFuZQJzRadHn95W2CrSFmZuTdDWP8HXaHca9z'
 
-module.exports = (createCommon, options) => {
+/** @typedef { import("ipfsd-ctl").TestsInterface } TestsInterface */
+/**
+ * @param {TestsInterface} common
+ * @param {Object} options
+ */
+module.exports = (common, options) => {
   const describe = getDescribe(options)
   const it = getIt(options)
-  const common = createCommon()
 
   describe('.bootstrap.add', function () {
     this.timeout(100 * 1000)

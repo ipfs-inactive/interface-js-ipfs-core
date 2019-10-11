@@ -5,10 +5,14 @@ const { expectIsBandwidth } = require('./utils')
 const pullToPromise = require('pull-to-promise')
 const { getDescribe, getIt } = require('../utils/mocha')
 
-module.exports = (createCommon, options) => {
+/** @typedef { import("ipfsd-ctl").TestsInterface } TestsInterface */
+/**
+ * @param {TestsInterface} common
+ * @param {Object} options
+ */
+module.exports = (common, options) => {
   const describe = getDescribe(options)
   const it = getIt(options)
-  const common = createCommon()
 
   describe('.stats.bwPullStream', () => {
     let ipfs

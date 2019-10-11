@@ -5,12 +5,16 @@ const { getDescribe, getIt, expect } = require('../utils/mocha')
 const delay = require('delay')
 const CID = require('cids')
 
-module.exports = (createCommon, options) => {
+/** @typedef { import("ipfsd-ctl").TestsInterface } TestsInterface */
+/**
+ * @param {TestsInterface} common
+ * @param {Object} options
+ */
+module.exports = (common, options) => {
   const describe = getDescribe(options)
   const it = getIt(options)
 
-  describe('.name.resolve offline', () => {
-    const common = createCommon()
+  describe('.name.resolve offline', function () {
     let ipfs
     let nodeId
 
@@ -127,7 +131,6 @@ module.exports = (createCommon, options) => {
   })
 
   describe('.name.resolve dns', function () {
-    const common = createCommon()
     let ipfs
     this.retries(5)
 
