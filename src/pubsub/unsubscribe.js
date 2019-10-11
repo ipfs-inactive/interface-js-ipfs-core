@@ -6,32 +6,25 @@ const { getTopic } = require('./utils')
 const { getDescribe, getIt, expect } = require('../utils/mocha')
 const delay = require('../utils/delay')
 
-module.exports = (createCommon, options) => {
+/** @typedef { import("ipfsd-ctl").TestsInterface } TestsInterface */
+/**
+ * @param {TestsInterface} common
+ * @param {Object} options
+ */
+module.exports = (common, options) => {
   const describe = getDescribe(options)
   const it = getIt(options)
-  const common = createCommon()
 
   describe('.pubsub.unsubscribe', function () {
     this.timeout(80 * 1000)
 
     let ipfs
 
-    before(function (done) {
-      // CI takes longer to instantiate the daemon, so we need to increase the
-      // timeout for the before step
-      this.timeout(60 * 1000)
-
-      common.setup((err, factory) => {
-        expect(err).to.not.exist()
-        factory.spawnNode((err, node) => {
-          expect(err).to.not.exist()
-          ipfs = node
-          done()
-        })
-      })
+    before(async () => {
+      ipfs = await common.setup()
     })
 
-    after((done) => common.teardown(done))
+    after(() => common.teardown())
 
     // Browser/worker has max ~5 open HTTP requests to the same origin
     const count = isBrowser || isWebWorker || isElectronRenderer ? 5 : 10

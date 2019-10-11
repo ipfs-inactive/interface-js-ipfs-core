@@ -4,16 +4,19 @@
 
 const pushable = require('it-pushable')
 const { collect } = require('streaming-iterables')
-const { spawnNodesWithId } = require('../utils/spawn')
 const { waitForPeers, getTopic } = require('./utils')
 const { getDescribe, getIt, expect } = require('../utils/mocha')
 const { connect } = require('../utils/swarm')
 const delay = require('../utils/delay')
 
-module.exports = (createCommon, options) => {
+/** @typedef { import("ipfsd-ctl").TestsInterface } TestsInterface */
+/**
+ * @param {TestsInterface} common
+ * @param {Object} options
+ */
+module.exports = (common, options) => {
   const describe = getDescribe(options)
   const it = getIt(options)
-  const common = createCommon()
 
   describe('.pubsub.subscribe', function () {
     this.timeout(80 * 1000)
@@ -23,24 +26,12 @@ module.exports = (createCommon, options) => {
     let topic
     let subscribedTopics = []
 
-    before(function (done) {
-      // CI takes longer to instantiate the daemon, so we need to increase the
-      // timeout for the before step
-      this.timeout(100 * 1000)
-
-      common.setup((err, factory) => {
-        if (err) return done(err)
-
-        spawnNodesWithId(2, factory, (err, nodes) => {
-          if (err) return done(err)
-
-          ipfs1 = nodes[0]
-          ipfs2 = nodes[1]
-
-          done()
-        })
-      })
+    before(async () => {
+      ipfs1 = await common.setup()
+      ipfs2 = await common.setup()
     })
+
+    after(() => common.teardown())
 
     beforeEach(() => {
       topic = getTopic()
@@ -57,7 +48,7 @@ module.exports = (createCommon, options) => {
       await delay(100)
     })
 
-    after((done) => common.teardown(done))
+    after(() => common.teardown())
 
     describe('single node', () => {
       it('should subscribe to one topic', async () => {

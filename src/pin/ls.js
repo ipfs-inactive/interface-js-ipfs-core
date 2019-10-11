@@ -1,53 +1,36 @@
 /* eslint-env mocha */
 'use strict'
 
-const series = require('async/series')
 const { fixtures } = require('./utils')
 const { getDescribe, getIt, expect } = require('../utils/mocha')
 
-module.exports = (createCommon, options) => {
+/** @typedef { import("ipfsd-ctl").TestsInterface } TestsInterface */
+/**
+ * @param {TestsInterface} common
+ * @param {Object} options
+ */
+module.exports = (common, options) => {
   const describe = getDescribe(options)
   const it = getIt(options)
-  const common = createCommon()
 
   describe('.pin.ls', function () {
     this.timeout(50 * 1000)
 
     let ipfs
 
-    before(function (done) {
-      // CI takes longer to instantiate the daemon, so we need to increase the
-      // timeout for the before step
-      this.timeout(60 * 1000)
-
-      common.setup((err, factory) => {
-        expect(err).to.not.exist()
-        factory.spawnNode((err, node) => {
-          expect(err).to.not.exist()
-          ipfs = node
-          populate()
-        })
-      })
-
-      function populate () {
-        series([
-          // two files wrapped in directories, only root CID pinned recursively
-          cb => {
-            const dir = fixtures.directory.files.map((file) => ({ path: file.path, content: file.data }))
-            ipfs.add(dir, { pin: false, cidVersion: 0 }, cb)
-          },
-          cb => ipfs.pin.add(fixtures.directory.cid, { recursive: true }, cb),
-          // a file (CID pinned recursively)
-          cb => ipfs.add(fixtures.files[0].data, { pin: false, cidVersion: 0 }, cb),
-          cb => ipfs.pin.add(fixtures.files[0].cid, { recursive: true }, cb),
-          // a single CID (pinned directly)
-          cb => ipfs.add(fixtures.files[1].data, { pin: false, cidVersion: 0 }, cb),
-          cb => ipfs.pin.add(fixtures.files[1].cid, { recursive: false }, cb)
-        ], done)
-      }
+    before(async () => {
+      ipfs = await common.setup()
+      // two files wrapped in directories, only root CID pinned recursively
+      const dir = fixtures.directory.files.map((file) => ({ path: file.path, content: file.data }))
+      await ipfs.add(dir, { pin: false, cidVersion: 0 })
+      await ipfs.pin.add(fixtures.directory.cid, { recursive: true })
+      // a file (CID pinned recursively)
+      await ipfs.add(fixtures.files[0].data, { pin: false, cidVersion: 0 })
+      await ipfs.pin.add(fixtures.files[0].cid, { recursive: true })
+      // a single CID (pinned directly)
+      await ipfs.add(fixtures.files[1].data, { pin: false, cidVersion: 0 })
+      await ipfs.pin.add(fixtures.files[1].cid, { recursive: false })
     })
-
-    after((done) => common.teardown(done))
 
     // 1st, because ipfs.add pins automatically
     it('should list all recursive pins', (done) => {

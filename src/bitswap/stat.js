@@ -1,34 +1,26 @@
 /* eslint-env mocha */
 'use strict'
 
-const waterfall = require('async/waterfall')
 const { getDescribe, getIt, expect } = require('../utils/mocha')
 const { expectIsBitswap } = require('../stats/utils')
 
-module.exports = (createCommon, options) => {
+/** @typedef { import("ipfsd-ctl").TestsInterface } TestsInterface */
+/**
+ * @param {TestsInterface} common
+ * @param {Object} options
+ */
+module.exports = (common, options) => {
   const describe = getDescribe(options)
   const it = getIt(options)
-  const common = createCommon()
 
-  describe('.bitswap.stat', () => {
+  describe('.bitswap.stat', function () {
+    this.timeout(60 * 1000)
     let ipfs
-
-    before(function (done) {
-      // CI takes longer to instantiate the daemon, so we need to increase the
-      // timeout for the before step
-      this.timeout(60 * 1000)
-
-      common.setup((err, factory) => {
-        expect(err).to.not.exist()
-        factory.spawnNode((err, node) => {
-          expect(err).to.not.exist()
-          ipfs = node
-          done()
-        })
-      })
+    before(async () => {
+      ipfs = await common.setup()
     })
 
-    after((done) => common.teardown(done))
+    after(() => common.teardown())
 
     it('should get bitswap stats', (done) => {
       ipfs.bitswap.stat((err, res) => {
@@ -43,20 +35,16 @@ module.exports = (createCommon, options) => {
       })
     })
 
-    it('should not get bitswap stats when offline', function (done) {
-      this.timeout(60 * 1000)
+    it('should not get bitswap stats when offline', async () => {
+      const node = await common.node()
+      await node.stop()
 
-      waterfall([
-        (cb) => createCommon().setup(cb),
-        (factory, cb) => factory.spawnNode(cb),
-        (node, cb) => node.stop((err) => cb(err, node))
-      ], (err, node) => {
-        expect(err).to.not.exist()
-        node.bitswap.wantlist((err) => {
-          expect(err).to.exist()
-          done()
-        })
-      })
+      try {
+        await node.api.bitswap.stat()
+        throw new Error('should error')
+      } catch (err) {
+        expect(err).to.exist()
+      }
     })
   })
 }

@@ -2,35 +2,25 @@
 /* eslint-env mocha */
 'use strict'
 
-const { spawnNodeWithId } = require('../utils/spawn')
 const { getDescribe, getIt, expect } = require('../utils/mocha')
 
-module.exports = (createCommon, options) => {
+/** @typedef { import("ipfsd-ctl").TestsInterface } TestsInterface */
+/**
+ * @param {TestsInterface} common
+ * @param {Object} options
+ */
+module.exports = (common, options) => {
   const describe = getDescribe(options)
   const it = getIt(options)
-  const common = createCommon()
 
   describe('.name.pubsub.subs', function () {
     let ipfs
 
-    before(function (done) {
-      // CI takes longer to instantiate the daemon, so we need to increase the
-      // timeout for the before step
-      this.timeout(60 * 1000)
-
-      common.setup((err, factory) => {
-        expect(err).to.not.exist()
-
-        spawnNodeWithId(factory, (err, node) => {
-          expect(err).to.not.exist()
-
-          ipfs = node
-          done()
-        })
-      })
+    before(async () => {
+      ipfs = await common.setup()
     })
 
-    after((done) => common.teardown(done))
+    after(() => common.teardown())
 
     it('should get an empty array as a result of subscriptions before any resolve', function (done) {
       this.timeout(60 * 1000)

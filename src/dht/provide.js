@@ -2,41 +2,29 @@
 'use strict'
 
 const CID = require('cids')
-const { spawnNodesWithId } = require('../utils/spawn')
 const { getDescribe, getIt, expect } = require('../utils/mocha')
-const { connect } = require('../utils/swarm')
 
-module.exports = (createCommon, options) => {
+/** @typedef { import("ipfsd-ctl").TestsInterface } TestsInterface */
+/**
+ * @param {TestsInterface} common
+ * @param {Object} options
+ */
+module.exports = (common, options) => {
   const describe = getDescribe(options)
   const it = getIt(options)
-  const common = createCommon()
 
   describe('.dht.provide', function () {
     this.timeout(80 * 1000)
 
     let ipfs
 
-    before(function (done) {
-      // CI takes longer to instantiate the daemon, so we need to increase the
-      // timeout for the before step
-      this.timeout(60 * 1000)
-
-      common.setup((err, factory) => {
-        expect(err).to.not.exist()
-
-        spawnNodesWithId(2, factory, (err, nodes) => {
-          expect(err).to.not.exist()
-          ipfs = nodes[0]
-          connect(ipfs, nodes[1].peerId.addresses[0], done)
-        })
-      })
+    before(async () => {
+      ipfs = await common.setup()
+      const nodeB = await common.setup()
+      await ipfs.swarm.connect(nodeB.peerId.addresses[0])
     })
 
-    after(function (done) {
-      this.timeout(50 * 1000)
-
-      common.teardown(done)
-    })
+    after(() => common.teardown())
 
     it('should provide local CID', (done) => {
       ipfs.add(Buffer.from('test'), (err, res) => {

@@ -6,29 +6,24 @@ const { getDescribe, getIt, expect } = require('../utils/mocha')
 const loadFixture = require('aegir/fixtures')
 const CID = require('cids')
 
-module.exports = (createCommon, suiteName, ipfsRefs, options) => {
+/** @typedef { import("ipfsd-ctl").TestsInterface } TestsInterface */
+/**
+ * @param {TestsInterface} common
+ * @param {*} suiteName
+ * @param {*} ipfsRefs
+ * @param {Object} options
+ */
+module.exports = (common, suiteName, ipfsRefs, options) => {
   const describe = getDescribe(options)
   const it = getIt(options)
-  const common = createCommon()
 
   describe(suiteName, function () {
     this.timeout(40 * 1000)
 
     let ipfs, pbRootCb, dagRootCid
 
-    before(function (done) {
-      // CI takes longer to instantiate the daemon, so we need to increase the
-      // timeout for the before step
-      this.timeout(60 * 1000)
-
-      common.setup((err, factory) => {
-        expect(err).to.not.exist()
-        factory.spawnNode((err, node) => {
-          expect(err).to.not.exist()
-          ipfs = node
-          done()
-        })
-      })
+    before(async () => {
+      ipfs = await common.setup()
     })
 
     before(function (done) {
@@ -47,7 +42,7 @@ module.exports = (createCommon, suiteName, ipfsRefs, options) => {
       })
     })
 
-    after((done) => common.teardown(done))
+    after(() => common.teardown())
 
     for (const [name, options] of Object.entries(getRefsTests())) {
       const { path, params, expected, expectError, expectTimeout } = options

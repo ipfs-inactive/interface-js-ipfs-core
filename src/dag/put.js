@@ -6,34 +6,24 @@ const DAGNode = dagPB.DAGNode
 const dagCBOR = require('ipld-dag-cbor')
 const CID = require('cids')
 const multihash = require('multihashes')
-const { spawnNodeWithId } = require('../utils/spawn')
 const { getDescribe, getIt, expect } = require('../utils/mocha')
 
-module.exports = (createCommon, options) => {
+/** @typedef { import("ipfsd-ctl").TestsInterface } TestsInterface */
+/**
+ * @param {TestsInterface} common
+ * @param {Object} options
+ */
+module.exports = (common, options) => {
   const describe = getDescribe(options)
   const it = getIt(options)
-  const common = createCommon()
 
-  describe('.dag.put', () => {
+  describe('.dag.put', function () {
+    this.timeout(60 * 1000)
     let ipfs
 
-    before(function (done) {
-      // CI takes longer to instantiate the daemon, so we need to increase the
-      // timeout for the before step
-      this.timeout(60 * 1000)
+    before(async () => { ipfs = await common.setup() })
 
-      common.setup((err, factory) => {
-        expect(err).to.not.exist()
-
-        spawnNodeWithId(factory, (err, node) => {
-          expect(err).to.not.exist()
-          ipfs = node
-          done()
-        })
-      })
-    })
-
-    after((done) => common.teardown(done))
+    after(() => common.teardown())
 
     let pbNode
     let cborNode
