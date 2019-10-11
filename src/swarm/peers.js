@@ -109,8 +109,8 @@ module.exports = (common, options) => {
     it('should list peers only once', async () => {
       const config = getConfig(['/ip4/127.0.0.1/tcp/0'])
 
-      const nodeA = await common.setup({}, { config })
-      const nodeB = await common.setup({}, { config })
+      const nodeA = await common.setup({ spawnOptions: { config } })
+      const nodeB = await common.setup({ spawnOptions: { config } })
       await nodeA.swarm.connect(nodeB.peerId.addresses[0])
       await delay(1000)
       const peersA = await nodeA.swarm.peers()
@@ -129,8 +129,8 @@ module.exports = (common, options) => {
         '/ip4/127.0.0.1/tcp/26545',
         '/ip4/127.0.0.1/tcp/26546'
       ])
-      const nodeA = await common.setup({}, { configA })
-      const nodeB = await common.setup({}, { configB })
+      const nodeA = await common.setup({ spawnOptions: { config: configA } })
+      const nodeB = await common.setup({ spawnOptions: { config: configB } })
       await nodeA.swarm.connect(nodeB.peerId.addresses[0])
       await delay(1000)
       const peersA = await nodeA.swarm.peers()
