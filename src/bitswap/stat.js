@@ -22,17 +22,9 @@ module.exports = (common, options) => {
 
     after(() => common.teardown())
 
-    it('should get bitswap stats', (done) => {
-      ipfs.bitswap.stat((err, res) => {
-        expectIsBitswap(err, res)
-        done()
-      })
-    })
-
-    it('should get bitswap stats (promised)', () => {
-      return ipfs.bitswap.stat().then((res) => {
-        expectIsBitswap(null, res)
-      })
+    it('should get bitswap stats', async () => {
+      const res = await ipfs.bitswap.stat()
+      expectIsBitswap(null, res)
     })
 
     it('should not get bitswap stats when offline', async () => {
@@ -41,7 +33,7 @@ module.exports = (common, options) => {
 
       try {
         await node.api.bitswap.stat()
-        throw new Error('should error')
+        expect.fail('bitswap.stat() did not throw an error as expected')
       } catch (err) {
         expect(err).to.exist()
       }

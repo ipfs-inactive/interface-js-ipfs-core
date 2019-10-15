@@ -30,12 +30,12 @@ module.exports = (common, options) => {
 
     after(() => common.teardown())
 
-    it('should get the wantlist', (done) => {
-      waitForWantlistKey(ipfsB, key, done)
+    it('should get the wantlist', () => {
+      return waitForWantlistKey(ipfsB, key)
     })
 
-    it('should get the wantlist by peer ID for a diffreent node', (done) => {
-      waitForWantlistKey(ipfsA, key, { peerId: ipfsB.peerId.id }, done)
+    it('should get the wantlist by peer ID for a diffreent node', () => {
+      return waitForWantlistKey(ipfsA, key, { peerId: ipfsB.peerId.id })
     })
 
     it('should not get the wantlist when offline', async () => {
@@ -44,7 +44,7 @@ module.exports = (common, options) => {
 
       try {
         await node.bitswap.wantlist()
-        throw new Error('should error')
+        expect.fail('bitswap.wantlist() did not throw an error as expected')
       } catch (err) {
         expect(err).to.exist()
       }

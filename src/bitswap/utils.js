@@ -1,36 +1,24 @@
 'use strict'
 
-const until = require('async/until')
+const pWhilst = require('p-whilst')
 
-function waitForWantlistKey (ipfs, key, opts, cb) {
-  if (typeof opts === 'function') {
-    cb = opts
-    opts = {}
-  }
-
-  opts = opts || {}
+function waitForWantlistKey (ipfs, key, opts = {}) {
   opts.timeout = opts.timeout || 10000
 
   let list = { Keys: [] }
 
   const start = Date.now()
-  const test = () => list.Keys.some(k => k['/'] === key)
-  const iteratee = (cb) => {
+  const test = () => !list.Keys.some(k => k['/'] === key)
+
+  const iteratee = async () => {
     if (Date.now() - start > opts.timeout) {
-      return cb(new Error(`Timed out waiting for ${key} in wantlist`))
+      throw new Error(`Timed out waiting for ${key} in wantlist`)
     }
-    ipfs.bitswap.wantlist(opts.peerId, (err, nextList) => {
-      if (err) return cb(err)
-      list = nextList
-      cb()
-    })
+
+    list = await ipfs.bitswap.wantlist(opts.peerId)
   }
-  until(test, iteratee, (err) => {
-    if (err) {
-      return cb(err)
-    }
-    cb()
-  })
+
+  return pWhilst(test, iteratee)
 }
 
 module.exports.waitForWantlistKey = waitForWantlistKey
