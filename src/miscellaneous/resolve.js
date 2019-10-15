@@ -82,7 +82,8 @@ module.exports = (common, options) => {
 
     it('should resolve IPNS link recursively', async function () {
       this.timeout(20 * 1000)
-      const node = await common.setup()
+      // TODO: for some reason this needs preload enable in the browser or else we get Error: No available transports to dial peer QmZPGcenMDSRttk8qekNqhEMPRnkrhciHdhW6RUoYdoNn1! from libp2p
+      const node = await common.setup({ spawnOptions: { preload: { enable: true } } })
       await ipfs.swarm.connect(node.peerId.addresses.find((a) => a.includes('127.0.0.1')))
 
       const [{ path }] = await ipfs.add(Buffer.from('should resolve a record recursive === true'))

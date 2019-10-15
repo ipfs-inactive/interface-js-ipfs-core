@@ -13,7 +13,7 @@ module.exports = (common, options) => {
   const it = getIt(options)
 
   describe('.dns', function () {
-    this.timeout(10 * 1000)
+    this.timeout(60 * 1000)
     this.retries(3)
     let ipfs
 
