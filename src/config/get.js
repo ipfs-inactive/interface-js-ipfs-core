@@ -21,51 +21,39 @@ module.exports = (common, options) => {
 
     after(() => common.teardown())
 
-    it('should retrieve the whole config', (done) => {
-      ipfs.config.get((err, config) => {
-        expect(err).to.not.exist()
-        expect(config).to.be.an('object')
-        expect(isPlainObject(config)).to.equal(true)
-        done()
-      })
+    it('should retrieve the whole config', async () => {
+      const config = await ipfs.config.get()
+
+      expect(config).to.be.an('object')
+      expect(isPlainObject(config)).to.equal(true)
     })
 
-    it('should retrieve the whole config (promised)', () => {
-      return ipfs.config.get()
-        .then((config) => {
-          expect(config).to.be.an('object')
-          expect(isPlainObject(config)).to.equal(true)
-        })
+    it('should retrieve a value through a key', async () => {
+      const peerId = await ipfs.config.get('Identity.PeerID')
+      expect(peerId).to.exist()
     })
 
-    it('should retrieve a value through a key', (done) => {
-      ipfs.config.get('Identity.PeerID', (err, peerId) => {
-        expect(err).to.not.exist()
-        expect(peerId).to.exist()
-        done()
-      })
+    it('should retrieve a value through a nested key', async () => {
+      const swarmAddrs = await ipfs.config.get('Addresses.Swarm')
+      expect(swarmAddrs).to.exist()
     })
 
-    it('should retrieve a value through a nested key', (done) => {
-      ipfs.config.get('Addresses.Swarm', (err, swarmAddrs) => {
-        expect(err).to.not.exist()
-        expect(swarmAddrs).to.exist()
-        done()
-      })
-    })
-
-    it('should fail on non valid key', (done) => {
-      ipfs.config.get(1234, (err, peerId) => {
+    it('should fail on non valid key', async () => {
+      try {
+        await ipfs.config.get(1234)
+        expect.fail('config.get() did not throw on non valid key')
+      } catch (err) {
         expect(err).to.exist()
-        done()
-      })
+      }
     })
 
-    it('should fail on non existent key', (done) => {
-      ipfs.config.get('Bananas', (err, peerId) => {
+    it('should fail on non existent key', async () => {
+      try {
+        await ipfs.config.get('Bananas')
+        expect.fail('config.get() did not throw on non existent key')
+      } catch (err) {
         expect(err).to.exist()
-        done()
-      })
+      }
     })
   })
 }
