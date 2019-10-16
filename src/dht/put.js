@@ -1,7 +1,7 @@
 /* eslint-env mocha */
 'use strict'
 
-const { getDescribe, getIt, expect } = require('../utils/mocha')
+const { getDescribe, getIt } = require('../utils/mocha')
 
 /** @typedef { import("ipfsd-ctl").TestsInterface } TestsInterface */
 /**
@@ -26,14 +26,11 @@ module.exports = (common, options) => {
 
     after(() => common.teardown())
 
-    it('should put a value to the DHT', (done) => {
+    it('should put a value to the DHT', async () => {
       const key = Buffer.from('QmUNLLsPACCz1vLxQVkXqqLX5R1X345qqfHbsf67hvA3Nn')
       const data = Buffer.from('data')
 
-      nodeA.dht.put(key, data, (err) => {
-        expect(err).to.not.exist()
-        done()
-      })
+      await nodeA.dht.put(key, data)
     })
   })
 }

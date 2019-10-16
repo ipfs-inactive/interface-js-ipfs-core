@@ -26,69 +26,60 @@ module.exports = (common, options) => {
 
     after(() => common.teardown())
 
-    it('should provide local CID', (done) => {
-      ipfs.add(Buffer.from('test'), (err, res) => {
-        if (err) return done(err)
+    it('should provide local CID', async () => {
+      const res = await ipfs.add(Buffer.from('test'))
 
-        ipfs.dht.provide(new CID(res[0].hash), (err) => {
-          expect(err).to.not.exist()
-          done()
-        })
-      })
+      await ipfs.dht.provide(new CID(res[0].hash))
     })
 
-    it('should not provide if block not found locally', (done) => {
+    it('should not provide if block not found locally', async () => {
       const cid = new CID('Qmd7qZS4T7xXtsNFdRoK1trfMs5zU94EpokQ9WFtxdPxsZ')
 
-      ipfs.dht.provide(cid, (err) => {
+      try {
+        await ipfs.dht.provide(cid)
+        expect.fail('dht.provide() did not throw when block is not found locally')
+      } catch (err) {
         expect(err).to.exist()
         expect(err.message).to.include('not found locally')
-        done()
-      })
+      }
     })
 
-    it('should allow multiple CIDs to be passed', (done) => {
-      ipfs.add([
+    it('should allow multiple CIDs to be passed', async () => {
+      const res = await ipfs.add([
         { content: Buffer.from('t0') },
         { content: Buffer.from('t1') }
-      ], (err, res) => {
-        if (err) return done(err)
+      ])
 
-        ipfs.dht.provide([
-          new CID(res[0].hash),
-          new CID(res[1].hash)
-        ], (err) => {
-          expect(err).to.not.exist()
-          done()
-        })
-      })
+      await ipfs.dht.provide([
+        new CID(res[0].hash),
+        new CID(res[1].hash)
+      ])
     })
 
-    it('should provide a CIDv1', (done) => {
-      ipfs.add(Buffer.from('test'), { cidVersion: 1 }, (err, res) => {
-        if (err) return done(err)
+    it('should provide a CIDv1', async () => {
+      const res = await ipfs.add(Buffer.from('test'), { cidVersion: 1 })
 
-        const cid = new CID(res[0].hash)
+      const cid = new CID(res[0].hash)
 
-        ipfs.dht.provide(cid, (err) => {
-          expect(err).to.not.exist()
-          done()
-        })
-      })
+      await ipfs.dht.provide(cid)
     })
 
-    it('should error on non CID arg', (done) => {
-      ipfs.dht.provide({}, (err) => {
+    it('should error on non CID arg', async () => {
+      try {
+        await ipfs.dht.provide({})
+        expect.fail('ipfs.dht.provide() did not throw on non CID arg')
+      } catch (err) {
         expect(err).to.exist()
-        done()
-      })
+      }
     })
 
-    it('should error on array containing non CID arg', (done) => {
-      ipfs.dht.provide([{}], (err) => {
+    it('should error on array containing non CID arg', async () => {
+      try {
+        await ipfs.dht.provide([{}])
+        expect.fail('ipfs.dht.provide() did not throw on array containing non CID arg')
+      } catch (err) {
         expect(err).to.exist()
-        done()
-      })
+      }
     })
   })
 }

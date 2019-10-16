@@ -2,19 +2,15 @@
 'use strict'
 
 const multihashing = require('multihashing-async')
-const waterfall = require('async/waterfall')
-const parallel = require('async/parallel')
 const CID = require('cids')
 const { getDescribe, getIt, expect } = require('../utils/mocha')
 
-function fakeCid (cb) {
+async function fakeCid () {
   const bytes = Buffer.from(`TEST${Date.now()}`)
-  multihashing(bytes, 'sha2-256', (err, mh) => {
-    if (err) {
-      cb(err)
-    }
-    cb(null, new CID(0, 'dag-pb', mh))
-  })
+
+  const mh = await multihashing(bytes, 'sha2-256')
+
+  return new CID(0, 'dag-pb', mh)
 }
 
 /** @typedef { import("ipfsd-ctl").TestsInterface } TestsInterface */
@@ -45,45 +41,43 @@ module.exports = (common, options) => {
     after(() => common.teardown())
 
     let providedCid
-    before('add providers for the same cid', function (done) {
-      parallel([
-        (cb) => nodeB.object.new('unixfs-dir', cb),
-        (cb) => nodeC.object.new('unixfs-dir', cb)
-      ], (err, cids) => {
-        if (err) return done(err)
-        providedCid = cids[0]
-        parallel([
-          (cb) => nodeB.dht.provide(providedCid, cb),
-          (cb) => nodeC.dht.provide(providedCid, cb)
-        ], done)
-      })
+    before('add providers for the same cid', async function () {
+      const cids = await Promise.all([
+        nodeB.object.new('unixfs-dir'),
+        nodeC.object.new('unixfs-dir')
+      ])
+
+      providedCid = cids[0]
+
+      await Promise.all([
+        nodeB.dht.provide(providedCid),
+        nodeC.dht.provide(providedCid)
+      ])
     })
 
-    it('should be able to find providers', function (done) {
-      waterfall([
-        (cb) => nodeA.dht.findProvs(providedCid, cb),
-        (provs, cb) => {
-          const providerIds = provs.map((p) => p.id.toB58String())
-          expect(providerIds).to.have.members([
-            nodeB.peerId.id,
-            nodeC.peerId.id
-          ])
-          cb()
-        }
-      ], done)
+    it('should be able to find providers', async function () {
+      const provs = await nodeA.dht.findProvs(providedCid)
+      const providerIds = provs.map((p) => p.id.toB58String())
+
+      expect(providerIds).to.have.members([
+        nodeB.peerId.id,
+        nodeC.peerId.id
+      ])
     })
 
-    it('should take options to override timeout config', function (done) {
+    it('should take options to override timeout config', async function () {
       const options = {
         timeout: 1
       }
-      waterfall([
-        (cb) => fakeCid(cb),
-        (cidV0, cb) => nodeA.dht.findProvs(cidV0, options, (err) => {
-          expect(err).to.exist()
-          cb(null)
-        })
-      ], done)
+
+      const cidV0 = await fakeCid()
+
+      try {
+        await nodeA.dht.findProvs(cidV0, options)
+        expect.fail('dht.findProvs() did not throw as expected')
+      } catch (err) {
+        expect(err).to.exist()
+      }
     })
   })
 }

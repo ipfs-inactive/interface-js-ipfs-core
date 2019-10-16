@@ -2,7 +2,6 @@
 'use strict'
 
 const hat = require('hat')
-const waterfall = require('async/waterfall')
 const { getDescribe, getIt, expect } = require('../utils/mocha')
 
 /** @typedef { import("ipfsd-ctl").TestsInterface } TestsInterface */
@@ -28,27 +27,23 @@ module.exports = (common, options) => {
 
     after(() => common.teardown())
 
-    it('should error when getting a non-existent key from the DHT', (done) => {
-      nodeA.dht.get('non-existing', { timeout: 100 }, (err, value) => {
+    it('should error when getting a non-existent key from the DHT', async () => {
+      try {
+        await nodeA.dht.get('non-existing', { timeout: 100 })
+        expect.fail('dht.get() did not throw when getting a non-existent key from the DHT')
+      } catch (err) {
         expect(err).to.be.an.instanceof(Error)
-        done()
-      })
+      }
     })
 
-    it('should get a value after it was put on another node', function (done) {
-      this.timeout(80 * 1000)
-
+    it('should get a value after it was put on another node', async () => {
       const key = Buffer.from(hat())
       const value = Buffer.from(hat())
 
-      waterfall([
-        cb => nodeB.dht.put(key, value, cb),
-        cb => nodeA.dht.get(key, cb),
-        (result, cb) => {
-          expect(result).to.eql(value)
-          cb()
-        }
-      ], done)
+      await nodeB.dht.put(key, value)
+      const result = await nodeA.dht.get(key)
+
+      expect(result).to.eql(value)
     })
   })
 }
