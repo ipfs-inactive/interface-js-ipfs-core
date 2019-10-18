@@ -22,29 +22,25 @@ module.exports = (common, options) => {
 
     after(() => common.teardown())
 
-    it('should make directory on root', (done) => {
+    it('should make directory on root', () => {
       const testDir = `/test-${hat()}`
 
-      ipfs.files.mkdir(testDir, (err) => {
-        expect(err).to.not.exist()
-        done()
-      })
+      return ipfs.files.mkdir(testDir)
     })
 
-    it('should make directory and its parents', (done) => {
+    it('should make directory and its parents', () => {
       const testDir = `/test-${hat()}`
 
-      ipfs.files.mkdir(`${testDir}/lv1/lv2`, { p: true }, (err) => {
-        expect(err).to.not.exist()
-        done()
-      })
+      return ipfs.files.mkdir(`${testDir}/lv1/lv2`, { p: true })
     })
 
-    it('should not make already existent directory', (done) => {
-      ipfs.files.mkdir('/', (err) => {
+    it('should not make already existent directory', async () => {
+      try {
+        await ipfs.files.mkdir('/')
+        expect.fail('files.mkdir() did not throw when making already existent directory')
+      } catch (err) {
         expect(err).to.exist()
-        done()
-      })
+      }
     })
   })
 }

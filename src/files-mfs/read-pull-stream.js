@@ -1,7 +1,6 @@
 /* eslint-env mocha */
 'use strict'
 
-const series = require('async/series')
 const hat = require('hat')
 const { getDescribe, getIt, expect } = require('../utils/mocha')
 const pull = require('pull-stream/pull')
@@ -25,34 +24,34 @@ module.exports = (common, options) => {
 
     after(() => common.teardown())
 
-    it('should not read not found, expect error', (done) => {
+    it('should not read not found, expect error', () => {
       const testDir = `/test-${hat()}`
 
-      pull(
-        ipfs.files.readPullStream(`${testDir}/404`),
-        collect((err) => {
-          expect(err).to.exist()
-          expect(err.message).to.contain('does not exist')
-          done()
-        })
-      )
+      return new Promise((resolve) => {
+        pull(
+          ipfs.files.readPullStream(`${testDir}/404`),
+          collect((err) => {
+            expect(err).to.exist()
+            expect(err.message).to.contain('does not exist')
+            resolve()
+          })
+        )
+      })
     })
 
-    it('should read file', (done) => {
+    it('should read file', async () => {
       const testDir = `/test-${hat()}`
 
-      series([
-        (cb) => ipfs.files.mkdir(testDir, cb),
-        (cb) => ipfs.files.write(`${testDir}/a`, Buffer.from('Hello, world!'), { create: true }, cb)
-      ], (err) => {
-        expect(err).to.not.exist()
+      await ipfs.files.mkdir(testDir)
+      await ipfs.files.write(`${testDir}/a`, Buffer.from('Hello, world!'), { create: true })
 
+      await new Promise((resolve, reject) => {
         pull(
           ipfs.files.readPullStream(`${testDir}/a`),
           collect((err, bufs) => {
             expect(err).to.not.exist()
             expect(bufs).to.eql([Buffer.from('Hello, world!')])
-            done()
+            resolve()
           })
         )
       })

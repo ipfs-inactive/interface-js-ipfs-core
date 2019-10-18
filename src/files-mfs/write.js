@@ -22,41 +22,33 @@ module.exports = (common, options) => {
 
     after(() => common.teardown())
 
-    it('should not write to non existent file, expect error', function (done) {
+    it('should not write to non existent file, expect error', async function () {
       const testDir = `/test-${hat()}`
 
-      ipfs.files.write(`${testDir}/a`, Buffer.from('Hello, world!'), (err) => {
+      try {
+        await ipfs.files.write(`${testDir}/a`, Buffer.from('Hello, world!'))
+        expect.fail('files.write() did not throw while writing to non existent file')
+      } catch (err) {
         expect(err).to.exist()
-        done()
-      })
+      }
     })
 
-    it('should write to non existent file with create flag', function (done) {
+    it('should write to non existent file with create flag', async function () {
       const testPath = `/test-${hat()}`
 
-      ipfs.files.write(testPath, Buffer.from('Hello, world!'), { create: true }, (err) => {
-        expect(err).to.not.exist()
+      await ipfs.files.write(testPath, Buffer.from('Hello, world!'), { create: true })
 
-        ipfs.files.stat(testPath, (err, stats) => {
-          expect(err).to.not.exist()
-          expect(stats.type).to.equal('file')
-          done()
-        })
-      })
+      const stats = await ipfs.files.stat(testPath)
+      expect(stats.type).to.equal('file')
     })
 
-    it('should write to deeply nested non existent file with create and parents flags', function (done) {
+    it('should write to deeply nested non existent file with create and parents flags', async function () {
       const testPath = `/foo/bar/baz/test-${hat()}`
 
-      ipfs.files.write(testPath, Buffer.from('Hello, world!'), { create: true, parents: true }, (err) => {
-        expect(err).to.not.exist()
+      await ipfs.files.write(testPath, Buffer.from('Hello, world!'), { create: true, parents: true })
 
-        ipfs.files.stat(testPath, (err, stats) => {
-          expect(err).to.not.exist()
-          expect(stats.type).to.equal('file')
-          done()
-        })
-      })
+      const stats = await ipfs.files.stat(testPath)
+      expect(stats.type).to.equal('file')
     })
   })
 }

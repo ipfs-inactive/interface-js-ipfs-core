@@ -1,7 +1,6 @@
 /* eslint-env mocha */
 'use strict'
 
-const series = require('async/series')
 const hat = require('hat')
 const { getDescribe, getIt, expect } = require('../utils/mocha')
 const pull = require('pull-stream/pull')
@@ -26,28 +25,28 @@ module.exports = (common, options) => {
 
     after(() => common.teardown())
 
-    it('should not ls not found file/dir, expect error', (done) => {
+    it('should not ls not found file/dir, expect error', () => {
       const testDir = `/test-${hat()}`
 
-      pull(
-        ipfs.files.lsPullStream(`${testDir}/404`),
-        onEnd((err) => {
-          expect(err).to.exist()
-          expect(err.message).to.include('does not exist')
-          done()
-        })
-      )
+      return new Promise((resolve) => {
+        pull(
+          ipfs.files.lsPullStream(`${testDir}/404`),
+          onEnd((err) => {
+            expect(err).to.exist()
+            expect(err.message).to.include('does not exist')
+            resolve()
+          })
+        )
+      })
     })
 
-    it('should ls directory', (done) => {
+    it('should ls directory', async () => {
       const testDir = `/test-${hat()}`
 
-      series([
-        (cb) => ipfs.files.mkdir(`${testDir}/lv1`, { p: true }, cb),
-        (cb) => ipfs.files.write(`${testDir}/b`, Buffer.from('Hello, world!'), { create: true }, cb)
-      ], (err) => {
-        expect(err).to.not.exist()
+      await ipfs.files.mkdir(`${testDir}/lv1`, { p: true })
+      await ipfs.files.write(`${testDir}/b`, Buffer.from('Hello, world!'), { create: true })
 
+      await new Promise((resolve) => {
         pull(
           ipfs.files.lsPullStream(testDir),
           collect((err, entries) => {
@@ -56,21 +55,19 @@ module.exports = (common, options) => {
               { name: 'b', type: 0, size: 0, hash: '' },
               { name: 'lv1', type: 0, size: 0, hash: '' }
             ])
-            done()
+            resolve()
           })
         )
       })
     })
 
-    it('should ls directory with long option', (done) => {
+    it('should ls directory with long option', async () => {
       const testDir = `/test-${hat()}`
 
-      series([
-        (cb) => ipfs.files.mkdir(`${testDir}/lv1`, { p: true }, cb),
-        (cb) => ipfs.files.write(`${testDir}/b`, Buffer.from('Hello, world!'), { create: true }, cb)
-      ], (err) => {
-        expect(err).to.not.exist()
+      await ipfs.files.mkdir(`${testDir}/lv1`, { p: true })
+      await ipfs.files.write(`${testDir}/b`, Buffer.from('Hello, world!'), { create: true })
 
+      await new Promise((resolve) => {
         pull(
           ipfs.files.lsPullStream(testDir, { long: true }),
           collect((err, entries) => {
@@ -89,7 +86,7 @@ module.exports = (common, options) => {
                 hash: 'QmUNLLsPACCz1vLxQVkXqqLX5R1X345qqfHbsf67hvA3Nn'
               }
             ])
-            done()
+            resolve()
           })
         )
       })
