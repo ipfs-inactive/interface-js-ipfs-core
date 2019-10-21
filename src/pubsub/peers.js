@@ -23,8 +23,8 @@ module.exports = (common, options) => {
     let subscribedTopics = []
     before(async () => {
       ipfs1 = await common.setup()
-      ipfs2 = await common.setup()
-      ipfs3 = await common.setup()
+      ipfs2 = await common.setup({ type: 'js' })
+      ipfs3 = await common.setup({ type: 'js' })
 
       const ipfs2Addr = ipfs2.peerId.addresses.find((a) => a.includes('127.0.0.1'))
       const ipfs3Addr = ipfs3.peerId.addresses.find((a) => a.includes('127.0.0.1'))

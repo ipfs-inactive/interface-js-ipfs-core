@@ -19,7 +19,7 @@ module.exports = (common, options) => {
 
     before(async () => {
       ipfsA = await common.setup()
-      ipfsB = await common.setup()
+      ipfsB = await common.setup({ type: 'js' })
     })
 
     after(() => common.teardown())

@@ -30,7 +30,7 @@ module.exports = (common, options) => {
       this.timeout(100 * 1000)
 
       ipfs1 = await common.setup()
-      ipfs2 = await common.setup()
+      ipfs2 = await common.setup({ type: 'js' })
     })
 
     after(() => common.teardown())
