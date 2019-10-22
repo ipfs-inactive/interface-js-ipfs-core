@@ -21,29 +21,31 @@ module.exports = (common, options) => {
 
     before(async () => { ipfs = await common.setup() })
 
-    before((done) => ipfs.add(fixtures.smallFile.data, done))
+    before(() => ipfs.add(fixtures.smallFile.data))
 
     after(() => common.teardown())
 
-    it('should return a Pull Stream of Pull Streams', (done) => {
+    it('should return a Pull Stream of Pull Streams', () => {
       const stream = ipfs.getPullStream(fixtures.smallFile.cid)
 
-      pull(
-        stream,
-        pull.collect((err, files) => {
-          expect(err).to.not.exist()
-          expect(files).to.be.length(1)
-          expect(files[0].path).to.eql(fixtures.smallFile.cid)
-          pull(
-            files[0].content,
-            pull.concat((err, data) => {
-              expect(err).to.not.exist()
-              expect(data.toString()).to.contain('Plz add me!')
-              done()
-            })
-          )
-        })
-      )
+      return new Promise((resolve) => {
+        pull(
+          stream,
+          pull.collect((err, files) => {
+            expect(err).to.not.exist()
+            expect(files).to.be.length(1)
+            expect(files[0].path).to.eql(fixtures.smallFile.cid)
+            pull(
+              files[0].content,
+              pull.concat((err, data) => {
+                expect(err).to.not.exist()
+                expect(data.toString()).to.contain('Plz add me!')
+                resolve()
+              })
+            )
+          })
+        )
+      })
     })
   })
 }

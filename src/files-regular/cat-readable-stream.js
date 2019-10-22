@@ -27,17 +27,19 @@ module.exports = (common, options) => {
 
     after(() => common.teardown())
 
-    it('should return a Readable Stream for a CID', (done) => {
+    it('should return a Readable Stream for a CID', () => {
       const stream = ipfs.catReadableStream(fixtures.bigFile.cid)
 
-      stream.pipe(bl((err, data) => {
-        expect(err).to.not.exist()
-        expect(data).to.eql(fixtures.bigFile.data)
-        done()
-      }))
+      return new Promise((resolve) => {
+        stream.pipe(bl((err, data) => {
+          expect(err).to.not.exist()
+          expect(data).to.eql(fixtures.bigFile.data)
+          resolve()
+        }))
+      })
     })
 
-    it('should export a chunk of a file in a Readable Stream', (done) => {
+    it('should export a chunk of a file in a Readable Stream', () => {
       const offset = 1
       const length = 3
 
@@ -46,11 +48,13 @@ module.exports = (common, options) => {
         length
       })
 
-      stream.pipe(bl((err, data) => {
-        expect(err).to.not.exist()
-        expect(data.toString()).to.equal('lz ')
-        done()
-      }))
+      return new Promise((resolve) => {
+        stream.pipe(bl((err, data) => {
+          expect(err).to.not.exist()
+          expect(data.toString()).to.equal('lz ')
+          resolve()
+        }))
+      })
     })
   })
 }

@@ -23,7 +23,7 @@ module.exports = (common, options) => {
 
     after(() => common.teardown())
 
-    it('should add from a stream', (done) => {
+    it('should add from a stream', async () => {
       const stream = new Readable({
         read () {
           this.push(fixtures.bigFile.data)
@@ -31,12 +31,9 @@ module.exports = (common, options) => {
         }
       })
 
-      ipfs.addFromStream(stream, (err, result) => {
-        expect(err).to.not.exist()
-        expect(result.length).to.equal(1)
-        expect(result[0].hash).to.equal(fixtures.bigFile.cid)
-        done()
-      })
+      const result = await ipfs.addFromStream(stream)
+      expect(result.length).to.equal(1)
+      expect(result[0].hash).to.equal(fixtures.bigFile.cid)
     })
   })
 }

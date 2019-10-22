@@ -4,12 +4,10 @@
 const concat = require('concat-stream')
 
 module.exports = (createCommon, options) => {
-  const ipfsRefsLocal = (ipfs) => {
-    return (cb) => {
-      const stream = ipfs.refs.localReadableStream()
-      stream.on('error', cb)
-      stream.pipe(concat((refs) => cb(null, refs)))
-    }
-  }
+  const ipfsRefsLocal = (ipfs) => new Promise((resolve, reject) => {
+    const stream = ipfs.refs.localReadableStream()
+    stream.on('error', reject)
+    stream.pipe(concat(resolve))
+  })
   require('./refs-local-tests')(createCommon, '.refs.localReadableStream', ipfsRefsLocal, options)
 }

@@ -25,7 +25,7 @@ module.exports = (common, options) => {
 
     after(() => common.teardown())
 
-    it('should pull stream ls with a base58 encoded CID', function (done) {
+    it('should pull stream ls with a base58 encoded CID', async function () {
       const content = (name) => ({
         path: `test-folder/${name}`,
         content: fixtures.directory.files[name]
@@ -44,16 +44,16 @@ module.exports = (common, options) => {
         emptyDir('files/empty')
       ]
 
-      ipfs.add(dirs, (err, res) => {
-        expect(err).to.not.exist()
-        const root = res[res.length - 1]
+      const res = await ipfs.add(dirs)
 
-        expect(root.path).to.equal('test-folder')
-        expect(root.hash).to.equal(fixtures.directory.cid)
+      const root = res[res.length - 1]
+      expect(root.path).to.equal('test-folder')
+      expect(root.hash).to.equal(fixtures.directory.cid)
 
-        const cid = 'QmVvjDy7yF7hdnqE8Hrf4MHo5ABDtb5AbX6hWbD3Y42bXP'
-        const stream = ipfs.lsPullStream(cid)
+      const cid = 'QmVvjDy7yF7hdnqE8Hrf4MHo5ABDtb5AbX6hWbD3Y42bXP'
+      const stream = ipfs.lsPullStream(cid)
 
+      return new Promise((resolve) => {
         pull(
           stream,
           pull.collect((err, files) => {
@@ -109,7 +109,7 @@ module.exports = (common, options) => {
                 type: 'file'
               }
             ])
-            done()
+            resolve()
           })
         )
       })

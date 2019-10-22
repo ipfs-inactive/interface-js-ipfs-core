@@ -27,21 +27,23 @@ module.exports = (common, options) => {
 
     after(() => common.teardown())
 
-    it('should return a Readable Stream of Readable Streams', (done) => {
+    it('should return a Readable Stream of Readable Streams', () => {
       const stream = ipfs.getReadableStream(fixtures.smallFile.cid)
       const files = []
 
-      stream.pipe(through.obj((file, enc, next) => {
-        file.content.pipe(concat((content) => {
-          files.push({ path: file.path, content: content })
-          next()
+      return new Promise((resolve) => {
+        stream.pipe(through.obj((file, enc, next) => {
+          file.content.pipe(concat((content) => {
+            files.push({ path: file.path, content: content })
+            next()
+          }))
+        }, () => {
+          expect(files).to.be.length(1)
+          expect(files[0].path).to.eql(fixtures.smallFile.cid)
+          expect(files[0].content.toString()).to.contain('Plz add me!')
+          resolve()
         }))
-      }, () => {
-        expect(files).to.be.length(1)
-        expect(files[0].path).to.eql(fixtures.smallFile.cid)
-        expect(files[0].content.toString()).to.contain('Plz add me!')
-        done()
-      }))
+      })
     })
   })
 }

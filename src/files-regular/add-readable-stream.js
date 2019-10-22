@@ -22,7 +22,7 @@ module.exports = (common, options) => {
 
     after(() => common.teardown())
 
-    it('should add readable stream of valid files and dirs', function (done) {
+    it('should add readable stream of valid files and dirs', function () {
       const content = (name) => ({
         path: `test-folder/${name}`,
         content: fixtures.directory.files[name]
@@ -53,10 +53,12 @@ module.exports = (common, options) => {
         }
       })
 
-      stream.on('end', done)
+      return new Promise((resolve, reject) => {
+        stream.on('end', resolve)
 
-      files.forEach((file) => stream.write(file))
-      stream.end()
+        files.forEach((file) => stream.write(file))
+        stream.end()
+      })
     })
   })
 }

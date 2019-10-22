@@ -21,24 +21,26 @@ module.exports = (common, options) => {
 
     before(async () => { ipfs = await common.setup() })
 
-    before((done) => ipfs.add(fixtures.smallFile.data, done))
+    before(() => ipfs.add(fixtures.smallFile.data))
     after(() => common.teardown())
 
-    it('should return a Pull Stream for a CID', (done) => {
+    it('should return a Pull Stream for a CID', () => {
       const stream = ipfs.catPullStream(fixtures.smallFile.cid)
 
-      pull(
-        stream,
-        pull.concat((err, data) => {
-          expect(err).to.not.exist()
-          expect(data.length).to.equal(fixtures.smallFile.data.length)
-          expect(data).to.eql(fixtures.smallFile.data.toString())
-          done()
-        })
-      )
+      return new Promise((resolve) => {
+        pull(
+          stream,
+          pull.concat((err, data) => {
+            expect(err).to.not.exist()
+            expect(data.length).to.equal(fixtures.smallFile.data.length)
+            expect(data).to.eql(fixtures.smallFile.data.toString())
+            resolve()
+          })
+        )
+      })
     })
 
-    it('should export a chunk of a file in a Pull Stream', (done) => {
+    it('should export a chunk of a file in a Pull Stream', () => {
       const offset = 1
       const length = 3
 
@@ -47,14 +49,16 @@ module.exports = (common, options) => {
         length
       })
 
-      pull(
-        stream,
-        pull.concat((err, data) => {
-          expect(err).to.not.exist()
-          expect(data.toString()).to.equal('lz ')
-          done()
-        })
-      )
+      return new Promise((resolve) => {
+        pull(
+          stream,
+          pull.concat((err, data) => {
+            expect(err).to.not.exist()
+            expect(data.toString()).to.equal('lz ')
+            resolve()
+          })
+        )
+      })
     })
   })
 }
