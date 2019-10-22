@@ -6,7 +6,7 @@ const pushable = require('it-pushable')
 const { collect } = require('streaming-iterables')
 const { waitForPeers, getTopic } = require('./utils')
 const { getDescribe, getIt, expect } = require('../utils/mocha')
-const delay = require('../utils/delay')
+const delay = require('delay')
 
 /** @typedef { import("ipfsd-ctl").TestsInterface } TestsInterface */
 /**

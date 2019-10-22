@@ -4,7 +4,7 @@
 const { isBrowser, isWebWorker, isElectronRenderer } = require('ipfs-utils/src/env')
 const { getTopic } = require('./utils')
 const { getDescribe, getIt, expect } = require('../utils/mocha')
-const delay = require('../utils/delay')
+const delay = require('delay')
 
 /** @typedef { import("ipfsd-ctl").TestsInterface } TestsInterface */
 /**
