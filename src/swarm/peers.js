@@ -29,63 +29,37 @@ module.exports = (common, options) => {
 
     after(() => common.teardown())
 
-    it('should list peers this node is connected to', (done) => {
-      ipfsA.swarm.peers((err, peers) => {
-        expect(err).to.not.exist()
-        expect(peers).to.have.length.above(0)
+    it('should list peers this node is connected to', async () => {
+      const peers = await ipfsA.swarm.peers()
+      expect(peers).to.have.length.above(0)
 
-        const peer = peers[0]
+      const peer = peers[0]
 
-        expect(peer).to.have.a.property('addr')
-        expect(multiaddr.isMultiaddr(peer.addr)).to.equal(true)
-        expect(peer).to.have.a.property('peer')
-        expect(PeerId.isPeerId(peer.peer)).to.equal(true)
-        expect(peer).to.not.have.a.property('latency')
+      expect(peer).to.have.a.property('addr')
+      expect(multiaddr.isMultiaddr(peer.addr)).to.equal(true)
+      expect(peer).to.have.a.property('peer')
+      expect(PeerId.isPeerId(peer.peer)).to.equal(true)
+      expect(peer).to.not.have.a.property('latency')
 
-        // only available in 0.4.5
-        // expect(peer).to.have.a.property('muxer')
-        // expect(peer).to.not.have.a.property('streams')
-
-        done()
-      })
+      // only available in 0.4.5
+      // expect(peer).to.have.a.property('muxer')
+      // expect(peer).to.not.have.a.property('streams')
     })
 
-    it('should list peers this node is connected to (promised)', () => {
-      return ipfsA.swarm.peers().then((peers) => {
-        expect(peers).to.have.length.above(0)
+    it('should list peers this node is connected to with verbose option', async () => {
+      const peers = await ipfsA.swarm.peers({ verbose: true })
+      expect(peers).to.have.length.above(0)
 
-        const peer = peers[0]
+      const peer = peers[0]
+      expect(peer).to.have.a.property('addr')
+      expect(multiaddr.isMultiaddr(peer.addr)).to.equal(true)
+      expect(peer).to.have.a.property('peer')
+      expect(peer).to.have.a.property('latency')
+      expect(peer.latency).to.match(/n\/a|[0-9]+m?s/) // n/a or 3ms or 3s
 
-        expect(peer).to.have.a.property('addr')
-        expect(multiaddr.isMultiaddr(peer.addr)).to.equal(true)
-        expect(peer).to.have.a.property('peer')
-        expect(PeerId.isPeerId(peer.peer)).to.equal(true)
-        expect(peer).to.not.have.a.property('latency')
-
-        // only available in 0.4.5
-        // expect(peer).to.have.a.property('muxer')
-        // expect(peer).to.not.have.a.property('streams')
-      })
-    })
-
-    it('should list peers this node is connected to with verbose option', (done) => {
-      ipfsA.swarm.peers({ verbose: true }, (err, peers) => {
-        expect(err).to.not.exist()
-        expect(peers).to.have.length.above(0)
-
-        const peer = peers[0]
-        expect(peer).to.have.a.property('addr')
-        expect(multiaddr.isMultiaddr(peer.addr)).to.equal(true)
-        expect(peer).to.have.a.property('peer')
-        expect(peer).to.have.a.property('latency')
-        expect(peer.latency).to.match(/n\/a|[0-9]+m?s/) // n/a or 3ms or 3s
-
-        // Only available in 0.4.5
-        // expect(peer).to.have.a.property('muxer')
-        // expect(peer).to.have.a.property('streams')
-
-        done()
-      })
+      // Only available in 0.4.5
+      // expect(peer).to.have.a.property('muxer')
+      // expect(peer).to.have.a.property('streams')
     })
 
     function getConfig (addrs) {

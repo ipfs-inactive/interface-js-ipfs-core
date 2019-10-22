@@ -26,11 +26,7 @@ module.exports = (common, options) => {
 
     after(() => common.teardown())
 
-    it('should disconnect from a peer', (done) => {
-      ipfsA.swarm.disconnect(ipfsB.peerId.addresses[0], done)
-    })
-
-    it('should disconnect from a peer (promised)', () => {
+    it('should disconnect from a peer', () => {
       return ipfsA.swarm.disconnect(ipfsB.peerId.addresses[0])
     })
   })

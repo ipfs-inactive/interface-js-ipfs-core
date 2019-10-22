@@ -24,11 +24,7 @@ module.exports = (common, options) => {
 
     after(() => common.teardown())
 
-    it('should connect to a peer', (done) => {
-      ipfsA.swarm.connect(ipfsB.peerId.addresses[0], done)
-    })
-
-    it('should connect to a peer (promised)', () => {
+    it('should connect to a peer', () => {
       return ipfsA.swarm.connect(ipfsB.peerId.addresses[0])
     })
   })
