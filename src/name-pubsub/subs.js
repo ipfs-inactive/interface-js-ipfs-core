@@ -22,37 +22,30 @@ module.exports = (common, options) => {
 
     after(() => common.teardown())
 
-    it('should get an empty array as a result of subscriptions before any resolve', function (done) {
+    it('should get an empty array as a result of subscriptions before any resolve', async function () {
       this.timeout(60 * 1000)
 
-      ipfs.name.pubsub.subs((err, res) => {
-        expect(err).to.not.exist()
-        expect(res).to.exist()
-        expect(res).to.eql([])
-
-        done()
-      })
+      const res = await ipfs.name.pubsub.subs()
+      expect(res).to.exist()
+      expect(res).to.eql([])
     })
 
-    it('should get the list of subscriptions updated after a resolve', function (done) {
+    it('should get the list of subscriptions updated after a resolve', async function () {
       this.timeout(300 * 1000)
       const id = 'QmNP1ASen5ZREtiJTtVD3jhMKhoPb1zppET1tgpjHx2NGA'
 
-      ipfs.name.pubsub.subs((err, res) => {
-        expect(err).to.not.exist()
-        expect(res).to.eql([]) // initally empty
+      const res = await ipfs.name.pubsub.subs()
+      expect(res).to.eql([]) // initally empty
 
-        ipfs.name.resolve(id, (err) => {
-          expect(err).to.exist()
+      try {
+        await ipfs.name.resolve(id)
+        expect.fail('name.resolve() did not throw as expected')
+      } catch (err) {
+        expect(err).to.exist()
 
-          ipfs.name.pubsub.subs((err, res) => {
-            expect(err).to.not.exist()
-            expect(res).to.be.an('array').that.does.include(`/ipns/${id}`)
-
-            done()
-          })
-        })
-      })
+        const res = await ipfs.name.pubsub.subs()
+        expect(res).to.be.an('array').that.does.include(`/ipns/${id}`)
+      }
     })
   })
 }
