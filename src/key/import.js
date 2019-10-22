@@ -22,21 +22,16 @@ module.exports = (common, options) => {
 
     after(() => common.teardown())
 
-    it('should import an exported key', (done) => {
+    it('should import an exported key', async () => {
       const password = hat()
 
-      ipfs.key.export('self', password, (err, pem) => {
-        expect(err).to.not.exist()
-        expect(pem).to.exist()
+      const pem = await ipfs.key.export('self', password)
+      expect(pem).to.exist()
 
-        ipfs.key.import('clone', pem, password, (err, key) => {
-          expect(err).to.not.exist()
-          expect(key).to.exist()
-          expect(key).to.have.property('name', 'clone')
-          expect(key).to.have.property('id')
-          done()
-        })
-      })
+      const key = await ipfs.key.import('clone', pem, password)
+      expect(key).to.exist()
+      expect(key).to.have.property('name', 'clone')
+      expect(key).to.have.property('id')
     })
   })
 }

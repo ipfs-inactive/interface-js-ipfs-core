@@ -2,7 +2,7 @@
 /* eslint max-nested-callbacks: ["error", 6] */
 'use strict'
 
-const timesSeries = require('async/timesSeries')
+const pTimes = require('p-times')
 const hat = require('hat')
 const { getDescribe, getIt, expect } = require('../utils/mocha')
 
@@ -24,27 +24,19 @@ module.exports = (common, options) => {
 
     after(() => common.teardown())
 
-    it('should list all the keys', function (done) {
+    it('should list all the keys', async function () {
       this.timeout(60 * 1000)
 
-      timesSeries(3, (n, cb) => {
-        ipfs.key.gen(hat(), { type: 'rsa', size: 2048 }, cb)
-      }, (err, keys) => {
-        expect(err).to.not.exist()
+      const keys = await pTimes(3, () => ipfs.key.gen(hat(), { type: 'rsa', size: 2048 }), { concurrency: 1 })
 
-        ipfs.key.list((err, res) => {
-          expect(err).to.not.exist()
-          expect(res).to.exist()
-          expect(res).to.be.an('array')
-          expect(res.length).to.be.above(keys.length - 1)
+      const res = await ipfs.key.list()
+      expect(res).to.exist()
+      expect(res).to.be.an('array')
+      expect(res.length).to.be.above(keys.length - 1)
 
-          keys.forEach(key => {
-            const found = res.find(({ id, name }) => name === key.name && id === key.id)
-            expect(found).to.exist()
-          })
-
-          done()
-        })
+      keys.forEach(key => {
+        const found = res.find(({ id, name }) => name === key.name && id === key.id)
+        expect(found).to.exist()
       })
     })
   })

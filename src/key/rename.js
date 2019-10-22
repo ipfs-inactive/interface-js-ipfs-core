@@ -23,30 +23,23 @@ module.exports = (common, options) => {
 
     after(() => common.teardown())
 
-    it('should rename a key', function (done) {
+    it('should rename a key', async function () {
       this.timeout(30 * 1000)
 
       const oldName = hat()
       const newName = hat()
 
-      ipfs.key.gen(oldName, { type: 'rsa', size: 2048 }, (err, key) => {
-        expect(err).to.not.exist()
+      const key = await ipfs.key.gen(oldName, { type: 'rsa', size: 2048 })
 
-        ipfs.key.rename(oldName, newName, (err, res) => {
-          expect(err).to.not.exist()
-          expect(res).to.exist()
-          expect(res).to.have.property('was', oldName)
-          expect(res).to.have.property('now', newName)
-          expect(res).to.have.property('id', key.id)
+      const renameRes = await ipfs.key.rename(oldName, newName)
+      expect(renameRes).to.exist()
+      expect(renameRes).to.have.property('was', oldName)
+      expect(renameRes).to.have.property('now', newName)
+      expect(renameRes).to.have.property('id', key.id)
 
-          ipfs.key.list((err, res) => {
-            expect(err).to.not.exist()
-            expect(res.find(k => k.name === newName)).to.exist()
-            expect(res.find(k => k.name === oldName)).to.not.exist()
-            done()
-          })
-        })
-      })
+      const res = await ipfs.key.list()
+      expect(res.find(k => k.name === newName)).to.exist()
+      expect(res.find(k => k.name === oldName)).to.not.exist()
     })
   })
 }
