@@ -24,51 +24,35 @@ module.exports = (common, options) => {
 
     after(() => common.teardown())
 
-    it('should append data to an existing node', (done) => {
+    it('should append data to an existing node', async () => {
       const obj = {
         Data: Buffer.from('patch test object'),
         Links: []
       }
 
-      ipfs.object.put(obj, (err, nodeCid) => {
-        expect(err).to.not.exist()
-
-        ipfs.object.patch.appendData(nodeCid, Buffer.from('append'), (err, patchedNodeCid) => {
-          expect(err).to.not.exist()
-          expect(patchedNodeCid).to.not.deep.equal(nodeCid)
-          done()
-        })
-      })
-    })
-
-    it('should append data to an existing node (promised)', async () => {
-      const obj = {
-        Data: Buffer.from('patch test object (promised)'),
-        Links: []
-      }
-
       const nodeCid = await ipfs.object.put(obj)
       const patchedNodeCid = await ipfs.object.patch.appendData(nodeCid, Buffer.from('append'))
-
-      expect(nodeCid).to.not.deep.equal(patchedNodeCid)
+      expect(patchedNodeCid).to.not.deep.equal(nodeCid)
     })
 
-    it('returns error for request without key & data', () => {
-      return ipfs.object.patch.appendData(null, null)
-        .then(
-          () => expect.fail('should have returned an error for invalid argument'),
-          (err) => expect(err).to.be.an.instanceof(Error)
-        )
+    it('returns error for request without key & data', async () => {
+      try {
+        await ipfs.object.patch.appendData(null, null)
+        expect.fail('should have returned an error for invalid argument')
+      } catch (err) {
+        expect(err).to.be.an.instanceof(Error)
+      }
     })
 
-    it('returns error for request without data', () => {
+    it('returns error for request without data', async () => {
       const filePath = 'test/fixtures/test-data/badnode.json'
 
-      return ipfs.object.patch.appendData(null, filePath)
-        .then(
-          () => expect.fail('should have returned an error for invalid argument'),
-          (err) => expect(err).to.be.an.instanceof(Error)
-        )
+      try {
+        await ipfs.object.patch.appendData(null, filePath)
+        expect.fail('should have returned an error for invalid argument')
+      } catch (err) {
+        expect(err).to.be.an.instanceof(Error)
+      }
     })
   })
 }
