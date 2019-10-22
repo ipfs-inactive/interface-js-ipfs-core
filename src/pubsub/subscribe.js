@@ -145,7 +145,7 @@ module.exports = (common, options) => {
     })
 
     describe('multiple connected nodes', () => {
-      before((done) => {
+      before(() => {
         if (ipfs1.pubsub.setMaxListeners) {
           ipfs1.pubsub.setMaxListeners(100)
         }
@@ -155,7 +155,7 @@ module.exports = (common, options) => {
         }
 
         const ipfs2Addr = ipfs2.peerId.addresses.find((a) => a.includes('127.0.0.1'))
-        ipfs1.swarm.connect(ipfs2Addr, done)
+        return ipfs1.swarm.connect(ipfs2Addr)
       })
 
       it('should receive messages from a different node', async () => {
