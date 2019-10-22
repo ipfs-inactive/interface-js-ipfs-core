@@ -23,16 +23,18 @@ module.exports = (common, options) => {
 
     after(() => common.teardown())
 
-    it('should get bandwidth stats over pull stream', (done) => {
+    it('should get bandwidth stats over pull stream', () => {
       const stream = ipfs.stats.bwPullStream()
 
-      pull(
-        stream,
-        pull.collect((err, data) => {
-          expectIsBandwidth(err, data[0])
-          done()
-        })
-      )
+      return new Promise((resolve) => {
+        pull(
+          stream,
+          pull.collect((err, data) => {
+            expectIsBandwidth(err, data[0])
+            resolve()
+          })
+        )
+      })
     })
   })
 }

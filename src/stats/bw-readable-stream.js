@@ -22,13 +22,15 @@ module.exports = (common, options) => {
 
     after(() => common.teardown())
 
-    it('should get bandwidth stats over readable stream', (done) => {
+    it('should get bandwidth stats over readable stream', () => {
       const stream = ipfs.stats.bwReadableStream()
 
-      stream.once('data', (data) => {
-        expectIsBandwidth(null, data)
-        stream.destroy()
-        done()
+      return new Promise((resolve) => {
+        stream.once('data', (data) => {
+          expectIsBandwidth(null, data)
+          stream.destroy()
+          resolve()
+        })
       })
     })
   })

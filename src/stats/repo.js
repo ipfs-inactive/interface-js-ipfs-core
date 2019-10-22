@@ -22,17 +22,9 @@ module.exports = (common, options) => {
 
     after(() => common.teardown())
 
-    it('should get repo stats', (done) => {
-      ipfs.stats.repo((err, res) => {
-        expectIsRepo(err, res)
-        done()
-      })
-    })
-
-    it('should get repo stats (promised)', () => {
-      return ipfs.stats.repo().then((res) => {
-        expectIsRepo(null, res)
-      })
+    it('should get repo stats', async () => {
+      const res = await ipfs.stats.repo()
+      expectIsRepo(null, res)
     })
   })
 }

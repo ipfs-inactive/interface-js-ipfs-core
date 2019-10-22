@@ -22,17 +22,9 @@ module.exports = (common, options) => {
 
     after(() => common.teardown())
 
-    it('should get bandwidth stats', function (done) {
-      ipfs.stats.bw((err, res) => {
-        expectIsBandwidth(err, res)
-        done()
-      })
-    })
-
-    it('should get bandwidth stats (promised)', () => {
-      return ipfs.stats.bw().then((res) => {
-        expectIsBandwidth(null, res)
-      })
+    it('should get bandwidth stats ', async () => {
+      const res = await ipfs.stats.bw()
+      expectIsBandwidth(null, res)
     })
   })
 }
