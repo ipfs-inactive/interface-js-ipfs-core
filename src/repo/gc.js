@@ -22,18 +22,9 @@ module.exports = (common, options) => {
 
     after(() => common.teardown())
 
-    it('should run garbage collection', (done) => {
-      ipfs.repo.gc((err, res) => {
-        expect(err).to.not.exist()
-        expect(res).to.exist()
-        done()
-      })
-    })
-
-    it('should run garbage collection (promised)', () => {
-      return ipfs.repo.gc().then((res) => {
-        expect(res).to.exist()
-      })
+    it('should run garbage collection', async () => {
+      const res = await ipfs.repo.gc()
+      expect(res).to.exist()
     })
 
     it('should clean up unpinned data', async () => {
