@@ -27,34 +27,37 @@ module.exports = (common, options) => {
 
     after(() => common.teardown())
 
-    it('should send the specified number of packets', (done) => {
+    it('should send the specified number of packets', async () => {
       const count = 3
-      ipfsA.ping(ipfsB.peerId.id, { count }, (err, responses) => {
-        expect(err).to.not.exist()
-        responses.forEach(expectIsPingResponse)
-        const pongs = responses.filter(isPong)
-        expect(pongs.length).to.equal(count)
-        done()
-      })
+      const responses = await ipfsA.ping(ipfsB.peerId.id, { count })
+      responses.forEach(expectIsPingResponse)
+
+      const pongs = responses.filter(isPong)
+      expect(pongs.length).to.equal(count)
     })
 
-    it('should fail when pinging a peer that is not available', (done) => {
+    it('should fail when pinging a peer that is not available', async () => {
       const notAvailablePeerId = 'QmUmaEnH1uMmvckMZbh3yShaasvELPW4ZLPWnB4entMTEn'
       const count = 2
 
-      ipfsA.ping(notAvailablePeerId, { count }, (err, responses) => {
+      try {
+        await ipfsA.ping(notAvailablePeerId, { count })
+        expect.fail('ping() did not throw when pinging a peer that is not available')
+      } catch (err) {
         expect(err).to.exist()
-        done()
-      })
+      }
     })
 
-    it('should fail when pinging an invalid peer Id', (done) => {
+    it('should fail when pinging an invalid peer Id', async () => {
       const invalidPeerId = 'not a peer ID'
       const count = 2
-      ipfsA.ping(invalidPeerId, { count }, (err, responses) => {
+
+      try {
+        await ipfsA.ping(invalidPeerId, { count })
+        expect.fail('ping() did not throw when pinging an invalid peer Id')
+      } catch (err) {
         expect(err).to.exist()
-        done()
-      })
+      }
     })
   })
 }

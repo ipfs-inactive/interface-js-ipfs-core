@@ -28,47 +28,56 @@ module.exports = (common, options) => {
 
     after(() => common.teardown())
 
-    it('should send the specified number of packets over pull stream', (done) => {
+    it('should send the specified number of packets over pull stream', () => {
       let packetNum = 0
       const count = 3
-      pull(
-        ipfsA.pingPullStream(ipfsB.peerId.id, { count }),
-        pull.drain((res) => {
-          expect(res.success).to.be.true()
-          // It's a pong
-          if (isPong(res)) {
-            packetNum++
-          }
-        }, (err) => {
-          expect(err).to.not.exist()
-          expect(packetNum).to.equal(count)
-          done()
-        })
-      )
+
+      return new Promise((resolve) => {
+        pull(
+          ipfsA.pingPullStream(ipfsB.peerId.id, { count }),
+          pull.drain((res) => {
+            expect(res.success).to.be.true()
+            // It's a pong
+            if (isPong(res)) {
+              packetNum++
+            }
+          }, (err) => {
+            expect(err).to.not.exist()
+            expect(packetNum).to.equal(count)
+            resolve()
+          })
+        )
+      })
     })
 
-    it('should fail when pinging an unknown peer over pull stream', (done) => {
+    it('should fail when pinging an unknown peer over pull stream', () => {
       const unknownPeerId = 'QmUmaEnH1uMmvckMZbh3yShaasvELPW4ZLPWnB4entMTEn'
       const count = 2
-      pull(
-        ipfsA.pingPullStream(unknownPeerId, { count }),
-        pull.collect((err, results) => {
-          expect(err).to.exist()
-          done()
-        })
-      )
+
+      return new Promise((resolve) => {
+        pull(
+          ipfsA.pingPullStream(unknownPeerId, { count }),
+          pull.collect((err, results) => {
+            expect(err).to.exist()
+            resolve()
+          })
+        )
+      })
     })
 
-    it('should fail when pinging an invalid peer id over pull stream', (done) => {
+    it('should fail when pinging an invalid peer id over pull stream', () => {
       const invalidPeerId = 'not a peer ID'
       const count = 2
-      pull(
-        ipfsA.pingPullStream(invalidPeerId, { count }),
-        pull.collect((err, results) => {
-          expect(err).to.exist()
-          done()
-        })
-      )
+
+      return new Promise((resolve, reject) => {
+        pull(
+          ipfsA.pingPullStream(invalidPeerId, { count }),
+          pull.collect((err, results) => {
+            expect(err).to.exist()
+            resolve()
+          })
+        )
+      })
     })
   })
 }
