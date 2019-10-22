@@ -21,23 +21,11 @@ module.exports = (common, options) => {
 
     after(() => common.teardown())
 
-    it('should get the node version', (done) => {
-      ipfs.version((err, result) => {
-        expect(err).to.not.exist()
-        expect(result).to.have.a.property('version')
-        expect(result).to.have.a.property('commit')
-        expect(result).to.have.a.property('repo')
-        done()
-      })
-    })
-
-    it('should get the node version (promised)', () => {
-      return ipfs.version()
-        .then((result) => {
-          expect(result).to.have.a.property('version')
-          expect(result).to.have.a.property('commit')
-          expect(result).to.have.a.property('repo')
-        })
+    it('should get the node version', async () => {
+      const result = await ipfs.version()
+      expect(result).to.have.a.property('version')
+      expect(result).to.have.a.property('commit')
+      expect(result).to.have.a.property('repo')
     })
   })
 }
