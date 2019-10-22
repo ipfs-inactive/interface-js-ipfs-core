@@ -60,6 +60,7 @@
     "multibase": "~0.6.0",
     "multihashes": "~0.4.14",
     "multihashing-async": "~0.8.0",
+    "p-each-series": "^2.1.0",
     "p-map-series": "^2.1.0",
     "p-timeout": "^3.2.0",
     "p-times": "^2.1.0",

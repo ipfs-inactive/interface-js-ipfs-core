@@ -1,8 +1,7 @@
 /* eslint-env mocha */
 'use strict'
 
-const series = require('async/series')
-const eachSeries = require('async/eachSeries')
+const pEachSeries = require('p-each-series')
 const dagPB = require('ipld-dag-pb')
 const DAGNode = dagPB.DAGNode
 const dagCBOR = require('ipld-dag-cbor')
@@ -30,101 +29,61 @@ module.exports = (common, options) => {
     let cidPb
     let cidCbor
 
-    before(function (done) {
-      series([
-        (cb) => {
-          try {
-            nodePb = new DAGNode(Buffer.from('I am inside a Protobuf'))
-          } catch (err) {
-            return cb(err)
-          }
+    before(async function () {
+      nodePb = new DAGNode(Buffer.from('I am inside a Protobuf'))
+      cidPb = await dagPB.util.cid(nodePb.serialize())
 
-          cb()
-        },
-        (cb) => {
-          dagPB.util.cid(nodePb.serialize())
-            .then(cid => {
-              cidPb = cid
-              cb()
-            }, cb)
-        },
-        (cb) => {
-          nodeCbor = {
-            someData: 'I am inside a Cbor object',
-            pb: cidPb
-          }
+      nodeCbor = {
+        someData: 'I am inside a Cbor object',
+        pb: cidPb
+      }
+      cidCbor = await dagCBOR.util.cid(dagCBOR.util.serialize(nodeCbor))
 
-          dagCBOR.util.cid(dagCBOR.util.serialize(nodeCbor))
-            .then(cid => {
-              cidCbor = cid
-              cb()
-            }, cb)
-        },
-        (cb) => {
-          eachSeries([
-            { node: nodePb, multicodec: 'dag-pb', hashAlg: 'sha2-256' },
-            { node: nodeCbor, multicodec: 'dag-cbor', hashAlg: 'sha2-256' }
-          ], (el, cb) => {
-            ipfs.dag.put(el.node, {
-              format: el.multicodec,
-              hashAlg: el.hashAlg
-            }, cb)
-          }, cb)
-        }
-      ], done)
+      await pEachSeries([
+        { node: nodePb, multicodec: 'dag-pb', hashAlg: 'sha2-256' },
+        { node: nodeCbor, multicodec: 'dag-cbor', hashAlg: 'sha2-256' }
+      ], (el) => ipfs.dag.put(el.node, {
+        format: el.multicodec,
+        hashAlg: el.hashAlg
+      }))
     })
 
-    it('should get tree with CID', (done) => {
-      ipfs.dag.tree(cidCbor, (err, paths) => {
-        expect(err).to.not.exist()
-        expect(paths).to.eql([
-          'pb',
-          'someData'
-        ])
-        done()
-      })
+    it('should get tree with CID', async () => {
+      const paths = await ipfs.dag.tree(cidCbor)
+      expect(paths).to.eql([
+        'pb',
+        'someData'
+      ])
     })
 
-    it('should get tree with CID and path', (done) => {
-      ipfs.dag.tree(cidCbor, 'someData', (err, paths) => {
-        expect(err).to.not.exist()
-        expect(paths).to.eql([])
-        done()
-      })
+    it('should get tree with CID and path', async () => {
+      const paths = await ipfs.dag.tree(cidCbor)
+      expect(paths).to.eql([])
     })
 
-    it('should get tree with CID and path as String', (done) => {
+    it('should get tree with CID and path as String', async () => {
       const cidCborStr = cidCbor.toBaseEncodedString()
 
-      ipfs.dag.tree(cidCborStr + '/someData', (err, paths) => {
-        expect(err).to.not.exist()
-        expect(paths).to.eql([])
-        done()
-      })
+      const paths = await ipfs.dag.tree(cidCborStr + '/someData')
+      expect(paths).to.eql([])
     })
 
-    it('should get tree with CID recursive (accross different formats)', (done) => {
-      ipfs.dag.tree(cidCbor, { recursive: true }, (err, paths) => {
-        expect(err).to.not.exist()
-        expect(paths).to.have.members([
-          'pb',
-          'someData',
-          'pb/Links',
-          'pb/Data'
-        ])
-        done()
-      })
+    it('should get tree with CID recursive (accross different formats)', async () => {
+      const paths = await ipfs.dag.tree(cidCbor, { recursive: true })
+      expect(paths).to.have.members([
+        'pb',
+        'someData',
+        'pb/Links',
+        'pb/Data'
+      ])
     })
 
-    it('should get tree with CID and path recursive', (done) => {
-      ipfs.dag.tree(cidCbor, 'pb', { recursive: true }, (err, paths) => {
-        expect(err).to.not.exist()
-        expect(paths).to.have.members([
-          'Links',
-          'Data'
-        ])
-        done()
-      })
+    it('should get tree with CID and path recursive', async () => {
+      const paths = await ipfs.dag.tree(cidCbor, 'pb', { recursive: true })
+      expect(paths).to.have.members([
+        'Links',
+        'Data'
+      ])
     })
   })
 }
