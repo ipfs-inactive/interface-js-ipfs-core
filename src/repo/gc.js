@@ -3,6 +3,12 @@
 
 const { getDescribe, getIt, expect } = require('../utils/mocha')
 const { DAGNode } = require('ipld-dag-pb')
+const CID = require('cids')
+
+function cidV0ToV1Raw (hash) {
+  const multihash = new CID(hash).multihash
+  return new CID(1, 'raw', multihash).toString()
+}
 
 module.exports = (createCommon, options) => {
   const describe = getDescribe(options)
@@ -52,12 +58,13 @@ module.exports = (createCommon, options) => {
       // information that refers to the blocks
       const addRes = await ipfs.add(Buffer.from('apples'))
       const hash = addRes[0].hash
+      const cidV1 = cidV0ToV1Raw(hash)
 
       // Get the list of local blocks after the add, should be bigger than
       // the initial list and contain hash
       const refsAfterAdd = await ipfs.refs.local()
       expect(refsAfterAdd.length).to.be.gt(refsBeforeAdd.length)
-      expect(refsAfterAdd.map(r => r.ref)).includes(hash)
+      expect(refsAfterAdd.map(r => r.ref)).includes(cidV1)
 
       // Run garbage collection
       await ipfs.repo.gc()
@@ -65,7 +72,7 @@ module.exports = (createCommon, options) => {
       // Get the list of local blocks after GC, should still contain the hash,
       // because the file is still pinned
       const refsAfterGc = await ipfs.refs.local()
-      expect(refsAfterGc.map(r => r.ref)).includes(hash)
+      expect(refsAfterGc.map(r => r.ref)).includes(cidV1)
 
       // Unpin the data
       await ipfs.pin.rm(hash)
@@ -75,7 +82,7 @@ module.exports = (createCommon, options) => {
 
       // The list of local blocks should no longer contain the hash
       const refsAfterUnpinAndGc = await ipfs.refs.local()
-      expect(refsAfterUnpinAndGc.map(r => r.ref)).not.includes(hash)
+      expect(refsAfterUnpinAndGc.map(r => r.ref)).not.includes(cidV1)
     })
 
     it('should clean up removed MFS files', async () => {
@@ -86,13 +93,13 @@ module.exports = (createCommon, options) => {
       await ipfs.files.write('/test', Buffer.from('oranges'), { create: true })
       const stats = await ipfs.files.stat('/test')
       expect(stats.type).to.equal('file')
-      const hash = stats.hash
+      const cidV1 = cidV0ToV1Raw(stats.hash)
 
       // Get the list of local blocks after the add, should be bigger than
       // the initial list and contain hash
       const refsAfterAdd = await ipfs.refs.local()
       expect(refsAfterAdd.length).to.be.gt(refsBeforeAdd.length)
-      expect(refsAfterAdd.map(r => r.ref)).includes(hash)
+      expect(refsAfterAdd.map(r => r.ref)).includes(cidV1)
 
       // Run garbage collection
       await ipfs.repo.gc()
@@ -100,7 +107,7 @@ module.exports = (createCommon, options) => {
       // Get the list of local blocks after GC, should still contain the hash,
       // because the file is in MFS
       const refsAfterGc = await ipfs.refs.local()
-      expect(refsAfterGc.map(r => r.ref)).includes(hash)
+      expect(refsAfterGc.map(r => r.ref)).includes(cidV1)
 
       // Remove the file
       await ipfs.files.rm('/test')
@@ -110,7 +117,7 @@ module.exports = (createCommon, options) => {
 
       // The list of local blocks should no longer contain the hash
       const refsAfterUnpinAndGc = await ipfs.refs.local()
-      expect(refsAfterUnpinAndGc.map(r => r.ref)).not.includes(hash)
+      expect(refsAfterUnpinAndGc.map(r => r.ref)).not.includes(cidV1)
     })
 
     it('should clean up block only after unpinned and removed from MFS', async () => {
@@ -121,21 +128,22 @@ module.exports = (createCommon, options) => {
       await ipfs.files.write('/test', Buffer.from('peaches'), { create: true })
       const stats = await ipfs.files.stat('/test')
       expect(stats.type).to.equal('file')
-      const mfsFileHash = stats.hash
+      const mfsFileCidV1 = cidV0ToV1Raw(stats.hash)
 
       // Get the CID of the data in the file
-      const block = await ipfs.block.get(mfsFileHash)
+      const block = await ipfs.block.get(mfsFileCidV1)
 
       // Add the data to IPFS (which implicitly pins the data)
       const addRes = await ipfs.add(block.data)
       const dataHash = addRes[0].hash
+      const dataCidV1 = cidV0ToV1Raw(dataHash)
 
       // Get the list of local blocks after the add, should be bigger than
       // the initial list and contain the data hash
       const refsAfterAdd = await ipfs.refs.local()
       expect(refsAfterAdd.length).to.be.gt(refsBeforeAdd.length)
       const hashesAfterAdd = refsAfterAdd.map(r => r.ref)
-      expect(hashesAfterAdd).includes(dataHash)
+      expect(hashesAfterAdd).includes(dataCidV1)
 
       // Run garbage collection
       await ipfs.repo.gc()
@@ -144,7 +152,7 @@ module.exports = (createCommon, options) => {
       // because the file is pinned and in MFS
       const refsAfterGc = await ipfs.refs.local()
       const hashesAfterGc = refsAfterGc.map(r => r.ref)
-      expect(hashesAfterGc).includes(dataHash)
+      expect(hashesAfterGc).includes(dataCidV1)
 
       // Remove the file
       await ipfs.files.rm('/test')
@@ -156,8 +164,8 @@ module.exports = (createCommon, options) => {
       // because the file is still pinned
       const refsAfterRmAndGc = await ipfs.refs.local()
       const hashesAfterRmAndGc = refsAfterRmAndGc.map(r => r.ref)
-      expect(hashesAfterRmAndGc).not.includes(mfsFileHash)
-      expect(hashesAfterRmAndGc).includes(dataHash)
+      expect(hashesAfterRmAndGc).not.includes(mfsFileCidV1)
+      expect(hashesAfterRmAndGc).includes(dataCidV1)
 
       // Unpin the data
       await ipfs.pin.rm(dataHash)
@@ -168,8 +176,8 @@ module.exports = (createCommon, options) => {
       // The list of local blocks should no longer contain the hashes
       const refsAfterUnpinAndGc = await ipfs.refs.local()
       const hashesAfterUnpinAndGc = refsAfterUnpinAndGc.map(r => r.ref)
-      expect(hashesAfterUnpinAndGc).not.includes(mfsFileHash)
-      expect(hashesAfterUnpinAndGc).not.includes(dataHash)
+      expect(hashesAfterUnpinAndGc).not.includes(mfsFileCidV1)
+      expect(hashesAfterUnpinAndGc).not.includes(dataCidV1)
     })
 
     it('should clean up indirectly pinned data after recursive pin removal', async () => {
@@ -179,6 +187,7 @@ module.exports = (createCommon, options) => {
       // Add some data
       const addRes = await ipfs.add(Buffer.from('pears'))
       const dataHash = addRes[0].hash
+      const dataHashCidV1 = cidV0ToV1Raw(dataHash)
 
       // Unpin the data
       await ipfs.pin.rm(dataHash)
@@ -192,6 +201,7 @@ module.exports = (createCommon, options) => {
 
       // Put the object into IPFS
       const objHash = (await ipfs.object.put(obj)).toString()
+      const objCidV1 = cidV0ToV1Raw(objHash)
 
       // Putting an object doesn't pin it
       expect((await ipfs.pin.ls()).map(p => p.hash)).not.includes(objHash)
@@ -201,8 +211,8 @@ module.exports = (createCommon, options) => {
       const refsAfterAdd = await ipfs.refs.local()
       expect(refsAfterAdd.length).to.be.gt(refsBeforeAdd.length)
       const hashesAfterAdd = refsAfterAdd.map(r => r.ref)
-      expect(hashesAfterAdd).includes(objHash)
-      expect(hashesAfterAdd).includes(dataHash)
+      expect(hashesAfterAdd).includes(objCidV1)
+      expect(hashesAfterAdd).includes(dataHashCidV1)
 
       // Recursively pin the object
       await ipfs.pin.add(objHash, { recursive: true })
@@ -217,7 +227,7 @@ module.exports = (createCommon, options) => {
       // Get the list of local blocks after GC, should still contain the data
       // hash, because the data is still (indirectly) pinned
       const refsAfterGc = await ipfs.refs.local()
-      expect(refsAfterGc.map(r => r.ref)).includes(dataHash)
+      expect(refsAfterGc.map(r => r.ref)).includes(dataHashCidV1)
 
       // Recursively unpin the object
       await ipfs.pin.rm(objHash)
@@ -228,8 +238,8 @@ module.exports = (createCommon, options) => {
       // The list of local blocks should no longer contain the hashes
       const refsAfterUnpinAndGc = await ipfs.refs.local()
       const hashesAfterUnpinAndGc = refsAfterUnpinAndGc.map(r => r.ref)
-      expect(hashesAfterUnpinAndGc).not.includes(objHash)
-      expect(hashesAfterUnpinAndGc).not.includes(dataHash)
+      expect(hashesAfterUnpinAndGc).not.includes(objCidV1)
+      expect(hashesAfterUnpinAndGc).not.includes(dataHashCidV1)
     })
   })
 }

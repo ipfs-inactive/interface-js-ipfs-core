@@ -102,9 +102,12 @@ pull(
 
 #### `refs.local`
 
-> Output all local references (CIDs of all blocks in the blockstore)
+> Output all local references (CIDs of all blocks in the blockstore. CIDs are reconstructed, hence they might not match the CIDs under the blocks were originally stored)
 
-##### `ipfs.refs.local([callback])`
+##### `ipfs.refs.local([options], [callback])`
+
+`options` is an optional object that may contain the following keys:
+  - `multihash (false)`: instead of reconstructed CIDs, the original multihashes are returned as base32 encoded strings
 
 `callback` must follow `function (err, refs) {}` signature, where `err` is an error if the operation was not successful and `refs` is an array of `{ ref: "myref", err: "error msg" }`
 
@@ -129,9 +132,12 @@ ipfs.refs.local(function (err, refs) {
 })
 ```
 
-#### `refs.localReadableStream`
+#### `refs.localReadableStream([options])`
 
 > Output all local references using a [Readable Stream][rs]
+
+`options` is an optional object that may contain the following keys:
+  - `multihash (false)`: instead of reconstructed CIDs, the original multihashes are returned as base32 encoded strings
 
 ##### `ipfs.localReadableStream()` -> [Readable Stream][rs]
 
@@ -148,9 +154,12 @@ stream.on('data', function (ref) {
 })
 ```
 
-#### `refs.localPullStream`
+#### `refs.localPullStream([options])`
 
 > Output all local references using a [Pull Stream][ps].
+
+`options` is an optional object that may contain the following keys:
+  - `multihash (false)`: instead of reconstructed CIDs, the original multihashes are returned as base32 encoded strings
 
 ##### `ipfs.refs.localReadableStream()` -> [Pull Stream][ps]
 
