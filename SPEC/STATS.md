@@ -6,6 +6,9 @@
 * [stats.bwPullStream](#statsbwpullstream)
 * [stats.bwReadableStream](#statsbwreadablestream)
 
+### ⚠️ Note
+Although not listed in the documentation, all the following APIs that actually return a **promise** can also accept a **final callback** parameter.
+
 #### `stats.bitswap`
 
 > Show diagnostic information on the bitswap agent.
@@ -71,7 +74,7 @@ Options are described on [`ipfs.stats.bw`](#bw).
 
 | Type | Description |
 | -------- | -------- |
-| `Promise<PullStream>` | A [Pull Stream][ps] representing IPFS bandwidth information |
+| `PullStream` | A [Pull Stream][ps] representing IPFS bandwidth information |
 
 **Example:**
 
@@ -108,7 +111,7 @@ Options are described on [`ipfs.stats.bw`](#bw).
 
 | Type | Description |
 | -------- | -------- |
-| `Promise<ReadableStream>` | A [Readable Stream][rs] representing IPFS bandwidth information |
+| `ReadableStream` | A [Readable Stream][rs] representing IPFS bandwidth information |
 
 **Example:**
 

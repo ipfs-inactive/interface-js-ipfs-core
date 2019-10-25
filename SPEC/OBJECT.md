@@ -11,6 +11,9 @@
 * [object.patch.appendData](#objectpatchappenddata)
 * [object.patch.setData](#objectpatchsetdata)
 
+### ⚠️ Note
+Although not listed in the documentation, all the following APIs that actually return a **promise** can also accept a **final callback** parameter.
+
 #### `object.new`
 
 > Create a new MerkleDAG node, using a specific layout. Caveat: So far, only UnixFS object layouts are supported.
@@ -66,7 +69,7 @@ const obj = {
   Links: []
 }
 
-const cid = await ipfs.object.pu(obj)
+const cid = await ipfs.object.put(obj)
 console.log(cid.toString())
 // Logs:
 // QmPb5f92FxKPYdT3QNBd1GKiL4tZUXUrzF4Hkpdr3Gf1gK
@@ -160,7 +163,7 @@ A great source of [examples][] can be found in the tests for this API.
 
 | Type | Description |
 | -------- | -------- |
-| `Promise<Array>` | An Array of [DAGLink](https://github.com/vijayee/js-ipfs-merkle-dag/blob/master/src/dag-node.js#L199-L203) objects |
+| `Promise<Array>` | An Array of [DAGLink](https://github.com/ipld/js-ipld-dag-pb/blob/master/src/dag-link/dagLink.js) objects |
 
 **Example:**
 

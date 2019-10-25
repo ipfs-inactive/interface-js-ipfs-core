@@ -5,6 +5,9 @@
 * [block.rm](#blockrm)
 * [block.stat](#blockstat)
 
+### ⚠️ Note
+Although not listed in the documentation, all the following APIs that actually return a **promise** can also accept a **final callback** parameter.
+
 #### `block.get`
 
 > Get a raw IPFS block.
@@ -75,7 +78,7 @@ const block = await ipfs.block.put(buf)
 console.log(block.data.toString())
 // Logs:
 // a serialized object
-console.log(block.cid.toBaseEncodedString())
+console.log(block.cid.toString())
 // Logs:
 // the CID of the object
 
@@ -89,7 +92,7 @@ const block = await ipfs.block.put(blob, cid)
 console.log(block.data.toString())
 // Logs:
 // a serialized object
-console.log(block.cid.toBaseEncodedString())
+console.log(block.cid.toString())
 // Logs:
 // the CID of the object
 ```

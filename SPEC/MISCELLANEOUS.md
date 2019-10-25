@@ -9,6 +9,9 @@
 * [pingReadableStream](#pingreadablestream)
 * [resolve](#resolve)
 
+### ⚠️ Note
+Although not listed in the documentation, all the following APIs that actually return a **promise** can also accept a **final callback** parameter.
+
 #### `id`
 
 > Returns the identity of the Peer
@@ -158,7 +161,7 @@ Where:
 
 | Type | Description |
 | -------- | -------- |
-| `Promise<PullStream>` | A [`PullStream`][ps] of ping response objects |
+| `PullStream` | A [`PullStream`][ps] of ping response objects |
 
 example of the returned objects:
 
@@ -207,7 +210,7 @@ Where:
 
 | Type | Description |
 | -------- | -------- |
-| `Promise<ReadableStream>` | A [`ReadableStream`][rs] of ping response objects |
+| `ReadableStream` | A [`ReadableStream`][rs] of ping response objects |
 
 example of the returned objects:
 

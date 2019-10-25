@@ -10,6 +10,9 @@
 * [bootstrap.list](#bootstraplist)
 * [bootstrap.rm](#bootstraprm)
 
+### ⚠️ Note
+Although not listed in the documentation, all the following APIs that actually return a **promise** can also accept a **final callback** parameter.
+
 #### `bootstrap.add`
 
 > Add a peer address to the bootstrap list

@@ -7,6 +7,9 @@
 * [dht.put](#dhtput)
 * [dht.query](#dhtquery)
 
+### ⚠️ Note
+Although not listed in the documentation, all the following APIs that actually return a **promise** can also accept a **final callback** parameter.
+
 #### `dht.findPeer`
 
 > Retrieve the Peer Info of a reachable node in the network.

@@ -8,6 +8,9 @@
 * [swarm.filters.add](#swarmfiltersadd) (not implemented yet)
 * [swarm.filters.rm](#swarmfiltersrm) (not implemented yet)
 
+### ⚠️ Note
+Although not listed in the documentation, all the following APIs that actually return a **promise** can also accept a **final callback** parameter.
+
 #### `swarm.addrs`
 
 > List of known addresses of each peer connected.

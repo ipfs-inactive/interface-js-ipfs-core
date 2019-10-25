@@ -7,6 +7,9 @@
 * [key.export](#keyexport)
 * [key.import](#keyimport)
 
+### ⚠️ Note
+Although not listed in the documentation, all the following APIs that actually return a **promise** can also accept a **final callback** parameter.
+
 #### `key.gen`
 
 > Generate a new key
@@ -148,8 +151,6 @@ A great source of [examples][] can be found in the tests for this API.
 
 > Export a key in a PEM encoded password protected PKCS #8
 
-##### Go **NYI**
-
 ##### `ipfs.key.export(name, password)`
 
 Where:
@@ -180,8 +181,6 @@ A great source of [examples][] can be found in the tests for this API.
 #### `key.import`
 
 > Import a PEM encoded password protected PKCS #8 key
-
-##### Go **NYI**
 
 ##### `ipfs.key.import(name, pem, password)`
 

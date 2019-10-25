@@ -38,6 +38,9 @@ _Explore the Mutable File System through interactive coding challenges in our [P
   - [files.stat](#filesstat)
   - [files.write](#fileswrite)
 
+### ⚠️ Note
+Although not listed in the documentation, all the following APIs that actually return a **promise** can also accept a **final callback** parameter.
+
 #### `add`
 
 > Add files and data to IPFS.

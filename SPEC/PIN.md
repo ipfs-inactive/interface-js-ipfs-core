@@ -4,6 +4,9 @@
 * [pin.ls](#pinls)
 * [pin.rm](#pinrm)
 
+### ⚠️ Note
+Although not listed in the documentation, all the following APIs that actually return a **promise** can also accept a **final callback** parameter.
+
 #### `pin.add`
 
 > Adds an IPFS object to the pinset and also stores it to the IPFS repo. pinset is the set of hashes currently pinned (not gc'able).
@@ -33,8 +36,10 @@ an array of objects is returned, each of the form:
 **Example:**
 
 ```JavaScript
-const pinset = await ipfs.pin.add(hash)
+const pinset = await ipfs.pin.add('QmWATWQ7fVPP2EFGu71UkfnqhYXDYH566qy47CnJDgvs8u')
 console.log(pinset)
+// Logs:
+// [ { hash: 'QmWATWQ7fVPP2EFGu71UkfnqhYXDYH566qy47CnJDgvs8u' } ]
 ```
 
 A great source of [examples][] can be found in the tests for this API.
@@ -64,6 +69,12 @@ an array of objects with keys `hash` and `type` is returned.
 ```JavaScript
 const pinset = await ipfs.pin.ls()
 console.log(pinset)
+// Logs
+// [
+//   { hash: Qmc5XkteJdb337s7VwFBAGtiaoj2QCEzyxtNRy3iMudc3E, type: 'recursive' },
+//   { hash: QmZbj5ruYneZb8FuR9wnLqJCpCXMQudhSdWhdhp5U1oPWJ, type: 'indirect' },
+//   { hash: QmSo73bmN47gBxMNqbdV6rZ4KJiqaArqJ1nu5TvFhqqj1R, type: 'indirect' }
+// ]
 ```
 
 A great source of [examples][] can be found in the tests for this API.

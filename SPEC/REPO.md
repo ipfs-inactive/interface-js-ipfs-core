@@ -4,6 +4,9 @@
 * [repo.stat](#repostat)
 * [repo.version](#repoversion)
 
+### ⚠️ Note
+Although not listed in the documentation, all the following APIs that actually return a **promise** can also accept a **final callback** parameter.
+
 #### `repo.gc`
 
 > Perform a garbage collection sweep on the repo.

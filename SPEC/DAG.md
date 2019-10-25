@@ -10,6 +10,9 @@ _Explore the DAG API through interactive coding challenges in our ProtoSchool tu
 - _[P2P data links with content addressing](https://proto.school/#/basics/) (beginner)_
 - _[Blogging on the Decentralized Web](https://proto.school/#/blog/) (intermediate)_
 
+### ⚠️ Note
+Although not listed in the documentation, all the following APIs that actually return a **promise** can also accept a **final callback** parameter.
+
 #### `dag.put`
 
 > Store an IPLD format node
@@ -40,7 +43,7 @@ _Explore the DAG API through interactive coding challenges in our ProtoSchool tu
 const obj = { simple: 'object' }
 const cid = await ipfs.dag.put(obj, { format: 'dag-cbor', hashAlg: 'sha3-512' })
 
-console.log(cid.toBaseEncodedString())
+console.log(cid.toString())
 // zBwWX9ecx5F4X54WAjmFLErnBT6ByfNxStr5ovowTL7AhaUR98RWvXPS1V3HqV1qs3r5Ec5ocv7eCdbqYQREXNUfYNuKG
 ```
 
@@ -85,11 +88,11 @@ const obj = {
 }
 
 const cid = await ipfs.dag.put(obj, { format: 'dag-cbor', hashAlg: 'sha2-256' })
-console.log(cid.toBaseEncodedString())
+console.log(cid.toString())
 // zdpuAmtur968yprkhG9N5Zxn6MFVoqAWBbhUAkNLJs2UtkTq5
 
-async function getAndLog(cid) {
-  const result = await ipfs.dag.get(cid)
+async function getAndLog(cidPath) {
+  const result = await ipfs.dag.get(cidPath)
   console.log(result.value)
 }
 
@@ -149,7 +152,7 @@ const obj = {
 }
 
 const cid = await ipfs.dag.put(obj, { format: 'dag-cbor', hashAlg: 'sha2-256' })
-console.log(cid.toBaseEncodedString())
+console.log(cid.toString())
 // zdpuAmtur968yprkhG9N5Zxn6MFVoqAWBbhUAkNLJs2UtkTq5
 
 const result = await ipfs.dag.tree('zdpuAmtur968yprkhG9N5Zxn6MFVoqAWBbhUAkNLJs2UtkTq5')

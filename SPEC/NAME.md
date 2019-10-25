@@ -6,6 +6,9 @@
 * [name.pubsub.subs](#namepubsubsubs)
 * [name.resolve](#nameresolve)
 
+### ⚠️ Note
+Although not listed in the documentation, all the following APIs that actually return a **promise** can also accept a **final callback** parameter.
+
 #### `name.publish`
 
 > Publish an IPNS name with a given value.

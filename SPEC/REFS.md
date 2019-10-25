@@ -7,6 +7,9 @@
 * [refs.localReadableStream](#refslocalreadablestream)
 * [refs.localPullStream](#refslocalpullstream)
 
+### ⚠️ Note
+Although not listed in the documentation, all the following APIs that actually return a **promise** can also accept a **final callback** parameter.
+
 #### `refs`
 
 > Get links (references) from an object.
@@ -72,7 +75,7 @@ for (const ref of refs) {
 
 | Type | Description |
 | -------- | -------- |
-| `Promise<ReadableStream>` | A [Readable Stream][rs] representing the references |
+| `ReadableStream` | A [Readable Stream][rs] representing the references |
 
 **Example:**
 
@@ -99,7 +102,7 @@ stream.on('data', function (ref) {
 
 | Type | Description |
 | -------- | -------- |
-| `Promise<PullStream>` | A [Pull Stream][ps] representing the references |
+| `PullStream` | A [Pull Stream][ps] representing the references |
 
 **Example:**
 
@@ -167,7 +170,7 @@ ipfs.refs.local(function (err, refs) {
 
 | Type | Description |
 | -------- | -------- |
-| `Promise<ReadableStream>` | A [Readable Stream][rs] representing all the local references |
+| `ReadableStream` | A [Readable Stream][rs] representing all the local references |
 
 **Example:**
 
@@ -192,7 +195,7 @@ stream.on('data', function (ref) {
 
 | Type | Description |
 | -------- | -------- |
-| `Promise<PullStream>` | A [Pull Stream][ps] representing all the local references |
+| `PullStream` | A [Pull Stream][ps] representing all the local references |
 
 **Example:**
 
