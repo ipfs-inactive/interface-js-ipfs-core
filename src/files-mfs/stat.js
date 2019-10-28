@@ -20,7 +20,7 @@ module.exports = (common, options) => {
     let ipfs
 
     before(async () => { ipfs = await common.setup() })
-    before((done) => ipfs.add(fixtures.smallFile.data, done))
+    before(async () => { await ipfs.add(fixtures.smallFile.data) })
 
     after(() => common.teardown())
 
