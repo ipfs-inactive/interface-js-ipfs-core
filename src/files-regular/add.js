@@ -68,14 +68,6 @@ module.exports = (common, options) => {
       expect(file.size).greaterThan(fixtures.smallFile.data.length)
     })
 
-    it('should add a Buffer (promised)', async () => {
-      const filesAdded = await ipfs.add(fixtures.smallFile.data)
-      const file = filesAdded[0]
-
-      expect(file.hash).to.equal(fixtures.smallFile.cid)
-      expect(file.path).to.equal(fixtures.smallFile.cid)
-    })
-
     it('should add a BIG Buffer', async () => {
       const filesAdded = await ipfs.add(fixtures.bigFile.data)
       expect(filesAdded).to.have.length(1)
@@ -303,7 +295,7 @@ module.exports = (common, options) => {
       expect(wrapped.path).to.equal('')
     })
 
-    it('should add with only-hash=true (promised)', async function () {
+    it('should add with only-hash=true', async function () {
       this.slow(10 * 1000)
       const content = String(Math.random() + Date.now())
 

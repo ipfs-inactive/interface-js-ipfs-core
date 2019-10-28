@@ -29,7 +29,7 @@ module.exports = (common, options) => {
 
     after(() => common.teardown())
 
-    it('should get empty links by multihash (promised)', async () => {
+    it('should get empty links by multihash', async () => {
       const testObj = {
         Data: Buffer.from(hat()),
         Links: []

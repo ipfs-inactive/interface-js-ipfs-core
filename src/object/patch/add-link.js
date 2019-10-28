@@ -4,12 +4,7 @@
 const dagPB = require('ipld-dag-pb')
 const DAGNode = dagPB.DAGNode
 const { getDescribe, getIt, expect } = require('../../utils/mocha')
-const {
-  calculateCid,
-  createDAGNode,
-  addLinkToDAGNode,
-  asDAGLink
-} = require('../utils')
+const { asDAGLink } = require('../utils')
 
 /** @typedef { import("ipfsd-ctl").TestsInterface } TestsInterface */
 /**
@@ -75,27 +70,6 @@ module.exports = (common, options) => {
       testNodeWithLinkMultihash = node.multihash
       testLinkPlainObject = node3
       */
-    })
-
-    it('should add a link to an existing node (promised)', async () => {
-      const obj = {
-        Data: Buffer.from('patch test object (promised)'),
-        Links: []
-      }
-
-      const parentCid = await ipfs.object.put(obj)
-      const parent = await ipfs.object.get(parentCid)
-      const childCid = await ipfs.object.put(await createDAGNode(Buffer.from('some other node'), []))
-      const child = await ipfs.object.get(childCid)
-      const newParent = await addLinkToDAGNode(parent, {
-        name: 'link-to-node',
-        size: child.size,
-        cid: childCid
-      })
-      const newParentCid = await calculateCid(newParent)
-      const nodeFromObjectPatchCid = await ipfs.object.patch.addLink(parentCid, newParent.Links[0])
-
-      expect(newParentCid).to.eql(nodeFromObjectPatchCid)
     })
 
     it('returns error for request without arguments', async () => {
