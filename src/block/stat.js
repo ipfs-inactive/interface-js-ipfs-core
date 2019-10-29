@@ -35,22 +35,12 @@ module.exports = (common, options) => {
       expect(stats).to.have.property('size')
     })
 
-    it('should return error for missing argument', async () => {
-      try {
-        await ipfs.block.stat(null)
-        expect.fail('should have thrown for missing parameter')
-      } catch (err) {
-        expect(err).to.be.an.instanceof(Error)
-      }
+    it('should return error for missing argument', () => {
+      return expect(ipfs.block.stat(null)).to.eventually.be.rejected.and.be.an.instanceOf(Error)
     })
 
-    it('should return error for invalid argument', async () => {
-      try {
-        await ipfs.block.stat('invalid')
-        expect.fail('should have thrown for invalid parameter')
-      } catch (err) {
-        expect(err).to.be.an.instanceof(Error)
-      }
+    it('should return error for invalid argument', () => {
+      return expect(ipfs.block.stat('invalid')).to.eventually.be.rejected.and.be.an.instanceOf(Error)
     })
   })
 }

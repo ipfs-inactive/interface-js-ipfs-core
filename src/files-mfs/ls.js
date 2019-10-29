@@ -23,15 +23,10 @@ module.exports = (common, options) => {
 
     after(() => common.teardown())
 
-    it('should not ls not found file/dir, expect error', async () => {
+    it('should not ls not found file/dir, expect error', () => {
       const testDir = `/test-${hat()}`
 
-      try {
-        await ipfs.files.ls(`${testDir}/404`)
-        expect.fail('files.ls() did not throw when file/dir was not found')
-      } catch (err) {
-        expect(err).to.exist()
-      }
+      return expect(ipfs.files.ls(`${testDir}/404`)).to.eventually.be.rejected()
     })
 
     it('should ls directory', async () => {

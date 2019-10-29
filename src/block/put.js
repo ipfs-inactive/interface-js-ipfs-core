@@ -72,15 +72,10 @@ module.exports = (common, options) => {
       expect(block.cid.multihash).to.eql(multihash.fromB58String(expectedHash))
     })
 
-    it('should error with array of blocks', async () => {
+    it('should error with array of blocks', () => {
       const blob = Buffer.from('blorb')
 
-      try {
-        await ipfs.block.put([blob, blob])
-        expect.fail('should have returned an error for array of blocks')
-      } catch (err) {
-        expect(err).to.be.an.instanceof(Error)
-      }
+      return expect(ipfs.block.put([blob, blob])).to.eventually.be.rejected.and.be.an.instanceOf(Error)
     })
   })
 }

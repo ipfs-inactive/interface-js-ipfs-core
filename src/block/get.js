@@ -82,13 +82,8 @@ module.exports = (common, options) => {
       expect(block.data).to.eql(input)
     })
 
-    it('should return an error for an invalid CID', async () => {
-      try {
-        await ipfs.block.get('invalid')
-        expect.fail('should have returned an error for invalid argument')
-      } catch (err) {
-        expect(err).to.be.an.instanceof(Error)
-      }
+    it('should return an error for an invalid CID', () => {
+      return expect(ipfs.block.get('invalid')).to.eventually.be.rejected.and.be.an.instanceOf(Error)
     })
   })
 }

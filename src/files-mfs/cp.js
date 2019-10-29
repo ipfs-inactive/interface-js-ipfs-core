@@ -23,15 +23,10 @@ module.exports = (common, options) => {
 
     after(() => common.teardown())
 
-    it('should copy file, expect error', async () => {
+    it('should copy file, expect error', () => {
       const testDir = `/test-${hat()}`
 
-      try {
-        await ipfs.files.cp(`${testDir}/c`, `${testDir}/b`)
-        expect.fail('files.cp() did not throw as expected on copy file')
-      } catch (err) {
-        expect(err).to.exist()
-      }
+      return expect(ipfs.files.cp(`${testDir}/c`, `${testDir}/b`)).to.eventually.be.rejected()
     })
 
     it('should copy file, expect no error', async () => {
@@ -42,15 +37,10 @@ module.exports = (common, options) => {
       await ipfs.files.cp(`${testDir}/a`, `${testDir}/b`)
     })
 
-    it('should copy dir, expect error', async () => {
+    it('should copy dir, expect error', () => {
       const testDir = `/test-${hat()}`
 
-      try {
-        await ipfs.files.cp(`${testDir}/lv1/lv3`, `${testDir}/lv1/lv4`)
-        expect.fail('files.cp() did not throw as expected on copy dir')
-      } catch (err) {
-        expect(err).to.exist()
-      }
+      return expect(ipfs.files.cp(`${testDir}/lv1/lv3`, `${testDir}/lv1/lv4`)).to.eventually.be.rejected()
     })
 
     it('should copy dir, expect no error', async () => {

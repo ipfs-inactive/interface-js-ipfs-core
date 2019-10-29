@@ -77,22 +77,12 @@ module.exports = (common, options) => {
       expect(testObj.Data).to.eql(data)
     })
 
-    it('returns error for request without argument', async () => {
-      try {
-        await ipfs.object.data(null)
-        expect.fail('should have returned an error for invalid argument')
-      } catch (err) {
-        expect(err).to.be.an.instanceof(Error)
-      }
+    it('returns error for request without argument', () => {
+      return expect(ipfs.object.data(null)).to.eventually.be.rejected.and.be.an.instanceOf(Error)
     })
 
-    it('returns error for request with invalid argument', async () => {
-      try {
-        await ipfs.object.data('invalid', { enc: 'base58' })
-        expect.fail('should have returned an error for invalid argument')
-      } catch (err) {
-        expect(err).to.be.an.instanceof(Error)
-      }
+    it('returns error for request with invalid argument', () => {
+      return expect(ipfs.object.data('invalid', { enc: 'base58' })).to.eventually.be.rejected.and.be.an.instanceOf(Error)
     })
   })
 }

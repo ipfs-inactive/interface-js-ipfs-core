@@ -69,22 +69,12 @@ module.exports = (common, options) => {
       expect(result).to.deep.equal(val)
     })
 
-    it('should fail on non valid key', async () => {
-      try {
-        await ipfs.config.set(Buffer.from('heeey'), '')
-        expect.fail('config.set() did not throw on non valid key')
-      } catch (err) {
-        expect(err).to.exist()
-      }
+    it('should fail on non valid key', () => {
+      return expect(ipfs.config.set(Buffer.from('heeey'), '')).to.eventually.be.rejected()
     })
 
-    it('should fail on non valid value', async () => {
-      try {
-        await ipfs.config.set('Fruit', Buffer.from('abc'))
-        expect.fail('config.set() did not throw on non valid value')
-      } catch (err) {
-        expect(err).to.exist()
-      }
+    it('should fail on non valid value', () => {
+      return expect(ipfs.config.set('Fruit', Buffer.from('abc'))).to.eventually.be.rejected()
     })
   })
 }

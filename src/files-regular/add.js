@@ -271,15 +271,10 @@ module.exports = (common, options) => {
       expect(nonSeqDirFilePaths.every(p => filesAddedPaths.includes(p))).to.be.true()
     })
 
-    it('should fail when passed invalid input', async () => {
+    it('should fail when passed invalid input', () => {
       const nonValid = 138
 
-      try {
-        await ipfs.add(nonValid)
-        expect.fail('ipfs.add() did not throw when passed invalid input')
-      } catch (err) {
-        expect(err).to.exist()
-      }
+      return expect(ipfs.add(nonValid)).to.eventually.be.rejected()
     })
 
     it('should wrap content in a directory', async () => {

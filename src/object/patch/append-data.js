@@ -35,24 +35,14 @@ module.exports = (common, options) => {
       expect(patchedNodeCid).to.not.deep.equal(nodeCid)
     })
 
-    it('returns error for request without key & data', async () => {
-      try {
-        await ipfs.object.patch.appendData(null, null)
-        expect.fail('should have returned an error for invalid argument')
-      } catch (err) {
-        expect(err).to.be.an.instanceof(Error)
-      }
+    it('returns error for request without key & data', () => {
+      return expect(ipfs.object.patch.appendData(null, null)).to.eventually.be.rejected.and.be.an.instanceOf(Error)
     })
 
-    it('returns error for request without data', async () => {
+    it('returns error for request without data', () => {
       const filePath = 'test/fixtures/test-data/badnode.json'
 
-      try {
-        await ipfs.object.patch.appendData(null, filePath)
-        expect.fail('should have returned an error for invalid argument')
-      } catch (err) {
-        expect(err).to.be.an.instanceof(Error)
-      }
+      return expect(ipfs.object.patch.appendData(null, filePath)).to.eventually.be.rejected.and.be.an.instanceOf(Error)
     })
   })
 }

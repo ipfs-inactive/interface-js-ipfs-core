@@ -72,22 +72,12 @@ module.exports = (common, options) => {
       */
     })
 
-    it('returns error for request without arguments', async () => {
-      try {
-        await ipfs.object.patch.addLink(null, null, null)
-        expect.fail('should have returned an error for invalid argument')
-      } catch (err) {
-        expect(err).to.be.an.instanceof(Error)
-      }
+    it('returns error for request without arguments', () => {
+      return expect(ipfs.object.patch.addLink(null, null, null)).to.eventually.be.rejected.and.be.an.instanceOf(Error)
     })
 
-    it('returns error for request with only one invalid argument', async () => {
-      try {
-        await ipfs.object.patch.addLink('invalid', null, null)
-        expect.fail('should have returned an error for invalid argument')
-      } catch (err) {
-        expect(err).to.be.an.instanceof(Error)
-      }
+    it('returns error for request with only one invalid argument', () => {
+      return expect(ipfs.object.patch.addLink('invalid', null, null)).to.eventually.be.rejected.and.be.an.instanceOf(Error)
     })
   })
 }

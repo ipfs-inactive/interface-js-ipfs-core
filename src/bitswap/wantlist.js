@@ -42,12 +42,7 @@ module.exports = (common, options) => {
       const node = await common.node()
       await node.stop()
 
-      try {
-        await node.bitswap.wantlist()
-        expect.fail('bitswap.wantlist() did not throw an error as expected')
-      } catch (err) {
-        expect(err).to.exist()
-      }
+      await expect(node.api.bitswap.wantlist()).to.be.rejected()
     })
   })
 }

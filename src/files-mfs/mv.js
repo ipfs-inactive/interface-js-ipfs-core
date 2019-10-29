@@ -26,15 +26,10 @@ module.exports = (common, options) => {
     })
     after(() => common.teardown())
 
-    it('should not move not found file/dir, expect error', async () => {
+    it('should not move not found file/dir, expect error', () => {
       const testDir = `/test-${hat()}`
 
-      try {
-        await ipfs.files.mv(`${testDir}/404`, `${testDir}/a`)
-        expect.fail('files.mv() did not throw while moving not found file/dir')
-      } catch (err) {
-        expect(err).to.exist()
-      }
+      return expect(ipfs.files.mv(`${testDir}/404`, `${testDir}/a`)).to.eventually.be.rejected()
     })
 
     it('should move file, expect no error', async () => {

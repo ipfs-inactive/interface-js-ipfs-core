@@ -42,26 +42,21 @@ module.exports = (common, options) => {
       const id = peerId.toB58String()
       const ipnsPath = `/ipns/${id}`
 
-      const res = await ipfs.name.pubsub.subs()
-      expect(res).to.be.an('array').that.does.not.include(ipnsPath)
+      const subs = await ipfs.name.pubsub.subs()
+      expect(subs).to.be.an('array').that.does.not.include(ipnsPath)
 
-      try {
-        await ipfs.name.resolve(id)
-        expect.fail('name.resolve() did not throw as expected')
-      } catch (err) {
-        expect(err).to.exist()
+      await expect(ipfs.name.resolve(id)).to.be.rejected()
 
-        let res
+      let res
 
-        res.subs1 = await ipfs.name.pubsub.subs()
-        res.cancel = await ipfs.name.pubsub.cancel(ipnsPath)
-        res.subs2 = await ipfs.name.pubsub.subs()
+      res.subs1 = await ipfs.name.pubsub.subs()
+      res.cancel = await ipfs.name.pubsub.cancel(ipnsPath)
+      res.subs2 = await ipfs.name.pubsub.subs()
 
-        expect(res.subs1).to.be.an('array').that.does.include(ipnsPath)
-        expect(res.cancel).to.have.property('canceled')
-        expect(res.cancel.canceled).to.eql(true)
-        expect(res.subs2).to.be.an('array').that.does.not.include(ipnsPath)
-      }
+      expect(res.subs1).to.be.an('array').that.does.include(ipnsPath)
+      expect(res.cancel).to.have.property('canceled')
+      expect(res.cancel.canceled).to.eql(true)
+      expect(res.subs2).to.be.an('array').that.does.not.include(ipnsPath)
     })
   })
 }

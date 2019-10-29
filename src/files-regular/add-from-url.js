@@ -105,13 +105,8 @@ module.exports = (common, options) => {
       expect(result).to.deep.equal(expectedResult)
     })
 
-    it('should not add from an invalid url', async () => {
-      try {
-        await ipfs.addFromURL('123http://invalid')
-        expect.fail('ipfs.addFromURL() did not throw when adding an invalid url')
-      } catch (err) {
-        expect(err).to.exist()
-      }
+    it('should not add from an invalid url', () => {
+      return expect(ipfs.addFromURL('123http://invalid')).to.eventually.be.rejected()
     })
   })
 }

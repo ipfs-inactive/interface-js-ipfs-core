@@ -26,13 +26,8 @@ module.exports = (common, options) => {
 
     after(() => common.teardown())
 
-    it('should return an error when called with an invalid arg', async () => {
-      try {
-        await ipfs.bootstrap.add(invalidArg)
-        expect.fail('bootstrap.add() did not throw when called with an invalid arg')
-      } catch (err) {
-        expect(err).to.be.an.instanceof(Error)
-      }
+    it('should return an error when called with an invalid arg', () => {
+      return expect(ipfs.bootstrap.add(invalidArg)).to.eventually.be.rejected.and.be.an.instanceOf(Error)
     })
 
     it('should return a list containing the bootstrap peer when called with a valid arg (ip4)', async () => {

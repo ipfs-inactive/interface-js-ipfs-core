@@ -34,13 +34,8 @@ module.exports = (common, options) => {
       return ipfs.files.mkdir(`${testDir}/lv1/lv2`, { p: true })
     })
 
-    it('should not make already existent directory', async () => {
-      try {
-        await ipfs.files.mkdir('/')
-        expect.fail('files.mkdir() did not throw when making already existent directory')
-      } catch (err) {
-        expect(err).to.exist()
-      }
+    it('should not make already existent directory', () => {
+      return expect(ipfs.files.mkdir('/')).to.eventually.be.rejected()
     })
   })
 }

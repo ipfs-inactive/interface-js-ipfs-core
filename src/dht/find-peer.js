@@ -37,13 +37,8 @@ module.exports = (common, options) => {
       expect(nodeAddresses).to.include(peerAddresses[0])
     })
 
-    it('should fail to find other peer if peer does not exist', async () => {
-      try {
-        await nodeA.dht.findPeer('Qmd7qZS4T7xXtsNFdRoK1trfMs5zU94EpokQ9WFtxdPxsZ')
-        expect.fail('dht.findPeer() did not throw when peer does not exist')
-      } catch (err) {
-        expect(err).to.exist()
-      }
+    it('should fail to find other peer if peer does not exist', () => {
+      return expect(nodeA.dht.findPeer('Qmd7qZS4T7xXtsNFdRoK1trfMs5zU94EpokQ9WFtxdPxsZ')).to.eventually.be.rejected()
     })
   })
 }

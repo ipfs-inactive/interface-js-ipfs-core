@@ -34,18 +34,13 @@ module.exports = (common, options) => {
       this.timeout(300 * 1000)
       const id = 'QmNP1ASen5ZREtiJTtVD3jhMKhoPb1zppET1tgpjHx2NGA'
 
+      const subs = await ipfs.name.pubsub.subs()
+      expect(subs).to.eql([]) // initally empty
+
+      await expect(ipfs.name.resolve(id)).to.be.rejected()
+
       const res = await ipfs.name.pubsub.subs()
-      expect(res).to.eql([]) // initally empty
-
-      try {
-        await ipfs.name.resolve(id)
-        expect.fail('name.resolve() did not throw as expected')
-      } catch (err) {
-        expect(err).to.exist()
-
-        const res = await ipfs.name.pubsub.subs()
-        expect(res).to.be.an('array').that.does.include(`/ipns/${id}`)
-      }
+      expect(res).to.be.an('array').that.does.include(`/ipns/${id}`)
     })
   })
 }

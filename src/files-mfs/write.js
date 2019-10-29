@@ -22,15 +22,10 @@ module.exports = (common, options) => {
 
     after(() => common.teardown())
 
-    it('should not write to non existent file, expect error', async function () {
+    it('should not write to non existent file, expect error', function () {
       const testDir = `/test-${hat()}`
 
-      try {
-        await ipfs.files.write(`${testDir}/a`, Buffer.from('Hello, world!'))
-        expect.fail('files.write() did not throw while writing to non existent file')
-      } catch (err) {
-        expect(err).to.exist()
-      }
+      return expect(ipfs.files.write(`${testDir}/a`, Buffer.from('Hello, world!'))).to.eventually.be.rejected()
     })
 
     it('should write to non existent file with create flag', async function () {

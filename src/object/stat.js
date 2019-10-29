@@ -58,18 +58,12 @@ module.exports = (common, options) => {
       const startTime = new Date()
       const badCid = 'QmNggDXca24S6cMPEYHZjeuc4QRmofkRrAEqVL3MzzzzzZ'
 
-      try {
-        // we can test that we are passing in opts by testing the timeout option for a CID that doesn't exist
-        await ipfs.object.stat(badCid, { timeout: `${timeout}s` })
-        expect.fail('object.stat() did not throw as expected')
-      } catch (err) {
-        const timeForRequest = (new Date() - startTime) / 1000
+      const err = await expect(ipfs.object.stat(badCid, { timeout: `${timeout}s` })).to.be.rejected()
+      const timeForRequest = (new Date() - startTime) / 1000
 
-        expect(err).to.exist()
-        expect(err.message).to.equal('failed to get block for QmNggDXca24S6cMPEYHZjeuc4QRmofkRrAEqVL3MzzzzzZ: context deadline exceeded')
-        expect(timeForRequest).to.not.lessThan(timeout)
-        expect(timeForRequest).to.not.greaterThan(timeout + 1)
-      }
+      expect(err).to.have.property('message', 'failed to get block for QmNggDXca24S6cMPEYHZjeuc4QRmofkRrAEqVL3MzzzzzZ: context deadline exceeded')
+      expect(timeForRequest).to.not.lessThan(timeout)
+      expect(timeForRequest).to.not.greaterThan(timeout + 1)
     })
 
     it('should get stats for object with links by multihash', async () => {
@@ -133,22 +127,12 @@ module.exports = (common, options) => {
       expect(expected).to.deep.equal(stats)
     })
 
-    it('returns error for request without argument', async () => {
-      try {
-        await ipfs.object.stat(null)
-        expect.fail('should have returned an error for invalid argument')
-      } catch (err) {
-        expect(err).to.be.an.instanceof(Error)
-      }
+    it('returns error for request without argument', () => {
+      return expect(ipfs.object.stat(null)).to.eventually.be.rejected.and.be.an.instanceOf(Error)
     })
 
-    it('returns error for request with invalid argument', async () => {
-      try {
-        await ipfs.object.stat('invalid', { enc: 'base58' })
-        expect.fail('should have returned an error for invalid argument')
-      } catch (err) {
-        expect(err).to.be.an.instanceof(Error)
-      }
+    it('returns error for request with invalid argument', () => {
+      return expect(ipfs.object.stat('invalid', { enc: 'base58' })).to.eventually.be.rejected.and.be.an.instanceOf(Error)
     })
   })
 }

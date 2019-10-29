@@ -36,28 +36,18 @@ module.exports = (common, options) => {
       expect(pongs.length).to.equal(count)
     })
 
-    it('should fail when pinging a peer that is not available', async () => {
+    it('should fail when pinging a peer that is not available', () => {
       const notAvailablePeerId = 'QmUmaEnH1uMmvckMZbh3yShaasvELPW4ZLPWnB4entMTEn'
       const count = 2
 
-      try {
-        await ipfsA.ping(notAvailablePeerId, { count })
-        expect.fail('ping() did not throw when pinging a peer that is not available')
-      } catch (err) {
-        expect(err).to.exist()
-      }
+      return expect(ipfsA.ping(notAvailablePeerId, { count })).to.eventually.be.rejected()
     })
 
-    it('should fail when pinging an invalid peer Id', async () => {
+    it('should fail when pinging an invalid peer Id', () => {
       const invalidPeerId = 'not a peer ID'
       const count = 2
 
-      try {
-        await ipfsA.ping(invalidPeerId, { count })
-        expect.fail('ping() did not throw when pinging an invalid peer Id')
-      } catch (err) {
-        expect(err).to.exist()
-      }
+      return expect(ipfsA.ping(invalidPeerId, { count })).to.eventually.be.rejected()
     })
   })
 }

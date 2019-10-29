@@ -20,14 +20,7 @@ module.exports = (common, options) => {
 
       await ipfs.stop()
 
-      try {
-        // Trying to stop an already stopped node should return an error
-        // as the node can't respond to requests anymore
-        await ipfs.stop()
-        expect.fail()
-      } catch (err) {
-        expect(err).to.exist()
-      }
+      await expect(ipfs.stop()).to.be.rejected()
     })
   })
 }

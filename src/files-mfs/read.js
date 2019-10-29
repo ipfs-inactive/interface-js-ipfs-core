@@ -23,16 +23,13 @@ module.exports = (common, options) => {
 
     after(() => common.teardown())
 
-    it('should not read not found, expect error', async () => {
+    it('should not read not found, expect error', () => {
       const testDir = `/test-${hat()}`
 
-      try {
-        await ipfs.files.read(`${testDir}/404`)
-        expect.fail('files.read() did not throw when reading not found file/dir')
-      } catch (err) {
-        expect(err).to.exist()
-        expect(err.message).to.contain('does not exist')
-      }
+      return expect(ipfs.files.cp(`${testDir}/c`, `${testDir}/b`)).to.eventually.be.rejected
+        .and.be.an.instanceOf(Error)
+        .and.to.have.property('message')
+        .that.include('does not exist')
     })
 
     it('should read file', async () => {

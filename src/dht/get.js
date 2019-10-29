@@ -27,13 +27,8 @@ module.exports = (common, options) => {
 
     after(() => common.teardown())
 
-    it('should error when getting a non-existent key from the DHT', async () => {
-      try {
-        await nodeA.dht.get('non-existing', { timeout: 100 })
-        expect.fail('dht.get() did not throw when getting a non-existent key from the DHT')
-      } catch (err) {
-        expect(err).to.be.an.instanceof(Error)
-      }
+    it('should error when getting a non-existent key from the DHT', () => {
+      return expect(nodeA.dht.get('non-existing', { timeout: 100 })).to.eventually.be.rejected.and.be.an.instanceOf(Error)
     })
 
     it('should get a value after it was put on another node', async () => {

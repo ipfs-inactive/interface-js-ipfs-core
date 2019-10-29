@@ -90,13 +90,8 @@ module.exports = (common, options) => {
       expect(dNode.Links).to.deep.equal(node.Links)
     })
 
-    it('should fail if a string is passed', async () => {
-      try {
-        await ipfs.object.put(hat())
-        expect.fail('object.put() did not throw when a string is passed')
-      } catch (err) {
-        expect(err).to.exist()
-      }
+    it('should fail if a string is passed', () => {
+      return expect(ipfs.object.put(hat())).to.eventually.be.rejected()
     })
 
     it('should put a Protobuf DAGNode with a link', async () => {

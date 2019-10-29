@@ -38,22 +38,12 @@ module.exports = (common, options) => {
       expect(swarmAddrs).to.exist()
     })
 
-    it('should fail on non valid key', async () => {
-      try {
-        await ipfs.config.get(1234)
-        expect.fail('config.get() did not throw on non valid key')
-      } catch (err) {
-        expect(err).to.exist()
-      }
+    it('should fail on non valid key', () => {
+      return expect(ipfs.config.get(1234)).to.eventually.be.rejected()
     })
 
-    it('should fail on non existent key', async () => {
-      try {
-        await ipfs.config.get('Bananas')
-        expect.fail('config.get() did not throw on non existent key')
-      } catch (err) {
-        expect(err).to.exist()
-      }
+    it('should fail on non existent key', () => {
+      return expect(ipfs.config.get('Bananas')).to.eventually.be.rejected()
     })
   })
 }

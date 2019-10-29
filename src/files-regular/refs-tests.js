@@ -44,38 +44,22 @@ module.exports = (common, suiteName, ipfsRefs, options) => {
       // eslint-disable-next-line no-loop-func
       it(name, async function () {
         this.timeout(20 * 1000)
-        let refs
 
         // Call out to IPFS
         const p = (path ? path(pbRootCb) : pbRootCb)
 
         if (expectTimeout) {
-          try {
-            await pTimeout(ipfsRefs(ipfs)(p, params), expectTimeout)
-            expect.fail('Expected timeout error')
-          } catch (err) {
-            if (err.name === 'TimeoutError') {
-              return Promise.resolve()
-            }
-
-            throw err
-          }
+          return expect(pTimeout(ipfsRefs(ipfs)(p, params), expectTimeout)).to.eventually.be.rejected
+            .and.be.an.instanceOf(Error)
+            .and.to.have.property('name')
+            .to.eql('TimeoutError')
         }
 
-        try {
-          refs = await ipfsRefs(ipfs)(p, params)
-
-          if (expectError) {
-            return expect.fail('Expected timeout error')
-          }
-        } catch (err) {
-          if (expectError) {
-            // Expected an error
-            return Promise.resolve()
-          }
-
-          throw err
+        if (expectError) {
+          return expect(ipfsRefs(ipfs)(p, params)).to.be.eventually.rejected.and.be.an.instanceOf(Error)
         }
+
+        const refs = await ipfsRefs(ipfs)(p, params)
 
         // Check there was no error and the refs match what was expected
         expect(refs.map(r => r.ref)).to.eql(expected)

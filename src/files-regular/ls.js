@@ -154,22 +154,12 @@ module.exports = (common, options) => {
       })
     })
 
-    it('should correctly handle a non existing hash', async () => {
-      try {
-        await ipfs.ls('surelynotavalidhashheh?')
-        expect.fail('ipfs.ls() did not throw to a non existing hash')
-      } catch (err) {
-        expect(err).to.exist()
-      }
+    it('should correctly handle a non existing hash', () => {
+      return expect(ipfs.ls('surelynotavalidhashheh?')).to.eventually.be.rejected()
     })
 
-    it('should correctly handle a non existing path', async () => {
-      try {
-        await ipfs.ls('QmRNjDeKStKGTQXnJ2NFqeQ9oW/folder_that_isnt_there')
-        expect.fail('ipfs.ls() did not throw to a non existing path')
-      } catch (err) {
-        expect(err).to.exist()
-      }
+    it('should correctly handle a non existing path', () => {
+      return expect(ipfs.ls('QmRNjDeKStKGTQXnJ2NFqeQ9oW/folder_that_isnt_there')).to.eventually.be.rejected()
     })
 
     it('should ls files by path', async () => {

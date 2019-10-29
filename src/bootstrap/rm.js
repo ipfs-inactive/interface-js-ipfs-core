@@ -24,13 +24,8 @@ module.exports = (common, options) => {
 
     after(() => common.teardown())
 
-    it('should return an error when called with an invalid arg', async () => {
-      try {
-        await ipfs.bootstrap.rm(invalidArg)
-        expect.fail('bootstrap.rm() did not throw when called with an invalid arg')
-      } catch (err) {
-        expect(err).to.be.an.instanceof(Error)
-      }
+    it('should return an error when called with an invalid arg', () => {
+      return expect(ipfs.bootstrap.rm(invalidArg)).to.eventually.be.rejected.and.be.an.instanceOf(Error)
     })
 
     it('should return an empty list because no peers removed when called without an arg or options', async () => {

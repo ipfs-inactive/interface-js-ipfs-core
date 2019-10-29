@@ -51,34 +51,19 @@ module.exports = (common, options) => {
       */
     })
 
-    it('returns error for request without arguments', async () => {
-      try {
-        await ipfs.object.patch.rmLink(null, null)
-        expect.fail('should have returned an error for invalid argument')
-      } catch (err) {
-        expect(err).to.be.an.instanceof(Error)
-      }
+    it('returns error for request without arguments', () => {
+      return expect(ipfs.object.patch.rmLink(null, null)).to.eventually.be.rejected.and.be.an.instanceOf(Error)
     })
 
-    it('returns error for request only one invalid argument', async () => {
-      try {
-        await ipfs.object.patch.rmLink('invalid', null)
-        expect.fail('should have returned an error for invalid argument')
-      } catch (err) {
-        expect(err).to.be.an.instanceof(Error)
-      }
+    it('returns error for request only one invalid argument', () => {
+      return expect(ipfs.object.patch.rmLink('invalid', null)).to.eventually.be.rejected.and.be.an.instanceOf(Error)
     })
 
-    it('returns error for request with invalid first argument', async () => {
+    it('returns error for request with invalid first argument', () => {
       const root = ''
       const link = 'foo'
 
-      try {
-        await ipfs.object.patch.rmLink(root, link)
-        expect.fail('should have returned an error for invalid argument')
-      } catch (err) {
-        expect(err).to.be.an.instanceof(Error)
-      }
+      return expect(ipfs.object.patch.rmLink(root, link)).to.eventually.be.rejected.and.be.an.instanceOf(Error)
     })
   })
 }

@@ -24,15 +24,10 @@ module.exports = (common, options) => {
 
     after(() => common.teardown())
 
-    it('should not stat not found file/dir, expect error', async function () {
+    it('should not stat not found file/dir, expect error', function () {
       const testDir = `/test-${hat()}`
 
-      try {
-        await ipfs.files.stat(`${testDir}/404`)
-        expect.fail('ipfs.files.stat() did not throw on not found file/dir')
-      } catch (err) {
-        expect(err).to.exist()
-      }
+      return expect(ipfs.files.stat(`${testDir}/404`)).to.eventually.be.rejected()
     })
 
     it('should stat file', async function () {

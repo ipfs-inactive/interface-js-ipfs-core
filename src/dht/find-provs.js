@@ -72,12 +72,7 @@ module.exports = (common, options) => {
 
       const cidV0 = await fakeCid()
 
-      try {
-        await nodeA.dht.findProvs(cidV0, options)
-        expect.fail('dht.findProvs() did not throw as expected')
-      } catch (err) {
-        expect(err).to.exist()
-      }
+      await expect(nodeA.dht.findProvs(cidV0, options)).to.be.rejected()
     })
   })
 }

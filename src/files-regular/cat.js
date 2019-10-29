@@ -114,58 +114,35 @@ module.exports = (common, options) => {
       expect(data.toString()).to.contain('Plz add me!')
     })
 
-    it('should error on invalid key', async () => {
+    it('should error on invalid key', () => {
       const invalidCid = 'somethingNotMultihash'
 
-      try {
-        await ipfs.cat(invalidCid)
-        expect.fail('ipfs.cat() did not throw on invalid key')
-      } catch (err) {
-        expect(err).to.exist()
-
-        const errString = err.toString()
-
-        if (errString === 'Error: invalid ipfs ref path') {
-          expect(err.toString()).to.contain('Error: invalid ipfs ref path')
-        }
-
-        if (errString === 'Error: Invalid Key') {
-          expect(err.toString()).to.contain('Error: Invalid Key')
-        }
-      }
+      return expect(ipfs.cat(invalidCid)).to.eventually.be.rejected()
     })
 
-    it('should error on unknown path', async () => {
-      try {
-        await ipfs.cat(fixtures.smallFile.cid + '/does-not-exist')
-        expect.fail('ipfs.cat() did not throw on unknown path')
-      } catch (err) {
-        expect(err).to.exist()
-        expect(err.message).to.be.oneOf([
+    it('should error on unknown path', () => {
+      return expect(ipfs.cat(fixtures.smallFile.cid + '/does-not-exist')).to.eventually.be.rejected()
+        .and.be.an.instanceOf(Error)
+        .and.to.have.property('message')
+        .to.be.oneOf([
           'file does not exist',
           'no link named "does-not-exist" under Qma4hjFTnCasJ8PVp3mZbZK5g2vGDT4LByLJ7m8ciyRFZP'
         ])
-      }
     })
 
     it('should error on dir path', async () => {
       const file = { path: 'dir/testfile.txt', content: fixtures.smallFile.data }
 
-      try {
-        const filesAdded = await ipfs.add([file])
-        expect(filesAdded.length).to.equal(2)
+      const filesAdded = await ipfs.add([file])
+      expect(filesAdded.length).to.equal(2)
 
-        const files = filesAdded.filter((file) => file.path === 'dir')
-        expect(files.length).to.equal(1)
+      const files = filesAdded.filter((file) => file.path === 'dir')
+      expect(files.length).to.equal(1)
 
-        const dir = files[0]
-        await ipfs.cat(dir.hash)
+      const dir = files[0]
 
-        expect.fail('ipfs.cat() did not throw on dir path')
-      } catch (err) {
-        expect(err).to.exist()
-        expect(err.message).to.contain('this dag node is a directory')
-      }
+      const err = await expect(ipfs.cat(dir.hash)).to.be.rejected()
+      expect(err.message).to.contain('this dag node is a directory')
     })
 
     it('should export a chunk of a file', async () => {

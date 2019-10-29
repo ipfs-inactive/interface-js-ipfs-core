@@ -182,22 +182,17 @@ module.exports = (common, options) => {
     it('should error on invalid key', async () => {
       const invalidCid = 'somethingNotMultihash'
 
-      try {
-        await ipfs.get(invalidCid)
-        expect.fail('ipfs.get() did not throw on invalid key')
-      } catch (err) {
-        expect(err).to.exist()
+      const err = await expect(ipfs.get(invalidCid)).to.be.rejected()
 
-        switch (err.toString()) {
-          case 'Error: invalid ipfs ref path':
-            expect(err.toString()).to.contain('Error: invalid ipfs ref path')
-            break
-          case 'Error: Invalid Key':
-            expect(err.toString()).to.contain('Error: Invalid Key')
-            break
-          default:
-            break
-        }
+      switch (err.toString()) {
+        case 'Error: invalid ipfs ref path':
+          expect(err.toString()).to.contain('Error: invalid ipfs ref path')
+          break
+        case 'Error: Invalid Key':
+          expect(err.toString()).to.contain('Error: Invalid Key')
+          break
+        default:
+          break
       }
     })
   })

@@ -112,25 +112,19 @@ module.exports = (common, options) => {
       }])
     })
 
-    it('should throw an error on missing direct pins for existing path', async () => {
+    it('should throw an error on missing direct pins for existing path', () => {
       // ipfs.txt is an indirect pin, so lookup for direct one should throw an error
-      try {
-        await ipfs.pin.ls(`/ipfs/${fixtures.directory.cid}/files/ipfs.txt`, { type: 'direct' })
-        expect.fail('pin.ls() did not throw on missing direct pins for existing path')
-      } catch (err) {
-        expect(err).to.exist()
-        expect(err.message).to.be.equal(`path '/ipfs/${fixtures.directory.cid}/files/ipfs.txt' is not pinned`)
-      }
+      return expect(ipfs.pin.ls(`/ipfs/${fixtures.directory.cid}/files/ipfs.txt`, { type: 'direct' }))
+        .to.eventually.be.rejected
+        .and.be.an.instanceOf(Error)
+        .and.to.have.property('message', `path '/ipfs/${fixtures.directory.cid}/files/ipfs.txt' is not pinned`)
     })
 
-    it('should throw an error on missing link for a specific path', async () => {
-      try {
-        await ipfs.pin.ls(`/ipfs/${fixtures.directory.cid}/I-DONT-EXIST.txt`, { type: 'direct' })
-        expect.fail('pin.ls() did not throw on missing link for a specific path')
-      } catch (err) {
-        expect(err).to.exist()
-        expect(err.message).to.be.equal(`no link named "I-DONT-EXIST.txt" under ${fixtures.directory.cid}`)
-      }
+    it('should throw an error on missing link for a specific path', () => {
+      return expect(ipfs.pin.ls(`/ipfs/${fixtures.directory.cid}/I-DONT-EXIST.txt`, { type: 'direct' }))
+        .to.eventually.be.rejected
+        .and.be.an.instanceOf(Error)
+        .and.to.have.property('message', `no link named "I-DONT-EXIST.txt" under ${fixtures.directory.cid}`)
     })
 
     it('should list indirect pins for a specific path', async () => {
