@@ -24,32 +24,84 @@ Any node linked to by the MFS root CID is immune from garbage collection, and so
 
 ## Problems
 
-This arrangement has existed for a long while and there have been proposals to unite the APIs in the past. There are a few links where you can read more:
+This arrangement has existed for a long while and there have been proposals to unite the APIs in the past. Here are a few links where you can read more:
 
 * https://github.com/ipfs/specs/issues/98
 * https://github.com/ipfs/interface-js-ipfs-core/issues/284
 
 The following attempts to enumerate the biggest issues with the current state of the files API as objectively as possible. In the next section we'll propose solutions to resolve them. Note that these are not in any particular order.
 
-### 1. There's no name for the root files API
+### 1. There's two `ls` methods
 
-There are two separate APIs residing at different namespaces for dealing with files in IPFS. It's difficult to even distinguish between the two. How does one refer to the API at the root level? "Files API" causes confusion with MFS API at the "files" namespace. "Root Files API" seems to suggest this API deals with files only residing at some root level. "Regular Files API" seems to be adding a superfluous word that does nothing to distinguish it.
+The root level `ls` method works with IPFS paths and the `files.ls` works with both MFS paths _and_ IPFS paths.
+
+There is an issue differentiating between the two different path types - there's a small possibility someone saved something in MFS at `/ipfs/QmHash/path/to/file`. MFS already deals with this in the `cp` command. If the path looks like an IPFS path it assumes it's an IPFS path even if the same path exists in MFS.
+
+It's confusing for `cp` to be able to deal with both path types but for `ls` not to be able to do the same. Similarly, it's confusing to have two `ls` commands that deal with files in IPFS.
+
+### 1.1 The `type` is inconsistent
+
+The `type` field in objects returned differs between calls to `ls` and `files.ls`. In `ls`, a file is 2 and a directory is 1. In `files.ls` a file is 0 and a directory 1.
+
+### 2. API methods are not streaming by default
+
+API methods should, where appropriate, be streaming by default and there should only be one, perferably language native, way to stream data from IPFS.
+
+For some directories `ls`/`files.ls` is simply unusable due to the size of the directory. The listing does not fit in memory or is so large that when it is attempted to be retrieved it takes so long that it appears to have stalled. This not only a bad user experience but makes IPFS unusable for big data storage. Streaming APIs actually play very well with the way that data is stored and retrieved from peers in IPFS and improves UX by providing user with feedback as soon as the first chunk arrives, rather than waiting (potentially forever) for an operation to complete.
+
+In js-ipfs we have alternatives to non-streaming APIs using Node.js streams and pull streams. However, neither of those are browser native, the latter is less widely used and we've ended up with a bloated API surface area, large bundle size, and user confusion around which to use by offering 3 different versions of a single API method.
+
+A multitude of libraries exist to collect or transform data from streams and it's possible that in the near future async iterators in JavaScript will actually support many of them [natively](https://github.com/tc39/proposal-iterator-helpers).
+
+### 3. API methods are not abortable (and by virtue have no timeout)
+
+This is a problem for all IPFS APIs but is probably most frustrating when using IPFS files APIs to retrieve content from peers. There's currently no way to abort a call to an API method. This wastes resources and does not help with the smooth running of the node, especially if it has been asked to retrieve a HUGE file that is not well hosted on the network. Typically the only way to find this out is to call the method and observe it being unresponsive.
+
+The very least we can do is offer a way of cancelling (or aborting) a method call and a default timeout that expires after a reasonable period of inactivity.
+
+### 3.1. No progress visibility
+
+There's no visibility into what is being done internally to deal with method calls. Since API calls are not streaming by default there's not even a way of knowing if IPFS has the data locally or is searching for peers who have the data or has even begun retrieving it at all.
+
+In go-ipfs the log API can be used for this to some extent, but this puts the burden on the application developer to pick out log lines that are relevant to their method call. It would be more useful if some sort of progress indication was available on a method level to more easily give the user an indication of what's happening so that they can make an informed decision about whether to abort the request or leave it running.
+
+### 4. There's no name for the root files API
+
+There are two separate APIs residing at different namespaces for dealing with files in IPFS. It's difficult to even distinguish between the two. How does one refer to the API at the root level? "Files API" causes confusion with MFS API at the "files" namespace. "Root Files API" seems to suggest this API deals with files only residing at some root level. "Regular Files API" just adds a superfluous word that does nothing to distinguish it.
 
 Furthermore, when you expand IPFS to InterPlanetary File System, it sounds unnecessary to refer to this API as InterPlanetary File System Files API since it is the _main_ API to interact with IPFS, it in itself a File System.
+
+### 4.1. `files` is indirection in the way of interacting with core IPFS
+
+Subjectively, namespacing APIs designed to interact with files in a `files` namespace is a nice way to compartmentalise them from other APIs in IPFS. Objectively though, the fact remains that typing `ipfs files read` is significantly longer than typing `ipfs read`. Considering that IPFS is primarily a file system, it makes sense for all the file system APIs to be "front and center" and thus available on the root namespace as `add`, `cat`, `get` and `ls` already are.
+
+### 5. Users do not understand when to use `add` and `write`
+
+The `add` and `write` API methods are a little too similar in name and cause confusion amongst users who do not understand the difference or in what situations one or the other should be used. This is because `write` effectively adds content to IPFS as well. The current `add` API method is more synonymous to importing data into IPFS from an outside source and could perhaps be renamed to more accurately reflect this.
+
+### 6. Pinning is an alien concept
+
+The act of pinning, even though the concept is relatively simple, is simply not widely understood by anyone outside of the IPFS world. As mentioned earlier the pin APIs are necessary for lower level APIs present in IPFS but we could remove the need for pinning and the overhead it creates when importing files if imported files were simply added to MFS.
+
+### 6.1. IPFS is not a small focused core
+
+IPFS is super modular in architecture but it is bundled with almost everything by default. This arrangement is reasonable for a binary distribution designed to run on servers or desktops but in browsers or on mobile where bandwidth and system resources are constrained a bundle that includes all functionalities is far from ideal. Note that this also applies to go-ipfs as well as js-ipfs because webassembly. A small core that is focused on the file system may allow us to exclude many user facing APIs.
+
+If imported files are added to MFS, we _could_ remove `pin` in it's entirety. Other APIs like `config`, `bitswap`, `block`, `bootstrap`, `dag`, `dht`, `object`, `pin`, `ping`, `pubsub`, `refs` could also be removed to create a lean core (although in some cases aspects of these APIs would still be in use behind the scenes).
+
+This is probably outside the scope of this proposal but worth entertaining nethertheless.
 
 ---
 
 # Rough notes
 
+## Problems
+
+* Defaults are insane `truncate`, `create` etc.
+
+## Solutions
+
 * rename add -> import
 * create alias add for import
 * import takes dest dir and adds to mfs
 * Remove pin option from add
-* `add` and `write` when to use?
-* MFS is `files` is confusing
-* `files` is indirection in the way of interacting with core IPFS
-* There's 2 `ls` methods
-* A root folder in MFS called 'ipfs'!??!
-* A small core API with no pinning
-* Pinning is alien
-* No streaming APIs
