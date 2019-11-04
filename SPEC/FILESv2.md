@@ -2,6 +2,12 @@
 
 There have long been dreams of uniting the files APIs. This is a new proposal for doing so.
 
+## Table of Contents
+
+* [Background](#background)
+* [Problems](#problems)
+* [Solutions](#solutions)
+
 ## Background
 
 In IPFS there are two sets of APIs for dealing with files. At the root level there is `add`, `cat`, `get` and `ls`. Since IPFS deals with immutable data there's no APIs to change data once it has been imported. You can only retrieve data, import more data or remove data you no longer wish to store in your local repo (That last part refers to pinning and garbage collection, which is somewhat outside the scope of this proposal but elements of these things will be covered with respect to UX and performance. If you're unfamiliar with those concepts, please read https://docs.ipfs.io/guides/concepts/pinning/ before continuing).
@@ -81,19 +87,21 @@ The `add` and `write` API methods are a little too similar in name and cause con
 
 ### 6. Pinning is an alien concept
 
-The act of pinning, even though the concept is relatively simple, is simply not widely recognised by anyone outside of the IPFS world. As mentioned earlier the pin APIs are necessary for lower level APIs present in IPFS but we could remove the need for pinning and the overhead it creates when importing files if imported files were simply added to MFS.
+The act of pinning, even though the concept is relatively simple, it's not widely recognised by anyone outside of the IPFS world. As mentioned earlier, the pin APIs are necessary for lower level APIs present in IPFS but we could remove the need for pinning and the overhead it creates when importing files if imported files were simply added to MFS.
 
 ### 6.1. IPFS is not a small focused core
 
 IPFS is super modular in architecture but it is bundled with almost everything by default. This arrangement is reasonable for a binary distribution designed to run on servers or desktops but in browsers or on mobile where bandwidth and system resources are constrained a bundle that includes all functionalities is far from ideal. Note that this also applies to go-ipfs as well as js-ipfs because webassembly. A small core that is focused on the file system may allow us to exclude many user facing APIs.
 
-If imported files are added to MFS, we _could_ remove `pin` in it's entirety. Other APIs like `config`, `bitswap`, `block`, `bootstrap`, `dag`, `dht`, `object`, `pin`, `ping`, `pubsub`, `refs` could also be removed to create a lean core (although in some cases aspects of these APIs would still be in use behind the scenes).
+If imported files are added to MFS, we _could_ remove `pin` in it's entirety from a small focused "core". Other APIs like `config`, `bitswap`, `block`, `bootstrap`, `dag`, `dht`, `object`, `pin`, `ping`, `pubsub`, `refs` could also be removed to create an even leaner core (although in some cases aspects of these APIs would still be in use behind the scenes).
 
 This is probably outside the scope of this proposal but worth entertaining nethertheless.
 
 ### 7. `cat` and `files.read` are the same
 
 These methods perform the same operation, and `files.read` also already works with both MFS and IPFS paths.
+
+---
 
 ## Solutions
 
