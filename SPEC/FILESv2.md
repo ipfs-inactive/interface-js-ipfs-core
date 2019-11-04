@@ -10,7 +10,7 @@ There have long been dreams of uniting the files APIs. This is a new proposal fo
 
 ## Background
 
-In IPFS there are two sets of APIs for dealing with files. At the root level there is `add`, `cat`, `get` and `ls`. Since IPFS deals with immutable data there's no APIs to change data once it has been imported. You can only retrieve data, import more data or remove data you no longer wish to store in your local repo (That last part refers to pinning and garbage collection, which is somewhat outside the scope of this proposal but elements of these things will be covered with respect to UX and performance. If you're unfamiliar with those concepts, please read https://docs.ipfs.io/guides/concepts/pinning/ before continuing).
+In IPFS there are two sets of APIs for dealing with files. At the root level there is `add`, `cat`, `get` and `ls`. Since IPFS deals with immutable data there's no way to actually change data once it has been imported. You can only retrieve data, import more data or remove data you no longer wish to store in your local repo (That last part refers to pinning and garbage collection, which is somewhat outside the scope of this proposal but elements of these things will be covered with respect to UX and performance. If you're unfamiliar with those concepts, please read https://docs.ipfs.io/guides/concepts/pinning/ before continuing).
 
 You _could_ change a file outside of IPFS and re-import it. IPFS will do it's best to de-dupe the data, but the fact remains that you haven't changed the original file. Changing files is quite a common thing to do so there exists a separate set of API methods specifically for dealing with changing files that have already been imported into IPFS. These are the Mutable File System (or MFS) API methods that deal with the fiddly work of mutating a DAG to change it's structure while re-using as many existing nodes as possible. It is an abstraction to make the immutable nature of IPFS appear as though it is mutable, but behind the scenes the only mutation that occurs is the tracking of the CID for a root node of a DAG that contains all MFS data in _your_ IPFS repo. Nodes in the DAG are never changed, only created or removed as necessary.
 
@@ -87,7 +87,7 @@ The `add` and `write` API methods are a little too similar in name and cause con
 
 ### 6. Pinning is an alien concept
 
-The act of pinning, even though the concept is relatively simple, it's not widely recognised by anyone outside of the IPFS world. As mentioned earlier, the pin APIs are necessary for lower level APIs present in IPFS but we could remove the need for pinning and the overhead it creates when importing files if imported files were simply added to MFS.
+The act of pinning, even though the concept is relatively simple, is not widely recognised by anyone outside of the IPFS world. As mentioned earlier, the pin APIs are necessary for lower level APIs present in IPFS but we could remove the need for pinning and the overhead it creates when importing files if imported files were simply added to MFS.
 
 ### 6.1. IPFS is not a small focused core
 
@@ -95,11 +95,15 @@ IPFS is super modular in architecture but it is bundled with almost everything b
 
 If imported files are added to MFS, we _could_ remove `pin` in it's entirety from a small focused "core". Other APIs like `config`, `bitswap`, `block`, `bootstrap`, `dag`, `dht`, `object`, `pin`, `ping`, `pubsub`, `refs` could also be removed to create an even leaner core (although in some cases aspects of these APIs would still be in use behind the scenes).
 
-This is probably outside the scope of this proposal but worth entertaining nethertheless.
+This problem requires further definition and reasoning and consequently it is outside the scope of the solutions in this proposal, but it's worth entertaining nethertheless!
 
 ### 7. `cat` and `files.read` are the same
 
 These methods perform the same operation, and `files.read` also already works with both MFS and IPFS paths.
+
+### 8. A single imported file loses it's name
+
+The common case of importing a single file to IPFS gives us back a CID but the file loses it's file name in the process unless the user explicitly asks for it to be "wrapped" in a directory. This is a big hurdle to overcome mentally and a significant WTF moment for people new to IPFS. This also means that the file extension is lost, losing any hint of what is inside. Also, exporting a file out of IPFS to a user's OS yields a file that the OS does not know how to open. Finally, having no name is bad for SEO both on the gateway or otherwise.
 
 ---
 
@@ -183,6 +187,26 @@ For clarity, the API movement/renaming changes are as follows:
 | `ipfs files rm` | `ipfs rm` |
 | `ipfs files stat` | `ipfs stat` |
 | `ipfs files write` | `ipfs write` |
+
+### 5. Allow both IPFS and MFS paths in API methods
+
+Rather than explicitly splitting MFS from the rest of IPFS, we can use MFS paths to refer to content on our local node and IPFS paths to refer to content on the wider IPFS network. We can draw an analogy here with way we use Unix paths and URLs today for working with our OS and the Internet. Where it makes sense, we can allow MFS paths in the root level API methods and IPFS paths in the MFS API methods. This has already been proven possible as many MFS API methods already accept IPFS paths.
+
+| Method | Accepts IPFS paths | Accepts MFS paths |
+|---|---|
+| `ipfs import` | ❌ | ❌ |
+| `ipfs cp` | ✅ | ✅ |
+| `ipfs get` | ✅ | ✅ |
+| `ipfs flush` | ❌ | ✅ |
+| `ipfs ls` | ✅ | ✅ |
+| `ipfs mkdir` | ❌ | ✅ |
+| `ipfs mv` | ✅ | ✅ |
+| `ipfs read` | ✅ | ✅ |
+| `ipfs rm` | ❌ | ✅ |
+| `ipfs stat` | ✅ | ✅ |
+| `ipfs write` | ❌ | ✅ |
+
+### 4. Streaming APIs by default
 
 ---
 
