@@ -193,7 +193,7 @@ For clarity, the API movement/renaming changes are as follows:
 Rather than explicitly splitting MFS from the rest of IPFS, we can use MFS paths to refer to content on our local node and IPFS paths to refer to content on the wider IPFS network. We can draw an analogy here with way we use Unix paths and URLs today for working with our OS and the Internet. Where it makes sense, we can allow MFS paths in the root level API methods and IPFS paths in the MFS API methods. This has already been proven possible as many MFS API methods already accept IPFS paths.
 
 | Method | Accepts IPFS paths | Accepts MFS paths |
-|---|---|
+|---|---|---|
 | `ipfs import` | ❌ | ❌ |
 | `ipfs cp` | ✅ | ✅ |
 | `ipfs get` | ✅ | ✅ |
