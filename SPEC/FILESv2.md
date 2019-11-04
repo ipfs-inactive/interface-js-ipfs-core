@@ -53,7 +53,7 @@ The `type` field in objects returned differs between calls to `ls` and `files.ls
 
 API methods should, where appropriate, be streaming by default and there should only be one, perferably language native, way to stream data from IPFS.
 
-For some directories `ls`/`files.ls` is simply unusable due to the size of the directory. The listing does not fit in memory or is so large that when it is attempted to be retrieved it takes so long that it appears to have stalled. This not only a bad user experience but makes IPFS unusable for big data storage. Streaming APIs actually play very well with the way that data is stored and retrieved from peers in IPFS and improves UX by providing user with feedback as soon as the first chunk arrives, rather than waiting (potentially forever) for an operation to complete.
+For some directories `ls`/`files.ls` is simply unusable due to the size of the directory. The listing does not fit in memory or is so large that when it is attempted to be retrieved it takes so long that it appears to have stalled. This not only a bad user experience but makes IPFS unusable for big data storage. Streaming APIs actually play very well with the way that data is stored and retrieved from peers in IPFS and improves UX by providing the user with feedback as soon as the first chunk arrives, rather than waiting (potentially forever) for an operation to complete.
 
 In js-ipfs we have alternatives to non-streaming APIs using Node.js streams and pull streams. However, neither of those are browser native, the latter is less widely used and we've ended up with a bloated API surface area, large bundle size, and user confusion around which to use by offering 3 different versions of a single API method.
 
@@ -138,7 +138,7 @@ Adding imported files to MFS also solves the problem of files not having names, 
 
 #### 1.2 Changes to returned values
 
-1. Importing a single file will now yield two entries, one for the imported file and one for the containing directory. Note this change can be considered almost backwards compatible: in the current API you'd receive an array of one value which you would access like `files[0]`. If you collect the result in the new API you'd still access it like that.
+1. Importing a single file will now yield two entries, one for the imported file and one for the containing directory. Note this change can be considered almost backwards compatible; in the current API you'd receive an array of one value which you would access like `files[0]`. If you collect the entries in the new API you'd still access it like that.
 2. Instead of a `hash` property, entries will instead have a `cid` property. In entries yielded from core it will be a CID instance, not a string (as agreed in [ipfs/interface-js-ipfs-core#394](https://github.com/ipfs/interface-js-ipfs-core/issues/394)). In the HTTP API/CLI it will necessarily be a string, encoded in base32 by default or whatever `?cid-base`/`--cid-base` option value was requested.
 
 Example:
@@ -198,7 +198,9 @@ For clarity, the API movement/renaming changes are as follows:
 
 ### 5. Allow both IPFS and MFS paths in API methods
 
-Rather than explicitly splitting MFS from the rest of IPFS, we can use MFS paths to refer to content on our local node and IPFS paths to refer to content on the wider IPFS network. We can draw an analogy here with way we use Unix paths and URLs today for working with our OS and the Internet. Where it makes sense, we can allow MFS paths in the root level API methods and IPFS paths in the MFS API methods. This has already been proven possible as many MFS API methods already accept IPFS paths.
+Rather than segregating MFS from the rest of IPFS, we can use MFS paths to refer to content on our local node and IPFS paths to refer to content on the wider IPFS network. We can draw an analogy here with way we use Unix paths and URLs today for working with files in our OS and the Internet respectively. This is natural for many computer users and it's widely understood that the path at the end of a domain navigates through a set of files in much the same way as a path navigates through a set of files on an OS.
+
+Where it makes sense, we can allow MFS paths in the root level API methods and IPFS paths in the MFS API methods. This has already been proven possible as many MFS API methods already accept IPFS paths.
 
 | Method | Accepts IPFS paths | Accepts MFS paths |
 |---|---|---|
@@ -218,10 +220,10 @@ The `/ipfs` directory in MFS problem can simply be avoided by either assuming IP
 
 ### 6. Streaming APIs by default
 
-The file system APIs will be streaming by default. Due to the way we store and retrieve data it makes sense for our API methods to stream content when retrieving it locally or over the network. Buffering APIs can cause OOM issues, give no feedback to the user on progress and they can be trivially wrapped to collect all items in order to achieve the same effect.
+The file system APIs will be streaming by default. Due to the way we store and retrieve data it makes sense for our API methods to stream content when retrieving it locally or over the network. Buffering APIs can cause OOM issues, give no feedback to the user on progress and they can be trivially wrapped to collect all items in order to achieve the same effect as a buffering API.
 
 Streaming APIs will use a language native / standard library feature that is supported in all runtimes that IPFS is actively targeting. This prevents bloat and by only supporting one streaming mechanism it reduces API surface area.
 
 #### 6.1 Abortable and with default inactivity timeout
 
-Sometimes content is simply unavailable or the user has second thoughts about downloading a 500GB file. The file APIs will be abortable and will abort automatically after a resaonable period of inactivity. Aborting will be threaded through subsystems so that resources can be cleaned up correctly. All file system APIs will have a `--timeout` option.
+Sometimes content is simply unavailable or the user has second thoughts about downloading a 500GB file. The file APIs will be abortable and will abort automatically after a resaonable period of inactivity. Aborting will be threaded through subsystems so that resources can be cleaned up correctly. All file system APIs will have a new `--timeout` option to achieve this.
