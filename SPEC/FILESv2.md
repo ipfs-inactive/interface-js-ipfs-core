@@ -75,13 +75,13 @@ Furthermore, when you expand IPFS to InterPlanetary File System, it sounds unnec
 
 Subjectively, namespacing APIs designed to interact with files in a `files` namespace is a nice way to compartmentalise them from other APIs in IPFS. Objectively though, the fact remains that typing `ipfs files read` is significantly longer than typing `ipfs read`. Considering that IPFS is primarily a file system, it makes sense for all the file system APIs to be "front and center" and thus available on the root namespace as `add`, `cat`, `get` and `ls` already are.
 
-### 5. Users do not understand when to use `add` and `write`
+### 5. Users do not understand when to use `add` vs `files.write`
 
 The `add` and `write` API methods are a little too similar in name and cause confusion amongst users who do not understand the difference or in what situations one or the other should be used. This is because `write` effectively adds content to IPFS as well. The current `add` API method is more synonymous to importing data into IPFS from an outside source and could perhaps be renamed to more accurately reflect this.
 
 ### 6. Pinning is an alien concept
 
-The act of pinning, even though the concept is relatively simple, is simply not widely understood by anyone outside of the IPFS world. As mentioned earlier the pin APIs are necessary for lower level APIs present in IPFS but we could remove the need for pinning and the overhead it creates when importing files if imported files were simply added to MFS.
+The act of pinning, even though the concept is relatively simple, is simply not widely recognised by anyone outside of the IPFS world. As mentioned earlier the pin APIs are necessary for lower level APIs present in IPFS but we could remove the need for pinning and the overhead it creates when importing files if imported files were simply added to MFS.
 
 ### 6.1. IPFS is not a small focused core
 
@@ -91,17 +91,95 @@ If imported files are added to MFS, we _could_ remove `pin` in it's entirety. Ot
 
 This is probably outside the scope of this proposal but worth entertaining nethertheless.
 
+### 7. `cat` and `files.read` are the same
+
+These methods perform the same operation, and `files.read` also already works with both MFS and IPFS paths.
+
+## Solutions
+
+### 1. Rename `add` to `import`
+
+"Import" more accurately describes what is occurring and will prevent confusion with `write`.
+
+```sh
+ipfs import --help
+# ...
+```
+
+It's also the [current name of the API method to import data into `go-filecoin`](https://github.com/filecoin-project/go-filecoin/blob/204837f72d20bd89889fcf92061c8846b238ccf4/cmd/go-filecoin/client.go#L62).
+
+#### 1.1 Add to MFS
+
+Adding files to MFS removes any performance overhead of creating/maintaining pinset DAG nodes, unburdens the user from understanding pinning, improves visibility of added files and makes it significantly easier to find or remove files that were previously imported.
+
+The `ipfs import` command _optionally_ takes a MFS path option `--dest`, a directory into which imported files are placed. Note the destination directory is automatically created (but not any parents). If the destination directory exists already then an error is thrown, unless the `--overwrite` flag is set. This causes any existing files with the same name as the imported files to be overwritten.
+
+If the destination directory is not specified, IPFS creates a new directory for the import with a timestamp (to aid the user in finding previously imported files). e.g. `/imports/2019103114555959/[imported files]`. If the directory already exists, it wll be suffixed with a number, e.g. `2019103114555959-1`.
+
+```sh
+ipfs import document.txt --dest=/my-docs
+```
+
+Adding imported files to MFS also solves the problem of files not having names, since they will always be added to a directory from which they can be accessed.
+
+#### 1.2 Changes to returned values
+
+1. Importing a single file will now yield two entries, one for the imported file and one for the containing directory. Note this change is actually backwards compatible: in the current API you'd receive an array of one value which you would access like `files[0]`.
+2. Instead of a `hash` property, entries will instead have a `cid` property. In entries yielded from core it will be a CID instance, not a string (as agreed in [ipfs/interface-js-ipfs-core#394](https://github.com/ipfs/interface-js-ipfs-core/issues/394)). In the HTTP API/CLI it will necessarily be a string, encoded in base32 by default or whatever `?cid-base`/`--cid-base` option value was requested.
+
+Example:
+
+```js
+{
+  path: '/imports/2019103114555959/myfile',
+  cid: CID,
+  size: 1234
+},
+{
+  path: '/imports/2019103114555959',
+  cid: CID,
+  size: 1234
+}
+```
+
+#### 1.3 Remove `pin` option
+
+If users actually want to pin the data _as well_ they should use the pinning API after importing.
+
+#### 1.4 Remove `wrap-with-directory` option
+
+Every import will effectively be "wrapped" in a directory so this option is no longer required.
+
+### 2. Remove `cat`
+
+For people for which cat means 🐈, the API method will be named `read`, which is the more obvious opposite to `write` anyway. It will also be streaming by default.
+
+### 3. Hoist all methods in the `files` namespace to the root level
+
+Methods that are integral for interacting with the InterPlanetary File System will reside on the root namespace. The reasoning is that these commands are important and will be used often so need to be given priority and ease of access over other APIs that IPFS exposes. It will more effectively advertise what the IPFS core functionality is to aid onboarding and understanding of IPFS in general.
+
+For clarity, the API movement/renaming changes are as follows:
+
+| Old name | New name |
+|---|---|
+| `ipfs add` | `ipfs import` |
+| `ipfs cat` | (removed) |
+| `ipfs get` | `ipfs get` |
+| `ipfs ls` | (removed) |
+| `ipfs files cp` | `ipfs cp` |
+| `ipfs files flush` | `ipfs flush` |
+| `ipfs files ls` | `ipfs ls` |
+| `ipfs files mkdir` | `ipfs mkdir` |
+| `ipfs files mv` | `ipfs mv` |
+| `ipfs files read` | `ipfs read` |
+| `ipfs files rm` | `ipfs rm` |
+| `ipfs files stat` | `ipfs stat` |
+| `ipfs files write` | `ipfs write` |
+
 ---
 
 # Rough notes
 
-## Problems
-
-* Defaults are insane `truncate`, `create` etc.
-
 ## Solutions
 
-* rename add -> import
-* create alias add for import
-* import takes dest dir and adds to mfs
-* Remove pin option from add
+* Distinguish by path type - anything that doesn't start with `/ipfs` is MFS.
