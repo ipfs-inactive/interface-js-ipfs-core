@@ -109,6 +109,8 @@ The common case of importing a single file to IPFS gives us back a CID but the f
 
 ## Solutions
 
+The solutions proposed below solve the majority of the problems but not all of them. Each solution summarises the problem that is being addressed but it is strongly recommended that the [problems](#problems) section is studied for the full detail.
+
 ### 1. Rename `add` to `import`
 
 "Import" more accurately describes what is occurring and will prevent confusion with `write`.
@@ -118,11 +120,11 @@ ipfs import --help
 # ...
 ```
 
-It's also the [current name of the API method to import data into `go-filecoin`](https://github.com/filecoin-project/go-filecoin/blob/204837f72d20bd89889fcf92061c8846b238ccf4/cmd/go-filecoin/client.go#L62).
+It's also the [current name of the API method to import data into `go-filecoin`](https://github.com/filecoin-project/go-filecoin/blob/204837f72d20bd89889fcf92061c8846b238ccf4/cmd/go-filecoin/client.go#L62), which is reassuring.
 
-#### 1.1 Add to MFS
+#### 1.1 Always add to MFS
 
-Adding files to MFS removes any performance overhead of creating/maintaining pinset DAG nodes, unburdens the user from understanding pinning, improves visibility of added files and makes it significantly easier to find or remove files that were previously imported.
+Adding files to MFS removes any performance overhead of creating/maintaining pinset DAG nodes, unburdens the user from understanding pinning (for the most part), improves visibility of added files and makes it significantly easier to find or remove files that were previously imported.
 
 The `ipfs import` command _optionally_ takes a MFS path option `--dest`, a directory into which imported files are placed. Note the destination directory is automatically created (but not any parents). If the destination directory exists already then an error is thrown, unless the `--overwrite` flag is set. This causes any existing files with the same name as the imported files to be overwritten.
 
@@ -136,7 +138,7 @@ Adding imported files to MFS also solves the problem of files not having names, 
 
 #### 1.2 Changes to returned values
 
-1. Importing a single file will now yield two entries, one for the imported file and one for the containing directory. Note this change is actually backwards compatible: in the current API you'd receive an array of one value which you would access like `files[0]`.
+1. Importing a single file will now yield two entries, one for the imported file and one for the containing directory. Note this change can be considered almost backwards compatible: in the current API you'd receive an array of one value which you would access like `files[0]`. If you collect the result in the new API you'd still access it like that.
 2. Instead of a `hash` property, entries will instead have a `cid` property. In entries yielded from core it will be a CID instance, not a string (as agreed in [ipfs/interface-js-ipfs-core#394](https://github.com/ipfs/interface-js-ipfs-core/issues/394)). In the HTTP API/CLI it will necessarily be a string, encoded in base32 by default or whatever `?cid-base`/`--cid-base` option value was requested.
 
 Example:
@@ -154,19 +156,25 @@ Example:
 }
 ```
 
+In js-ipfs there is a restriction when importing that disallows multiple root directories. This change would remove this restriction since there will always be a common root.
+
 #### 1.3 Remove `pin` option
 
-If users actually want to pin the data _as well_ they should use the pinning API after importing.
+If users actually want to pin the data _as well_ they should use the pinning API after importing. Users may wish to do this in order to ensure the original files are retained by their node in the case where the imported files are changed.
 
 #### 1.4 Remove `wrap-with-directory` option
 
 Every import will effectively be "wrapped" in a directory so this option is no longer required.
 
-### 2. Remove `cat`
+### 2. Rename `get` to `export`
 
-For people for which cat means 🐈, the API method will be named `read`, which is the more obvious opposite to `write` anyway. It will also be streaming by default.
+Renaming to `export` will more accurately describe the intention of the method.
 
-### 3. Hoist all methods in the `files` namespace to the root level
+### 3. Remove `cat`
+
+For the people to whom cat means 🐈, the API method is removed and `read` used instead, which is the more obvious opposite to `write` anyway and supports IPFS paths.
+
+### 4. Hoist all methods in the `files` namespace to the root level
 
 Methods that are integral for interacting with the InterPlanetary File System will reside on the root namespace. The reasoning is that these commands are important and will be used often so need to be given priority and ease of access over other APIs that IPFS exposes. It will more effectively advertise what the IPFS core functionality is to aid onboarding and understanding of IPFS in general.
 
@@ -176,7 +184,7 @@ For clarity, the API movement/renaming changes are as follows:
 |---|---|
 | `ipfs add` | `ipfs import` |
 | `ipfs cat` | (removed) |
-| `ipfs get` | `ipfs get` |
+| `ipfs get` | `ipfs export` |
 | `ipfs ls` | (removed) |
 | `ipfs files cp` | `ipfs cp` |
 | `ipfs files flush` | `ipfs flush` |
@@ -194,10 +202,10 @@ Rather than explicitly splitting MFS from the rest of IPFS, we can use MFS paths
 
 | Method | Accepts IPFS paths | Accepts MFS paths |
 |---|---|---|
-| `ipfs import` | ❌ | ❌ |
 | `ipfs cp` | ✅ | ✅ |
-| `ipfs get` | ✅ | ✅ |
+| `ipfs export` | ✅ | ✅ |
 | `ipfs flush` | ❌ | ✅ |
+| `ipfs import` | ❌ | ❌ |
 | `ipfs ls` | ✅ | ✅ |
 | `ipfs mkdir` | ❌ | ✅ |
 | `ipfs mv` | ✅ | ✅ |
@@ -206,12 +214,14 @@ Rather than explicitly splitting MFS from the rest of IPFS, we can use MFS paths
 | `ipfs stat` | ✅ | ✅ |
 | `ipfs write` | ❌ | ✅ |
 
-### 4. Streaming APIs by default
+The `/ipfs` directory in MFS problem can simply be avoided by either assuming IPFS path (the current solution) or by denying writes to a directory of this name.
 
----
+### 6. Streaming APIs by default
 
-# Rough notes
+The file system APIs will be streaming by default. Due to the way we store and retrieve data it makes sense for our API methods to stream content when retrieving it locally or over the network. Buffering APIs can cause OOM issues, give no feedback to the user on progress and they can be trivially wrapped to collect all items in order to achieve the same effect.
 
-## Solutions
+Streaming APIs will use a language native / standard library feature that is supported in all runtimes that IPFS is actively targeting. This prevents bloat and by only supporting one streaming mechanism it reduces API surface area.
 
-* Distinguish by path type - anything that doesn't start with `/ipfs` is MFS.
+#### 6.1 Abortable and with default inactivity timeout
+
+Sometimes content is simply unavailable or the user has second thoughts about downloading a 500GB file. The file APIs will be abortable and will abort automatically after a resaonable period of inactivity. Aborting will be threaded through subsystems so that resources can be cleaned up correctly. All file system APIs will have a `--timeout` option.
