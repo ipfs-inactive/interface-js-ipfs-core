@@ -53,7 +53,7 @@ The `type` field in objects returned differs between calls to `ls` and `files.ls
 
 API methods should, where appropriate, be streaming by default and there should only be one, perferably language native, way to stream data from IPFS.
 
-For some directories `ls`/`files.ls` is simply unusable due to the size of the directory. The listing does not fit in memory or is so large that when it is attempted to be retrieved it takes so long that it appears to have stalled. This not only a bad user experience but makes IPFS unusable for big data storage. Streaming APIs actually play very well with the way that data is stored and retrieved from peers in IPFS and improves UX by providing the user with feedback as soon as the first chunk arrives, rather than waiting (potentially forever) for an operation to complete.
+For some directories `ls`/`files.ls` is simply unusable due to the size of the directory. The listing does not fit in memory or is so large that when it is attempted to be retrieved it takes so long that it appears to have stalled. This is not only a bad user experience but makes IPFS unusable for big data storage. Streaming APIs actually play very well with the way that data is stored and retrieved from peers in IPFS and improves UX by providing the user with feedback as soon as the first chunk arrives, rather than waiting (potentially forever) for an operation to complete.
 
 In js-ipfs we have alternatives to non-streaming APIs using Node.js streams and pull streams. However, neither of those are browser native, the latter is less widely used and we've ended up with a bloated API surface area, large bundle size, and user confusion around which to use by offering 3 different versions of a single API method.
 
@@ -227,3 +227,11 @@ Streaming APIs will use a language native / standard library feature that is sup
 #### 6.1 Abortable and with default inactivity timeout
 
 Sometimes content is simply unavailable or the user has second thoughts about downloading a 500GB file. The file APIs will be abortable and will abort automatically after a resaonable period of inactivity. Aborting will be threaded through subsystems so that resources can be cleaned up correctly. All file system APIs will have a new `--timeout` option to achieve this.
+
+---
+
+## Fallout
+
+As with all good solutions there are trade offs. Here are the potential issues that can be forseen if we implement these solutions.
+
+TODO
