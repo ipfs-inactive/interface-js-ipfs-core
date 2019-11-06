@@ -37,7 +37,6 @@
   "homepage": "https://github.com/ipfs/interface-ipfs-core#readme",
   "dependencies": {
     "async": "^2.6.2",
-    "bl": "^3.0.0",
     "bs58": "^4.0.1",
     "chai": "^4.2.0",
     "chai-as-promised": "^7.1.1",
@@ -46,6 +45,7 @@
     "delay": "^4.3.0",
     "dirty-chai": "^2.0.1",
     "es6-promisify": "^6.0.2",
+    "get-stream": "^5.1.0",
     "hat": "0.0.3",
     "ipfs-block": "~0.8.0",
     "ipfs-unixfs": "~0.1.16",
@@ -68,6 +68,7 @@
     "peer-id": "~0.12.0",
     "peer-info": "~0.15.0",
     "pull-stream": "^3.6.14",
+    "pull-to-promise": "^1.0.1",
     "pump": "^3.0.0",
     "readable-stream": "^3.1.1",
     "streaming-iterables": "^4.1.0",

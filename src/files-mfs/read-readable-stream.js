@@ -3,7 +3,7 @@
 
 const hat = require('hat')
 const { getDescribe, getIt, expect } = require('../utils/mocha')
-const bl = require('bl')
+const getStream = require('get-stream')
 
 /** @typedef { import("ipfsd-ctl").TestsInterface } TestsInterface */
 /**
@@ -25,17 +25,12 @@ module.exports = (common, options) => {
 
     it('should not read not found, expect error', () => {
       const testDir = `/test-${hat()}`
-
       const stream = ipfs.files.readReadableStream(`${testDir}/404`)
-      stream.on('data', () => {})
 
-      return new Promise((resolve) => {
-        stream.once('error', (err) => {
-          expect(err).to.exist()
-          expect(err.message).to.contain('does not exist')
-          resolve()
-        })
-      })
+      return expect(getStream(stream)).to.eventually.be.rejected
+        .and.be.an.instanceOf(Error)
+        .and.have.property('message')
+        .that.include('does not exist')
     })
 
     it('should read file', async () => {
@@ -46,13 +41,8 @@ module.exports = (common, options) => {
 
       const stream = ipfs.files.readReadableStream(`${testDir}/a`)
 
-      await new Promise((resolve, reject) => {
-        stream.pipe(bl((err, buf) => {
-          expect(err).to.not.exist()
-          expect(buf).to.eql(Buffer.from('Hello, world!'))
-          resolve()
-        }))
-      })
+      const buf = await getStream(stream)
+      expect(buf).to.eql('Hello, world!')
     })
   })
 }

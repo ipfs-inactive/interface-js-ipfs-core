@@ -3,6 +3,7 @@
 
 const hat = require('hat')
 const { getDescribe, getIt, expect } = require('../utils/mocha')
+const getStream = require('get-stream')
 
 /** @typedef { import("ipfsd-ctl").TestsInterface } TestsInterface */
 /**
@@ -24,16 +25,12 @@ module.exports = (common, options) => {
 
     it('should not ls not found file/dir, expect error', () => {
       const testDir = `/test-${hat()}`
-
       const stream = ipfs.files.lsReadableStream(`${testDir}/404`)
 
-      return new Promise((resolve) => {
-        stream.once('error', (err) => {
-          expect(err).to.exist()
-          expect(err.message).to.include('does not exist')
-          resolve()
-        })
-      })
+      return expect(getStream(stream)).to.eventually.be.rejected
+        .and.be.an.instanceOf(Error)
+        .and.have.property('message')
+        .that.include('does not exist')
     })
 
     it('should ls directory', async () => {
@@ -43,19 +40,13 @@ module.exports = (common, options) => {
       await ipfs.files.write(`${testDir}/b`, Buffer.from('Hello, world!'), { create: true })
 
       const stream = ipfs.files.lsReadableStream(testDir)
-      const entries = []
 
-      stream.on('data', entry => entries.push(entry))
+      const entries = await getStream.array(stream)
 
-      await new Promise((resolve) => {
-        stream.once('end', () => {
-          expect(entries.sort((a, b) => a.name.localeCompare(b.name))).to.eql([
-            { name: 'b', type: 0, size: 0, hash: '' },
-            { name: 'lv1', type: 0, size: 0, hash: '' }
-          ])
-          resolve()
-        })
-      })
+      expect(entries.sort((a, b) => a.name.localeCompare(b.name))).to.eql([
+        { name: 'b', type: 0, size: 0, hash: '' },
+        { name: 'lv1', type: 0, size: 0, hash: '' }
+      ])
     })
 
     it('should ls directory with long option', async () => {
@@ -65,29 +56,22 @@ module.exports = (common, options) => {
       await ipfs.files.write(`${testDir}/b`, Buffer.from('Hello, world!'), { create: true })
 
       const stream = ipfs.files.lsReadableStream(testDir, { long: true })
-      const entries = []
+      const entries = await getStream(stream)
 
-      stream.on('data', entry => entries.push(entry))
-
-      await new Promise((resolve) => {
-        stream.once('end', () => {
-          expect(entries.sort((a, b) => a.name.localeCompare(b.name))).to.eql([
-            {
-              name: 'b',
-              type: 0,
-              size: 13,
-              hash: 'QmcZojhwragQr5qhTeFAmELik623Z21e3jBTpJXoQ9si1T'
-            },
-            {
-              name: 'lv1',
-              type: 1,
-              size: 0,
-              hash: 'QmUNLLsPACCz1vLxQVkXqqLX5R1X345qqfHbsf67hvA3Nn'
-            }
-          ])
-          resolve()
-        })
-      })
+      expect(entries.sort((a, b) => a.name.localeCompare(b.name))).to.eql([
+        {
+          name: 'b',
+          type: 0,
+          size: 13,
+          hash: 'QmcZojhwragQr5qhTeFAmELik623Z21e3jBTpJXoQ9si1T'
+        },
+        {
+          name: 'lv1',
+          type: 1,
+          size: 0,
+          hash: 'QmUNLLsPACCz1vLxQVkXqqLX5R1X345qqfHbsf67hvA3Nn'
+        }
+      ])
     })
   })
 }

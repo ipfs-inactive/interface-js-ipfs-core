@@ -1,12 +1,13 @@
 /* eslint-env mocha */
 'use strict'
 
-const pull = require('pull-stream')
+const pullToPromise = require('pull-to-promise')
 
 module.exports = (createCommon, options) => {
-  const ipfsRefs = (ipfs) => (path, params) => new Promise((resolve, reject) => {
+  const ipfsRefs = (ipfs) => (path, params) => {
     const stream = ipfs.refsPullStream(path, params)
-    pull(stream, pull.collect((err, res) => err ? reject(err) : resolve(res)))
-  })
+
+    return pullToPromise.any(stream)
+  }
   require('./refs-tests')(createCommon, '.refsPullStream', ipfsRefs, options)
 }

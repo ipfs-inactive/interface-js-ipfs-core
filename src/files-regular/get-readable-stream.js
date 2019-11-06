@@ -27,23 +27,25 @@ module.exports = (common, options) => {
 
     after(() => common.teardown())
 
-    it('should return a Readable Stream of Readable Streams', () => {
+    it('should return a Readable Stream of Readable Streams', async () => {
       const stream = ipfs.getReadableStream(fixtures.smallFile.cid)
-      const files = []
 
-      return new Promise((resolve) => {
+      // I was not able to use 'get-stream' module here
+      // as it exceeds the timeout. I think it might be related
+      // to 'pump' module that get-stream uses
+      const files = await new Promise((resolve, reject) => {
+        const filesArr = []
         stream.pipe(through.obj((file, enc, next) => {
           file.content.pipe(concat((content) => {
-            files.push({ path: file.path, content: content })
+            filesArr.push({ path: file.path, content: content })
             next()
           }))
-        }, () => {
-          expect(files).to.be.length(1)
-          expect(files[0].path).to.eql(fixtures.smallFile.cid)
-          expect(files[0].content.toString()).to.contain('Plz add me!')
-          resolve()
-        }))
+        }, () => resolve(filesArr)))
       })
+
+      expect(files).to.be.length(1)
+      expect(files[0].path).to.eql(fixtures.smallFile.cid)
+      expect(files[0].content.toString()).to.contain('Plz add me!')
     })
   })
 }

@@ -40,10 +40,8 @@ module.exports = (common, options) => {
       expect(peer).to.have.a.property('peer')
       expect(PeerId.isPeerId(peer.peer)).to.equal(true)
       expect(peer).to.not.have.a.property('latency')
-
-      // only available in 0.4.5
-      // expect(peer).to.have.a.property('muxer')
-      // expect(peer).to.not.have.a.property('streams')
+      expect(peer).to.have.a.property('muxer')
+      expect(peer).to.not.have.a.property('streams')
     })
 
     it('should list peers this node is connected to with verbose option', async () => {
@@ -56,10 +54,8 @@ module.exports = (common, options) => {
       expect(peer).to.have.a.property('peer')
       expect(peer).to.have.a.property('latency')
       expect(peer.latency).to.match(/n\/a|[0-9]+m?s/) // n/a or 3ms or 3s
-
-      // Only available in 0.4.5
-      // expect(peer).to.have.a.property('muxer')
-      // expect(peer).to.have.a.property('streams')
+      expect(peer).to.have.a.property('muxer')
+      expect(peer).to.have.a.property('streams')
     })
 
     function getConfig (addrs) {

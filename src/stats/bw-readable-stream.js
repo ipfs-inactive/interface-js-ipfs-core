@@ -3,6 +3,7 @@
 
 const { expectIsBandwidth } = require('./utils')
 const { getDescribe, getIt } = require('../utils/mocha')
+const getStream = require('get-stream')
 
 /** @typedef { import("ipfsd-ctl").TestsInterface } TestsInterface */
 /**
@@ -22,16 +23,12 @@ module.exports = (common, options) => {
 
     after(() => common.teardown())
 
-    it('should get bandwidth stats over readable stream', () => {
+    it('should get bandwidth stats over readable stream', async () => {
       const stream = ipfs.stats.bwReadableStream()
 
-      return new Promise((resolve) => {
-        stream.once('data', (data) => {
-          expectIsBandwidth(null, data)
-          stream.destroy()
-          resolve()
-        })
-      })
+      const [data] = await getStream.array(stream)
+
+      expectIsBandwidth(null, data)
     })
   })
 }

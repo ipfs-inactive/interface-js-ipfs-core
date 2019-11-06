@@ -3,6 +3,7 @@
 
 const { fixtures } = require('./utils')
 const { getDescribe, getIt, expect } = require('../utils/mocha')
+const getStream = require('get-stream')
 
 /** @typedef { import("ipfsd-ctl").TestsInterface } TestsInterface */
 /**
@@ -22,7 +23,7 @@ module.exports = (common, options) => {
 
     after(() => common.teardown())
 
-    it('should add readable stream of valid files and dirs', function () {
+    it('should add readable stream of valid files and dirs', async function () {
       const content = (name) => ({
         path: `test-folder/${name}`,
         content: fixtures.directory.files[name]
@@ -43,22 +44,13 @@ module.exports = (common, options) => {
 
       const stream = ipfs.addReadableStream()
 
-      stream.on('error', (err) => {
-        expect(err).to.not.exist()
-      })
+      files.forEach((file) => stream.write(file))
+      stream.end()
 
-      stream.on('data', (file) => {
-        if (file.path === 'test-folder') {
-          expect(file.hash).to.equal(fixtures.directory.cid)
-        }
-      })
+      const filesArray = await getStream.array(stream)
+      const file = filesArray[filesArray.length - 1]
 
-      return new Promise((resolve, reject) => {
-        stream.on('end', resolve)
-
-        files.forEach((file) => stream.write(file))
-        stream.end()
-      })
+      expect(file.hash).to.equal(fixtures.directory.cid)
     })
   })
 }

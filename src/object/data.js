@@ -40,7 +40,7 @@ module.exports = (common, options) => {
       if (typeof data === 'string') {
         data = Buffer.from(data)
       }
-      expect(testObj.Data).to.eql(data)
+      expect(testObj.Data).to.deep.equal(data)
     })
 
     it('should get data by base58 encoded multihash', async () => {
@@ -57,7 +57,7 @@ module.exports = (common, options) => {
       if (typeof data === 'string') {
         data = Buffer.from(data)
       }
-      expect(testObj.Data).to.eql(data)
+      expect(testObj.Data).to.deep.equal(data)
     })
 
     it('should get data by base58 encoded multihash string', async () => {

@@ -1,7 +1,7 @@
 /* eslint-env mocha */
 'use strict'
 
-const { getDescribe, getIt } = require('../utils/mocha')
+const { getDescribe, getIt, expect } = require('../utils/mocha')
 
 /** @typedef { import("ipfsd-ctl").TestsInterface } TestsInterface */
 /**
@@ -24,8 +24,16 @@ module.exports = (common, options) => {
 
     after(() => common.teardown())
 
-    it('should connect to a peer', () => {
-      return ipfsA.swarm.connect(ipfsB.peerId.addresses[0])
+    it('should connect to a peer', async () => {
+      let peers
+
+      peers = await ipfsA.swarm.peers()
+      expect(peers).to.have.length(0)
+
+      await ipfsA.swarm.connect(ipfsB.peerId.addresses[0])
+
+      peers = await ipfsA.swarm.peers()
+      expect(peers).to.have.length.above(0)
     })
   })
 }

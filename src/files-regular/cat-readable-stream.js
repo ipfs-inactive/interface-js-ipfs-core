@@ -2,8 +2,8 @@
 'use strict'
 
 const { fixtures } = require('./utils')
-const bl = require('bl')
 const { getDescribe, getIt, expect } = require('../utils/mocha')
+const getStream = require('get-stream')
 
 /** @typedef { import("ipfsd-ctl").TestsInterface } TestsInterface */
 /**
@@ -27,19 +27,14 @@ module.exports = (common, options) => {
 
     after(() => common.teardown())
 
-    it('should return a Readable Stream for a CID', () => {
+    it('should return a Readable Stream for a CID', async () => {
       const stream = ipfs.catReadableStream(fixtures.bigFile.cid)
+      const data = await getStream.buffer(stream)
 
-      return new Promise((resolve) => {
-        stream.pipe(bl((err, data) => {
-          expect(err).to.not.exist()
-          expect(data).to.eql(fixtures.bigFile.data)
-          resolve()
-        }))
-      })
+      expect(data).to.eql(fixtures.bigFile.data)
     })
 
-    it('should export a chunk of a file in a Readable Stream', () => {
+    it('should export a chunk of a file in a Readable Stream', async () => {
       const offset = 1
       const length = 3
 
@@ -48,13 +43,8 @@ module.exports = (common, options) => {
         length
       })
 
-      return new Promise((resolve) => {
-        stream.pipe(bl((err, data) => {
-          expect(err).to.not.exist()
-          expect(data.toString()).to.equal('lz ')
-          resolve()
-        }))
-      })
+      const data = await getStream.buffer(stream)
+      expect(data.toString()).to.equal('lz ')
     })
   })
 }

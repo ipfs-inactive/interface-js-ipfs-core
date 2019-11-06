@@ -2,8 +2,8 @@
 'use strict'
 
 const { fixtures } = require('./utils')
-const pull = require('pull-stream')
 const { getDescribe, getIt, expect } = require('../utils/mocha')
+const pullToPromise = require('pull-to-promise')
 
 /** @typedef { import("ipfsd-ctl").TestsInterface } TestsInterface */
 /**
@@ -24,23 +24,16 @@ module.exports = (common, options) => {
     before(() => ipfs.add(fixtures.smallFile.data))
     after(() => common.teardown())
 
-    it('should return a Pull Stream for a CID', () => {
+    it('should return a Pull Stream for a CID', async () => {
       const stream = ipfs.catPullStream(fixtures.smallFile.cid)
 
-      return new Promise((resolve) => {
-        pull(
-          stream,
-          pull.concat((err, data) => {
-            expect(err).to.not.exist()
-            expect(data.length).to.equal(fixtures.smallFile.data.length)
-            expect(data).to.eql(fixtures.smallFile.data.toString())
-            resolve()
-          })
-        )
-      })
+      const data = Buffer.concat(await pullToPromise.any(stream))
+
+      expect(data.length).to.equal(fixtures.smallFile.data.length)
+      expect(data.toString()).to.deep.equal(fixtures.smallFile.data.toString())
     })
 
-    it('should export a chunk of a file in a Pull Stream', () => {
+    it('should export a chunk of a file in a Pull Stream', async () => {
       const offset = 1
       const length = 3
 
@@ -49,16 +42,8 @@ module.exports = (common, options) => {
         length
       })
 
-      return new Promise((resolve) => {
-        pull(
-          stream,
-          pull.concat((err, data) => {
-            expect(err).to.not.exist()
-            expect(data.toString()).to.equal('lz ')
-            resolve()
-          })
-        )
-      })
+      const data = Buffer.concat(await pullToPromise.any(stream))
+      expect(data.toString()).to.equal('lz ')
     })
   })
 }

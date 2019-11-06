@@ -1,13 +1,12 @@
 /* eslint-env mocha */
 'use strict'
 
-const concat = require('concat-stream')
+const getStream = require('get-stream')
 
 module.exports = (createCommon, options) => {
-  const ipfsRefs = (ipfs) => (path, params, cb) => new Promise((resolve, reject) => {
+  const ipfsRefs = (ipfs) => (path, params) => {
     const stream = ipfs.refsReadableStream(path, params)
-    stream.on('error', reject)
-    stream.pipe(concat(resolve))
-  })
+    return getStream.array(stream)
+  }
   require('./refs-tests')(createCommon, '.refsReadableStream', ipfsRefs, options)
 }

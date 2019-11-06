@@ -3,8 +3,7 @@
 
 const hat = require('hat')
 const { getDescribe, getIt, expect } = require('../utils/mocha')
-const pull = require('pull-stream/pull')
-const collect = require('pull-stream/sinks/collect')
+const pullToPromise = require('pull-to-promise')
 
 /** @typedef { import("ipfsd-ctl").TestsInterface } TestsInterface */
 /**
@@ -27,16 +26,10 @@ module.exports = (common, options) => {
     it('should not read not found, expect error', () => {
       const testDir = `/test-${hat()}`
 
-      return new Promise((resolve) => {
-        pull(
-          ipfs.files.readPullStream(`${testDir}/404`),
-          collect((err) => {
-            expect(err).to.exist()
-            expect(err.message).to.contain('does not exist')
-            resolve()
-          })
-        )
-      })
+      return expect(pullToPromise.any(ipfs.files.readPullStream(`${testDir}/404`))).to.eventually.be.rejected
+        .and.be.an.instanceOf(Error)
+        .and.have.property('message')
+        .that.include('does not exist')
     })
 
     it('should read file', async () => {
@@ -45,16 +38,9 @@ module.exports = (common, options) => {
       await ipfs.files.mkdir(testDir)
       await ipfs.files.write(`${testDir}/a`, Buffer.from('Hello, world!'), { create: true })
 
-      await new Promise((resolve, reject) => {
-        pull(
-          ipfs.files.readPullStream(`${testDir}/a`),
-          collect((err, bufs) => {
-            expect(err).to.not.exist()
-            expect(bufs).to.eql([Buffer.from('Hello, world!')])
-            resolve()
-          })
-        )
-      })
+      const bufs = await pullToPromise.any(ipfs.files.readPullStream(`${testDir}/a`))
+
+      expect(bufs).to.eql([Buffer.from('Hello, world!')])
     })
   })
 }
