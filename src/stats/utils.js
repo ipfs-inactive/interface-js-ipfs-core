@@ -57,3 +57,18 @@ exports.expectIsRepo = (err, res) => {
   expect(res.repoPath).to.be.a('string')
   expect(res.version).to.be.a('string')
 }
+
+exports.expectIsRepoHumanized = (err, res) => {
+  expect(err).to.not.exist()
+  expect(res).to.exist()
+  expect(res).to.have.a.property('numObjects')
+  expect(res).to.have.a.property('repoSize')
+  expect(res).to.have.a.property('repoPath')
+  expect(res).to.have.a.property('version')
+  expect(res).to.have.a.property('storageMax')
+  expect(res.numObjects).to.be.a('number')
+  expect(res.repoSize).to.eql('30.1 kB')
+  expect(res.storageMax).to.eql('9.01 PB')
+  expect(res.repoPath).to.be.a('string')
+  expect(res.version).to.be.a('string')
+}
