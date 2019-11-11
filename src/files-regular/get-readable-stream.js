@@ -2,9 +2,9 @@
 'use strict'
 
 const { fixtures } = require('./utils')
-const concat = require('concat-stream')
 const through = require('through2')
 const { getDescribe, getIt, expect } = require('../utils/mocha')
+const getStream = require('get-stream')
 
 /** @typedef { import("ipfsd-ctl").TestsInterface } TestsInterface */
 /**
@@ -35,11 +35,10 @@ module.exports = (common, options) => {
       // to 'pump' module that get-stream uses
       const files = await new Promise((resolve, reject) => {
         const filesArr = []
-        stream.pipe(through.obj((file, enc, next) => {
-          file.content.pipe(concat((content) => {
-            filesArr.push({ path: file.path, content: content })
-            next()
-          }))
+        stream.pipe(through.obj(async (file, enc, next) => {
+          const content = await getStream.buffer(file.content)
+          filesArr.push({ path: file.path, content: content })
+          next()
         }, () => resolve(filesArr)))
       })
 

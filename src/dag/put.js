@@ -28,22 +28,20 @@ module.exports = (common, options) => {
     let pbNode
     let cborNode
 
-    before(() => {
+    before((done) => {
       const someData = Buffer.from('some data')
 
-      return new Promise((resolve, reject) => {
-        try {
-          pbNode = new DAGNode(someData)
-        } catch (err) {
-          return reject(err)
-        }
+      try {
+        pbNode = new DAGNode(someData)
+      } catch (err) {
+        return done(err)
+      }
 
-        cborNode = {
-          data: someData
-        }
+      cborNode = {
+        data: someData
+      }
 
-        resolve()
-      })
+      done()
     })
 
     it('should put dag-pb with default hash func (sha2-256)', () => {
