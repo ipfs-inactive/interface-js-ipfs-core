@@ -1,7 +1,7 @@
 /* eslint-env mocha */
 'use strict'
 
-const { expectIsRepo, expectIsRepoHumanized } = require('../stats/utils')
+const { expectIsRepo } = require('../stats/utils')
 const { getDescribe, getIt, expect } = require('../utils/mocha')
 
 module.exports = (createCommon, options) => {
@@ -45,7 +45,17 @@ module.exports = (createCommon, options) => {
     it('should get human readable repo stats', async () => {
       const res = await ipfs.repo.stat({ human: true })
 
-      expectIsRepoHumanized(null, res)
+      expect(res).to.exist()
+      expect(res).to.have.a.property('numObjects')
+      expect(res).to.have.a.property('repoSize')
+      expect(res).to.have.a.property('repoPath')
+      expect(res).to.have.a.property('version')
+      expect(res).to.have.a.property('storageMax')
+      expect(res.numObjects).to.be.a('number')
+      expect(res.repoSize).to.match(/\s.?B$/gm)
+      expect(res.storageMax).to.match(/\s.?B$/gm)
+      expect(res.repoPath).to.be.a('string')
+      expect(res.version).to.be.a('string')
     })
   })
 }
