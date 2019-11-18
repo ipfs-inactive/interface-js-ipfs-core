@@ -19,9 +19,9 @@ exports.expectIsBitswap = (err, stats) => {
   expect(stats).to.have.a.property('dupBlksReceived')
   expect(stats).to.have.a.property('dupDataReceived')
 
-  expect(stats.provideBufLen).to.a('number')
   expect(stats.wantlist).to.be.an('array')
   expect(stats.peers).to.be.an('array')
+  expect(isBigInt(stats.provideBufLen)).to.eql(true)
   expect(isBigInt(stats.blocksReceived)).to.eql(true)
   expect(isBigInt(stats.dataReceived)).to.eql(true)
   expect(isBigInt(stats.blocksSent)).to.eql(true)
