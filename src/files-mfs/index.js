@@ -5,7 +5,7 @@ const { createSuite } = require('../utils/suite')
 const tests = {
   mkdir: require('./mkdir'),
   write: require('./write'),
-  cparents: require('./cp'),
+  cp: require('./cp'),
   mv: require('./mv'),
   rm: require('./rm'),
   stat: require('./stat'),
