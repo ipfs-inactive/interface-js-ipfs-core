@@ -43,7 +43,7 @@ module.exports = (createCommon, options) => {
       })
     })
 
-    it.only('should get human readable bitswap stats', async () => {
+    it('should get human readable bitswap stats', async () => {
       const stats = await ipfs.bitswap.stat({ human: true })
 
       expect(stats).to.exist()
