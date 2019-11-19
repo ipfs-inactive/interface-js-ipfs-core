@@ -3,7 +3,7 @@
 
 const waterfall = require('async/waterfall')
 const { getDescribe, getIt, expect } = require('../utils/mocha')
-const { expectIsBitswap } = require('../stats/utils')
+const { expectIsBitswap, expectIsBitswapHumanReadable } = require('../stats/utils')
 
 module.exports = (createCommon, options) => {
   const describe = getDescribe(options)
@@ -46,30 +46,7 @@ module.exports = (createCommon, options) => {
     it('should get human readable bitswap stats', async () => {
       const stats = await ipfs.bitswap.stat({ human: true })
 
-      expect(stats).to.exist()
-      expect(stats).to.have.a.property('provideBufLen')
-        .and.to.be.a('number')
-      expect(stats).to.have.a.property('blocksReceived')
-        .and.to.be.a('number')
-      expect(stats).to.have.a.property('wantlist')
-        .and.to.be.a('string')
-        .and.to.match(/\[\d+\skeys\]$/gm)
-      expect(stats).to.have.a.property('peers')
-        .and.to.be.a('string')
-        .and.to.match(/\[\d+\]$/gm)
-      expect(stats).to.have.a.property('dupBlksReceived')
-        .and.to.be.a('number')
-      expect(stats).to.have.a.property('dupDataReceived')
-        .and.to.be.a('string')
-        .and.to.match(/[\d.]+\s[PTGMK]?B$/gm)
-      expect(stats).to.have.a.property('dataReceived')
-        .and.to.be.a('string')
-        .and.to.match(/[\d.]+\s[PTGMK]?B$/gm)
-      expect(stats).to.have.a.property('blocksSent')
-        .and.to.be.a('number')
-      expect(stats).to.have.a.property('dataSent')
-        .and.to.be.a('string')
-        .and.to.match(/[\d.]+\s[PTGMK]?B$/gm)
+      expectIsBitswapHumanReadable(null, stats)
     })
 
     it('should not get bitswap stats when offline', function (done) {

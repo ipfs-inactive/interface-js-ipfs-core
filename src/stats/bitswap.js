@@ -2,7 +2,7 @@
 'use strict'
 
 const { getDescribe, getIt, expect } = require('../utils/mocha')
-const { expectIsBitswap } = require('./utils')
+const { expectIsBitswap, expectIsBitswapHumanReadable } = require('./utils')
 
 module.exports = (createCommon, options) => {
   const describe = getDescribe(options)
@@ -40,6 +40,12 @@ module.exports = (createCommon, options) => {
       return ipfs.stats.bitswap().then((res) => {
         expectIsBitswap(null, res)
       })
+    })
+
+    it('should get human readable bitswap stats', async () => {
+      const stats = await ipfs.stats.bitswap({ human: true })
+
+      expectIsBitswapHumanReadable(null, stats)
     })
   })
 }
