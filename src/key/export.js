@@ -29,12 +29,9 @@ module.exports = (createCommon, options) => {
 
     after((done) => common.teardown(done))
 
-    it('should export "self" key', function (done) {
-      ipfs.key.export('self', hat(), (err, pem) => {
-        expect(err).to.not.exist()
-        expect(pem).to.exist()
-        done()
-      })
+    it('should export "self" key', async function () {
+      const pem = await ipfs.key.export('self', hat())
+      expect(pem).to.exist()
     })
   })
 }

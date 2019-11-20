@@ -30,25 +30,18 @@ module.exports = (createCommon, options) => {
 
     after((done) => common.teardown(done))
 
-    it('should rm a key', function (done) {
+    it('should rm a key', async function () {
       this.timeout(30 * 1000)
 
-      ipfs.key.gen(hat(), { type: 'rsa', size: 2048 }, (err, key) => {
-        expect(err).to.not.exist()
+      const key = await ipfs.key.gen(hat(), { type: 'rsa', size: 2048 })
 
-        ipfs.key.rm(key.name, (err, res) => {
-          expect(err).to.not.exist()
-          expect(res).to.exist()
-          expect(res).to.have.property('name', key.name)
-          expect(res).to.have.property('id', key.id)
+      const removeRes = await ipfs.key.rm(key.name)
+      expect(removeRes).to.exist()
+      expect(removeRes).to.have.property('name', key.name)
+      expect(removeRes).to.have.property('id', key.id)
 
-          ipfs.key.list((err, res) => {
-            expect(err).to.not.exist()
-            expect(res.find(k => k.name === key.name)).to.not.exist()
-            done()
-          })
-        })
-      })
+      const res = await ipfs.key.list()
+      expect(res.find(k => k.name === key.name)).to.not.exist()
     })
   })
 }

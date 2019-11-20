@@ -34,16 +34,13 @@ module.exports = (createCommon, options) => {
     after((done) => common.teardown(done))
 
     keyTypes.forEach((kt) => {
-      it(`should generate a new ${kt.type} key`, function (done) {
+      it(`should generate a new ${kt.type} key`, async function () {
         this.timeout(20 * 1000)
         const name = hat()
-        ipfs.key.gen(name, kt, (err, key) => {
-          expect(err).to.not.exist()
-          expect(key).to.exist()
-          expect(key).to.have.property('name', name)
-          expect(key).to.have.property('id')
-          done()
-        })
+        const key = await ipfs.key.gen(name, kt)
+        expect(key).to.exist()
+        expect(key).to.have.property('name', name)
+        expect(key).to.have.property('id')
       })
     })
   })
