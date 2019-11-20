@@ -468,7 +468,7 @@ an array of objects is returned, each of the form:
 }
 ```
 
-Here, each `path` corresponds to the name of a file, and `content` is a regular Readable stream with the raw contents of that file.
+Here, each `path` corresponds to the name of a file, and `content` is a Buffer with the raw contents of that file.
 
 **Example:**
 
