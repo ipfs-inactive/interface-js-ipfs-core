@@ -31,17 +31,13 @@ module.exports = (createCommon, options) => {
 
     after((done) => common.teardown(done))
 
-    it('should get the current state of pubsub', function (done) {
+    it('should get the current state of pubsub', async function () {
       this.timeout(50 * 1000)
 
-      ipfs.name.pubsub.state((err, res) => {
-        expect(err).to.not.exist()
-        expect(res).to.exist()
-        expect(res).to.have.property('enabled')
-        expect(res.enabled).to.be.eql(true)
-
-        done()
-      })
+      const res = await ipfs.name.pubsub.state()
+      expect(res).to.exist()
+      expect(res).to.have.property('enabled')
+      expect(res.enabled).to.be.eql(true)
     })
   })
 }
