@@ -38,23 +38,11 @@ module.exports = (createCommon, options) => {
 
     after((done) => common.teardown(done))
 
-    it('should add a pin', (done) => {
-      ipfs.pin.add(fixtures.files[0].cid, { recursive: false }, (err, pinset) => {
-        expect(err).to.not.exist()
-        expect(pinset).to.deep.include({
-          hash: fixtures.files[0].cid
-        })
-        done()
+    it('should add a pin', async () => {
+      const pinset = await ipfs.pin.add(fixtures.files[0].cid, { recursive: false })
+      expect(pinset).to.deep.include({
+        hash: fixtures.files[0].cid
       })
-    })
-
-    it('should add a pin (promised)', () => {
-      return ipfs.pin.add(fixtures.files[1].cid, { recursive: false })
-        .then((pinset) => {
-          expect(pinset).to.deep.include({
-            hash: fixtures.files[1].cid
-          })
-        })
     })
   })
 }
