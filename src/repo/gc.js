@@ -29,18 +29,17 @@ module.exports = (createCommon, options) => {
 
     after((done) => common.teardown(done))
 
-    it('should run garbage collection', (done) => {
-      ipfs.repo.gc((err, res) => {
-        expect(err).to.not.exist()
-        expect(res).to.exist()
-        done()
-      })
-    })
+    it('should run garbage collection', async () => {
+      const res = await ipfs.add(Buffer.from('apples'))
 
-    it('should run garbage collection (promised)', () => {
-      return ipfs.repo.gc().then((res) => {
-        expect(res).to.exist()
-      })
+      const pinset = await ipfs.pin.ls()
+      expect(pinset.map((obj) => obj.hash)).includes(res[0].hash)
+
+      await ipfs.pin.rm(res[0].hash)
+      await ipfs.repo.gc()
+
+      const finalPinset = await ipfs.pin.ls()
+      expect(finalPinset.map((obj) => obj.hash)).not.includes(res[0].hash)
     })
 
     it('should clean up unpinned data', async () => {

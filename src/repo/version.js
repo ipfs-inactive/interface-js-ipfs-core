@@ -28,18 +28,9 @@ module.exports = (createCommon, options) => {
 
     after((done) => common.teardown(done))
 
-    it('should get the repo version', (done) => {
-      ipfs.repo.version((err, version) => {
-        expect(err).to.not.exist()
-        expect(version).to.exist()
-        done()
-      })
-    })
-
-    it('should get the repo version (promised)', () => {
-      return ipfs.repo.version().then((version) => {
-        expect(version).to.exist()
-      })
+    it('should get the repo version', async () => {
+      const version = await ipfs.repo.version()
+      expect(version).to.exist()
     })
   })
 }
