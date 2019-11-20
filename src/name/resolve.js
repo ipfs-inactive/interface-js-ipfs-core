@@ -4,7 +4,7 @@
 
 const { spawnNodeWithId } = require('../utils/spawn')
 const { getDescribe, getIt, expect } = require('../utils/mocha')
-const delay = require('../utils/delay')
+const delay = require('delay')
 const CID = require('cids')
 
 module.exports = (createCommon, options) => {

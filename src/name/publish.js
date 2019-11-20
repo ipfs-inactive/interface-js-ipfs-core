@@ -38,29 +38,25 @@ module.exports = (createCommon, options) => {
 
     after((done) => common.teardown(done))
 
-    it('should publish an IPNS record with the default params', function (done) {
+    it('should publish an IPNS record with the default params', async function () {
       this.timeout(50 * 1000)
 
       const value = fixture.cid
 
-      ipfs.name.publish(value, { allowOffline: true }, (err, res) => {
-        expect(err).to.not.exist()
-        expect(res).to.exist()
-        expect(res.name).to.equal(nodeId)
-        expect(res.value).to.equal(`/ipfs/${value}`)
-
-        done()
-      })
+      const res = await ipfs.name.publish(value, { 'allow-offline': true })
+      expect(res).to.exist()
+      expect(res.name).to.equal(nodeId)
+      expect(res.value).to.equal(`/ipfs/${value}`)
     })
 
     it('should publish correctly with the lifetime option and resolve', async () => {
       const [{ path }] = await ipfs.add(Buffer.from('should publish correctly with the lifetime option and resolve'))
-      await ipfs.name.publish(path, { allowOffline: true, resolve: false, lifetime: '2h' })
+      await ipfs.name.publish(path, { 'allow-offline': true, resolve: false, lifetime: '2h' })
 
       return expect(await ipfs.name.resolve(`/ipns/${nodeId}`)).to.eq(`/ipfs/${path}`)
     })
 
-    it('should publish correctly when the file was not added but resolve is disabled', function (done) {
+    it('should publish correctly when the file was not added but resolve is disabled', async function () {
       this.timeout(50 * 1000)
 
       const value = 'QmPFVLPmp9zv5Z5KUqLhe2EivAGccQW2r7M7jhVJGLZoZU'
@@ -70,20 +66,16 @@ module.exports = (createCommon, options) => {
         lifetime: '1m',
         ttl: '10s',
         key: 'self',
-        allowOffline: true
+        'allow-offline': true
       }
 
-      ipfs.name.publish(value, options, (err, res) => {
-        expect(err).to.not.exist()
-        expect(res).to.exist()
-        expect(res.name).to.equal(nodeId)
-        expect(res.value).to.equal(`/ipfs/${value}`)
-
-        done()
-      })
+      const res = await ipfs.name.publish(value, options)
+      expect(res).to.exist()
+      expect(res.name).to.equal(nodeId)
+      expect(res.value).to.equal(`/ipfs/${value}`)
     })
 
-    it('should publish with a key received as param, instead of using the key of the node', function (done) {
+    it('should publish with a key received as param, instead of using the key of the node', async function () {
       this.timeout(90 * 1000)
 
       const value = fixture.cid
@@ -92,21 +84,15 @@ module.exports = (createCommon, options) => {
         lifetime: '24h',
         ttl: '10s',
         key: keyName,
-        allowOffline: true
+        'allow-offline': true
       }
 
-      ipfs.key.gen(keyName, { type: 'rsa', size: 2048 }, function (err, key) {
-        expect(err).to.not.exist()
+      const key = await ipfs.key.gen(keyName, { type: 'rsa', size: 2048 })
 
-        ipfs.name.publish(value, options, (err, res) => {
-          expect(err).to.not.exist()
-          expect(res).to.exist()
-          expect(res.name).to.equal(key.id)
-          expect(res.value).to.equal(`/ipfs/${value}`)
-
-          done()
-        })
-      })
+      const res = await ipfs.name.publish(value, options)
+      expect(res).to.exist()
+      expect(res.name).to.equal(key.id)
+      expect(res.value).to.equal(`/ipfs/${value}`)
     })
   })
 }
