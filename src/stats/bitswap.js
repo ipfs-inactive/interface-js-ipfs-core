@@ -29,17 +29,9 @@ module.exports = (createCommon, options) => {
 
     after((done) => common.teardown(done))
 
-    it('should get bitswap stats', (done) => {
-      ipfs.stats.bitswap((err, res) => {
-        expectIsBitswap(err, res)
-        done()
-      })
-    })
-
-    it('should get bitswap stats (promised)', () => {
-      return ipfs.stats.bitswap().then((res) => {
-        expectIsBitswap(null, res)
-      })
+    it('should get bitswap stats', async () => {
+      const res = await ipfs.stats.bitswap()
+      expectIsBitswap(null, res)
     })
   })
 }

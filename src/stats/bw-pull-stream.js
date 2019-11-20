@@ -2,7 +2,7 @@
 'use strict'
 
 const { expectIsBandwidth } = require('./utils')
-const pull = require('pull-stream')
+const pullToPromise = require('pull-to-promise')
 const { getDescribe, getIt, expect } = require('../utils/mocha')
 
 module.exports = (createCommon, options) => {
@@ -30,16 +30,11 @@ module.exports = (createCommon, options) => {
 
     after((done) => common.teardown(done))
 
-    it('should get bandwidth stats over pull stream', (done) => {
+    it('should get bandwidth stats over pull stream', async () => {
       const stream = ipfs.stats.bwPullStream()
 
-      pull(
-        stream,
-        pull.collect((err, data) => {
-          expectIsBandwidth(err, data[0])
-          done()
-        })
-      )
+      const data = await pullToPromise.any(stream)
+      expectIsBandwidth(null, data[0])
     })
   })
 }

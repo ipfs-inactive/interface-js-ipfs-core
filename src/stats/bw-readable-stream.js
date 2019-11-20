@@ -3,6 +3,7 @@
 
 const { expectIsBandwidth } = require('./utils')
 const { getDescribe, getIt, expect } = require('../utils/mocha')
+const getStream = require('get-stream')
 
 module.exports = (createCommon, options) => {
   const describe = getDescribe(options)
@@ -29,14 +30,12 @@ module.exports = (createCommon, options) => {
 
     after((done) => common.teardown(done))
 
-    it('should get bandwidth stats over readable stream', (done) => {
+    it('should get bandwidth stats over readable stream', async () => {
       const stream = ipfs.stats.bwReadableStream()
 
-      stream.once('data', (data) => {
-        expectIsBandwidth(null, data)
-        stream.destroy()
-        done()
-      })
+      const [data] = await getStream.array(stream)
+
+      expectIsBandwidth(null, data)
     })
   })
 }
