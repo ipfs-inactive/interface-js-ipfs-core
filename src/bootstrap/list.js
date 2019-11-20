@@ -30,13 +30,11 @@ module.exports = (createCommon, options) => {
 
     after((done) => common.teardown(done))
 
-    it('should return a list of peers', (done) => {
-      ipfs.bootstrap.list((err, res) => {
-        expect(err).to.not.exist()
-        const peers = res.Peers
-        expect(peers).to.exist()
-        done()
-      })
+    it('should return a list of peers', async () => {
+      const res = await ipfs.bootstrap.list()
+
+      const peers = res.Peers
+      expect(peers).to.exist()
     })
   })
 }
