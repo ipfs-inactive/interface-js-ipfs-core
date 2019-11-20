@@ -30,28 +30,12 @@ module.exports = (createCommon, options) => {
 
     after((done) => common.teardown(done))
 
-    it('should create a new object with no template', (done) => {
-      ipfs.object.new((err, cid) => {
-        expect(err).to.not.exist()
-        expect(cid.toBaseEncodedString()).to.equal('QmdfTbBqBPQ7VNxZEYEj14VmRuZBkqFbiwReogJgS1zR1n')
-        done()
-      })
-    })
-
-    it('should create a new object with no template (promised)', async () => {
+    it('should create a new object with no template', async () => {
       const cid = await ipfs.object.new()
       expect(cid.toBaseEncodedString()).to.equal('QmdfTbBqBPQ7VNxZEYEj14VmRuZBkqFbiwReogJgS1zR1n')
     })
 
-    it('should create a new object with unixfs-dir template', (done) => {
-      ipfs.object.new('unixfs-dir', (err, cid) => {
-        expect(err).to.not.exist()
-        expect(cid.toBaseEncodedString()).to.equal('QmUNLLsPACCz1vLxQVkXqqLX5R1X345qqfHbsf67hvA3Nn')
-        done()
-      })
-    })
-
-    it('should create a new object with unixfs-dir template (promised)', async () => {
+    it('should create a new object with unixfs-dir template', async () => {
       const cid = await ipfs.object.new('unixfs-dir')
       expect(cid.toBaseEncodedString()).to.equal('QmUNLLsPACCz1vLxQVkXqqLX5R1X345qqfHbsf67hvA3Nn')
     })
