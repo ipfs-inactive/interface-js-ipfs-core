@@ -33,31 +33,23 @@ module.exports = (createCommon, options) => {
 
     after((done) => common.teardown(done))
 
-    it('should stat by CID', (done) => {
+    it('should stat by CID', async () => {
       const cid = new CID(hash)
 
-      ipfs.block.stat(cid, (err, stats) => {
-        expect(err).to.not.exist()
-        expect(stats).to.have.property('key')
-        expect(stats).to.have.property('size')
-        done()
-      })
+      const stats = await ipfs.block.stat(cid)
+
+      expect(stats).to.have.property('key')
+      expect(stats).to.have.property('size')
     })
 
     it('should return error for missing argument', () => {
-      return ipfs.block.stat(null)
-        .then(
-          () => expect.fail('should have thrown for missing parameter'),
-          (err) => expect(err).to.be.an.instanceof(Error)
-        )
+      return expect(ipfs.block.stat(null)).to.eventually.be.rejected
+        .and.be.an.instanceOf(Error)
     })
 
     it('should return error for invalid argument', () => {
-      return ipfs.block.stat('invalid')
-        .then(
-          () => expect.fail('should have thrown for invalid parameter'),
-          (err) => expect(err).to.be.an.instanceof(Error)
-        )
+      return expect(ipfs.block.stat('invalid')).to.eventually.be.rejected
+        .and.be.an.instanceOf(Error)
     })
   })
 }
