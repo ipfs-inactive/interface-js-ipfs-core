@@ -30,51 +30,29 @@ module.exports = (createCommon, options) => {
 
     after((done) => common.teardown(done))
 
-    it('should retrieve the whole config', (done) => {
-      ipfs.config.get((err, config) => {
-        expect(err).to.not.exist()
-        expect(config).to.be.an('object')
-        expect(isPlainObject(config)).to.equal(true)
-        done()
-      })
+    it('should retrieve the whole config', async () => {
+      const config = await ipfs.config.get()
+
+      expect(config).to.be.an('object')
+      expect(isPlainObject(config)).to.equal(true)
     })
 
-    it('should retrieve the whole config (promised)', () => {
-      return ipfs.config.get()
-        .then((config) => {
-          expect(config).to.be.an('object')
-          expect(isPlainObject(config)).to.equal(true)
-        })
+    it('should retrieve a value through a key', async () => {
+      const peerId = await ipfs.config.get('Identity.PeerID')
+      expect(peerId).to.exist()
     })
 
-    it('should retrieve a value through a key', (done) => {
-      ipfs.config.get('Identity.PeerID', (err, peerId) => {
-        expect(err).to.not.exist()
-        expect(peerId).to.exist()
-        done()
-      })
+    it('should retrieve a value through a nested key', async () => {
+      const swarmAddrs = await ipfs.config.get('Addresses.Swarm')
+      expect(swarmAddrs).to.exist()
     })
 
-    it('should retrieve a value through a nested key', (done) => {
-      ipfs.config.get('Addresses.Swarm', (err, swarmAddrs) => {
-        expect(err).to.not.exist()
-        expect(swarmAddrs).to.exist()
-        done()
-      })
+    it('should fail on non valid key', () => {
+      return expect(ipfs.config.get(1234)).to.eventually.be.rejected()
     })
 
-    it('should fail on non valid key', (done) => {
-      ipfs.config.get(1234, (err, peerId) => {
-        expect(err).to.exist()
-        done()
-      })
-    })
-
-    it('should fail on non existent key', (done) => {
-      ipfs.config.get('Bananas', (err, peerId) => {
-        expect(err).to.exist()
-        done()
-      })
+    it('should fail on non existent key', () => {
+      return expect(ipfs.config.get('Bananas')).to.eventually.be.rejected()
     })
   })
 }

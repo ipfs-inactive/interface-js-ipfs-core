@@ -33,26 +33,18 @@ module.exports = (createCommon, options) => {
       Fruit: 'Bananas'
     }
 
-    it('should replace the whole config', (done) => {
-      ipfs.config.replace(config, (err) => {
-        expect(err).to.not.exist()
-        ipfs.config.get((err, _config) => {
-          expect(err).to.not.exist()
-          expect(_config).to.deep.equal(config)
-          done()
-        })
-      })
+    it('should replace the whole config', async () => {
+      await ipfs.config.replace(config)
+
+      const _config = await ipfs.config.get()
+      expect(_config).to.deep.equal(config)
     })
 
-    it('should replace to empty config', (done) => {
-      ipfs.config.replace({}, (err) => {
-        expect(err).to.not.exist()
-        ipfs.config.get((err, _config) => {
-          expect(err).to.not.exist()
-          expect(_config).to.deep.equal({})
-          done()
-        })
-      })
+    it('should replace to empty config', async () => {
+      await ipfs.config.replace({})
+
+      const _config = await ipfs.config.get()
+      expect(_config).to.deep.equal({})
     })
   })
 }

@@ -29,47 +29,28 @@ module.exports = (createCommon, options) => {
 
     after((done) => common.teardown(done))
 
-    it('should set a new key', (done) => {
-      ipfs.config.set('Fruit', 'banana', (err) => {
-        expect(err).to.not.exist()
-        ipfs.config.get('Fruit', (err, fruit) => {
-          expect(err).to.not.exist()
-          expect(fruit).to.equal('banana')
-          done()
-        })
-      })
+    it('should set a new key', async () => {
+      await ipfs.config.set('Fruit', 'banana')
+
+      const fruit = await ipfs.config.get('Fruit')
+      expect(fruit).to.equal('banana')
     })
 
-    it('should set a new key (promised)', () => {
-      return ipfs.config.set('Fruit', 'banana')
-        .then(() => ipfs.config.get('Fruit'))
-        .then((fruit) => {
-          expect(fruit).to.equal('banana')
-        })
+    it('should set an already existing key', async () => {
+      await ipfs.config.set('Fruit', 'morango')
+
+      const fruit = await ipfs.config.get('Fruit')
+      expect(fruit).to.equal('morango')
     })
 
-    it('should set an already existing key', (done) => {
-      ipfs.config.set('Fruit', 'morango', (err) => {
-        expect(err).to.not.exist()
-        ipfs.config.get('Fruit', (err, fruit) => {
-          expect(err).to.not.exist()
-          expect(fruit).to.equal('morango')
-          done()
-        })
-      })
-    })
-
-    it('should set a number', (done) => {
+    it('should set a number', async () => {
       const key = 'Discovery.MDNS.Interval'
       const val = 11
-      ipfs.config.set(key, val, function (err) {
-        expect(err).to.not.exist()
-        ipfs.config.get(key, function (err, result) {
-          expect(err).to.not.exist()
-          expect(result).to.equal(val)
-          done()
-        })
-      })
+
+      await ipfs.config.set(key, val)
+
+      const result = await ipfs.config.get(key)
+      expect(result).to.equal(val)
     })
 
     it('should set a boolean', async () => {
@@ -88,31 +69,22 @@ module.exports = (createCommon, options) => {
       expect(await ipfs.config.get(key)).to.equal(value)
     })
 
-    it('should set a JSON object', (done) => {
+    it('should set a JSON object', async () => {
       const key = 'API.HTTPHeaders.Access-Control-Allow-Origin'
       const val = ['http://example.io']
-      ipfs.config.set(key, val, function (err) {
-        expect(err).to.not.exist()
-        ipfs.config.get(key, function (err, result) {
-          expect(err).to.not.exist()
-          expect(result).to.deep.equal(val)
-          done()
-        })
-      })
+
+      await ipfs.config.set(key, val)
+
+      const result = await ipfs.config.get(key)
+      expect(result).to.deep.equal(val)
     })
 
-    it('should fail on non valid key', (done) => {
-      ipfs.config.set(Buffer.from('heeey'), '', (err) => {
-        expect(err).to.exist()
-        done()
-      })
+    it('should fail on non valid key', () => {
+      return expect(ipfs.config.set(Buffer.from('heeey'), '')).to.eventually.be.rejected()
     })
 
-    it('should fail on non valid value', (done) => {
-      ipfs.config.set('Fruit', Buffer.from('abc'), (err) => {
-        expect(err).to.exist()
-        done()
-      })
+    it('should fail on non valid value', () => {
+      return expect(ipfs.config.set('Fruit', Buffer.from('abc'))).to.eventually.be.rejected()
     })
   })
 }
