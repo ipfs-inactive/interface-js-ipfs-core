@@ -31,7 +31,7 @@ module.exports = (createCommon, suiteName, ipfsRefsLocal, options) => {
 
     after((done) => common.teardown(done))
 
-    it('should get local refs', function (done) {
+    it('should get local refs', async function () {
       const content = (name) => ({
         path: `test-folder/${name}`,
         content: fixtures.directory.files[name]
@@ -42,19 +42,13 @@ module.exports = (createCommon, suiteName, ipfsRefsLocal, options) => {
         content('holmes.txt')
       ]
 
-      ipfs.add(dirs, (err, res) => {
-        expect(err).to.not.exist()
+      await ipfs.add(dirs)
 
-        ipfsRefsLocal(ipfs)((err, refs) => {
-          expect(err).to.not.exist()
+      const refs = await ipfsRefsLocal(ipfs)
 
-          const cids = refs.map(r => r.ref)
-          expect(cids).to.include('QmVwdDCY4SPGVFnNCiZnX5CtzwWDn6kAM98JXzKxE3kCmn')
-          expect(cids).to.include('QmR4nFjTu18TyANgC65ArNWp5Yaab1gPzQ4D8zp7Kx3vhr')
-
-          done()
-        })
-      })
+      const cids = refs.map(r => r.ref)
+      expect(cids).to.include('QmVwdDCY4SPGVFnNCiZnX5CtzwWDn6kAM98JXzKxE3kCmn')
+      expect(cids).to.include('QmR4nFjTu18TyANgC65ArNWp5Yaab1gPzQ4D8zp7Kx3vhr')
     })
   })
 }

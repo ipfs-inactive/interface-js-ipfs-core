@@ -4,6 +4,7 @@
 const { fixtures } = require('./utils')
 const pull = require('pull-stream')
 const { getDescribe, getIt, expect } = require('../utils/mocha')
+const pullToPromise = require('pull-to-promise')
 
 module.exports = (createCommon, options) => {
   const describe = getDescribe(options)
@@ -32,7 +33,7 @@ module.exports = (createCommon, options) => {
 
     after((done) => common.teardown(done))
 
-    it('should add pull stream of valid files and dirs', function (done) {
+    it('should add pull stream of valid files and dirs', async function () {
       const content = (name) => ({
         path: `test-folder/${name}`,
         content: fixtures.directory.files[name]
@@ -53,35 +54,21 @@ module.exports = (createCommon, options) => {
 
       const stream = ipfs.addPullStream()
 
-      pull(
-        pull.values(files),
-        stream,
-        pull.collect((err, filesAdded) => {
-          expect(err).to.not.exist()
+      const filesAdded = await pullToPromise.any(pull(pull.values(files), stream))
+      const testFolderIndex = filesAdded.length - 1
 
-          filesAdded.forEach((file) => {
-            if (file.path === 'test-folder') {
-              expect(file.hash).to.equal(fixtures.directory.cid)
-              done()
-            }
-          })
-        })
-      )
+      expect(filesAdded).to.have.nested.property(`[${testFolderIndex}].path`, 'test-folder')
+      expect(filesAdded).to.have.nested.property(`[${testFolderIndex}].hash`, fixtures.directory.cid)
     })
 
-    it('should add with object chunks and pull stream content', (done) => {
+    it('should add with object chunks and pull stream content', async () => {
       const expectedCid = 'QmRf22bZar3WKmojipms22PkXH1MZGmvsqzQtuSvQE3uhm'
+      const data = [{ content: pull.values([Buffer.from('test')]) }]
+      const stream = ipfs.addPullStream()
 
-      pull(
-        pull.values([{ content: pull.values([Buffer.from('test')]) }]),
-        ipfs.addPullStream(),
-        pull.collect((err, res) => {
-          if (err) return done(err)
-          expect(res).to.have.length(1)
-          expect(res[0]).to.deep.equal({ path: expectedCid, hash: expectedCid, size: 12 })
-          done()
-        })
-      )
+      const res = await pullToPromise.any(pull(pull.values(data), stream))
+      expect(res).to.have.property('length', 1)
+      expect(res[0]).to.deep.equal({ path: expectedCid, hash: expectedCid, size: 12 })
     })
   })
 }

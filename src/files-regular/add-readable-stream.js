@@ -3,6 +3,7 @@
 
 const { fixtures } = require('./utils')
 const { getDescribe, getIt, expect } = require('../utils/mocha')
+const getStream = require('get-stream')
 
 module.exports = (createCommon, options) => {
   const describe = getDescribe(options)
@@ -31,7 +32,7 @@ module.exports = (createCommon, options) => {
 
     after((done) => common.teardown(done))
 
-    it('should add readable stream of valid files and dirs', function (done) {
+    it('should add readable stream of valid files and dirs', async function () {
       const content = (name) => ({
         path: `test-folder/${name}`,
         content: fixtures.directory.files[name]
@@ -52,20 +53,13 @@ module.exports = (createCommon, options) => {
 
       const stream = ipfs.addReadableStream()
 
-      stream.on('error', (err) => {
-        expect(err).to.not.exist()
-      })
-
-      stream.on('data', (file) => {
-        if (file.path === 'test-folder') {
-          expect(file.hash).to.equal(fixtures.directory.cid)
-        }
-      })
-
-      stream.on('end', done)
-
       files.forEach((file) => stream.write(file))
       stream.end()
+
+      const filesArray = await getStream.array(stream)
+      const file = filesArray[filesArray.length - 1]
+
+      expect(file.hash).to.equal(fixtures.directory.cid)
     })
   })
 }
