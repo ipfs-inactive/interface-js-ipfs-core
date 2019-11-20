@@ -1,6 +1,7 @@
 /* eslint-env mocha */
 'use strict'
 
+const pTimeout = require('p-timeout')
 const { spawnNodesWithId } = require('../utils/spawn')
 const { getDescribe, getIt, expect } = require('../utils/mocha')
 const { connect } = require('../utils/swarm')
@@ -41,27 +42,24 @@ module.exports = (createCommon, options) => {
       common.teardown(done)
     })
 
-    it('should return the other node in the query', function (done) {
+    it('should return the other node in the query', async function () {
       const timeout = 150 * 1000
       this.timeout(timeout)
 
-      let skipped = false
+      try {
+        const peers = await pTimeout(nodeA.dht.query(nodeB.peerId.id), timeout - 1000)
 
-      // This test is meh. DHT works best with >= 20 nodes. Therefore a
-      // failure might happen, but we don't want to report it as such.
-      // Hence skip the test before the timeout is reached
-      const timeoutId = setTimeout(function () {
-        skipped = true
-        this.skip()
-      }.bind(this), timeout - 1000)
-
-      nodeA.dht.query(nodeB.peerId.id, (err, peers) => {
-        if (skipped) return
-        clearTimeout(timeoutId)
-        expect(err).to.not.exist()
         expect(peers.map((p) => p.id.toB58String())).to.include(nodeB.peerId.id)
-        done()
-      })
+      } catch (err) {
+        if (err.name === 'TimeoutError') {
+          // This test is meh. DHT works best with >= 20 nodes. Therefore a
+          // failure might happen, but we don't want to report it as such.
+          // Hence skip the test before the timeout is reached
+          this.skip()
+        } else {
+          throw err
+        }
+      }
     })
   })
 }

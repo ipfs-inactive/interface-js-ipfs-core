@@ -36,15 +36,11 @@ module.exports = (createCommon, options) => {
 
     after((done) => common.teardown(done))
 
-    it('should put a value to the DHT', (done) => {
-      this.timeout(80 * 1000)
+    it('should put a value to the DHT', async () => {
       const key = Buffer.from('QmUNLLsPACCz1vLxQVkXqqLX5R1X345qqfHbsf67hvA3Nn')
       const data = Buffer.from('data')
 
-      nodeA.dht.put(key, data, (err) => {
-        expect(err).to.not.exist()
-        done()
-      })
+      await nodeA.dht.put(key, data)
     })
   })
 }
