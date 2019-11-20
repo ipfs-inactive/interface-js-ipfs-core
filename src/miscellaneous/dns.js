@@ -32,25 +32,25 @@ module.exports = (createCommon, options) => {
       common.teardown(done)
     })
 
-    it('should non-recursively resolve ipfs.io', () => {
-      return ipfs.dns('ipfs.io', { recursive: false }).then(res => {
+    it('should non-recursively resolve ipfs.io', async () => {
+      const res = await ipfs.dns('ipfs.io', { recursive: false })
+
       // matches pattern /ipns/<ipnsaddress>
-        expect(res).to.match(/\/ipns\/.+$/)
-      })
+      expect(res).to.match(/\/ipns\/.+$/)
     })
 
-    it('should recursively resolve ipfs.io', () => {
-      return ipfs.dns('ipfs.io', { recursive: true }).then(res => {
+    it('should recursively resolve ipfs.io', async () => {
+      const res = await ipfs.dns('ipfs.io', { recursive: true })
+
       // matches pattern /ipfs/<hash>
-        expect(res).to.match(/\/ipfs\/.+$/)
-      })
+      expect(res).to.match(/\/ipfs\/.+$/)
     })
 
-    it('should resolve subdomain docs.ipfs.io', () => {
-      return ipfs.dns('docs.ipfs.io').then(res => {
+    it('should resolve subdomain docs.ipfs.io', async () => {
+      const res = await ipfs.dns('docs.ipfs.io')
+
       // matches pattern /ipfs/<hash>
-        expect(res).to.match(/\/ipfs\/.+$/)
-      })
+      expect(res).to.match(/\/ipfs\/.+$/)
     })
   })
 }

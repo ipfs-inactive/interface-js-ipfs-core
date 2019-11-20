@@ -31,19 +31,14 @@ module.exports = (createCommon, options) => {
     })
 
     // must be last test to run
-    it('should stop the node', function (done) {
+    it('should stop the node2', async function () {
       this.timeout(10 * 1000)
 
-      ipfs.stop((err) => {
-        expect(err).to.not.exist()
+      await ipfs.stop()
 
-        // Trying to stop an already stopped node should return an error
-        // as the node can't respond to requests anymore
-        ipfs.stop((err) => {
-          expect(err).to.exist()
-          done()
-        })
-      })
+      // Trying to stop an already stopped node should return an error
+      // as the node can't respond to requests anymore
+      return expect(ipfs.stop()).to.eventually.be.rejected()
     })
   })
 }
