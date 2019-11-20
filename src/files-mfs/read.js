@@ -1,7 +1,6 @@
 /* eslint-env mocha */
 'use strict'
 
-const series = require('async/series')
 const hat = require('hat')
 const { fixtures } = require('../files-regular/utils')
 const { getDescribe, getIt, expect } = require('../utils/mocha')
@@ -33,31 +32,24 @@ module.exports = (createCommon, options) => {
 
     after((done) => common.teardown(done))
 
-    it('should not read not found, expect error', (done) => {
+    it('should not read not found, expect error', () => {
       const testDir = `/test-${hat()}`
 
-      ipfs.files.read(`${testDir}/404`, (err) => {
-        expect(err).to.exist()
-        expect(err.message).to.contain('does not exist')
-        done()
-      })
+      return expect(ipfs.files.cp(`${testDir}/c`, `${testDir}/b`)).to.eventually.be.rejected
+        .and.be.an.instanceOf(Error)
+        .and.to.have.property('message')
+        .that.include('does not exist')
     })
 
-    it('should read file', (done) => {
+    it('should read file', async () => {
       const testDir = `/test-${hat()}`
 
-      series([
-        (cb) => ipfs.files.mkdir(testDir, cb),
-        (cb) => ipfs.files.write(`${testDir}/a`, Buffer.from('Hello, world!'), { create: true }, cb)
-      ], (err) => {
-        expect(err).to.not.exist()
+      await ipfs.files.mkdir(testDir)
+      await ipfs.files.write(`${testDir}/a`, Buffer.from('Hello, world!'), { create: true })
 
-        ipfs.files.read(`${testDir}/a`, (err, buf) => {
-          expect(err).to.not.exist()
-          expect(buf).to.eql(Buffer.from('Hello, world!'))
-          done()
-        })
-      })
+      const buf = await ipfs.files.read(`${testDir}/a`)
+
+      expect(buf).to.eql(Buffer.from('Hello, world!'))
     })
 
     it('should read from outside of mfs', async () => {

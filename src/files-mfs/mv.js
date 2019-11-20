@@ -1,7 +1,6 @@
 /* eslint-env mocha */
 'use strict'
 
-const series = require('async/series')
 const hat = require('hat')
 const { getDescribe, getIt, expect } = require('../utils/mocha')
 
@@ -30,51 +29,33 @@ module.exports = (createCommon, options) => {
       })
     })
 
-    before((done) => {
-      series([
-        (cb) => ipfs.files.mkdir('/test/lv1/lv2', { parents: true }, cb),
-        (cb) => ipfs.files.write('/test/a', Buffer.from('Hello, world!'), { create: true }, cb)
-      ], done)
+    before(async () => {
+      await ipfs.files.mkdir('/test/lv1/lv2', { p: true })
+      await ipfs.files.write('/test/a', Buffer.from('Hello, world!'), { create: true })
     })
 
-    after((done) => common.teardown(done))
+    after(() => common.teardown())
 
-    it('should not move not found file/dir, expect error', (done) => {
+    it('should not move not found file/dir, expect error', () => {
       const testDir = `/test-${hat()}`
 
-      ipfs.files.mv(`${testDir}/404`, `${testDir}/a`, (err) => {
-        expect(err).to.exist()
-        done()
-      })
+      return expect(ipfs.files.mv(`${testDir}/404`, `${testDir}/a`)).to.eventually.be.rejected()
     })
 
-    it('should move file, expect no error', (done) => {
+    it('should move file, expect no error', async () => {
       const testDir = `/test-${hat()}`
 
-      series([
-        (cb) => ipfs.files.mkdir(`${testDir}/lv1/lv2`, { parents: true }, cb),
-        (cb) => ipfs.files.write(`${testDir}/a`, Buffer.from('Hello, world!'), { create: true }, cb)
-      ], (err) => {
-        expect(err).to.not.exist()
+      await ipfs.files.mkdir(`${testDir}/lv1/lv2`, { p: true })
+      await ipfs.files.write(`${testDir}/a`, Buffer.from('Hello, world!'), { create: true })
 
-        ipfs.files.mv(`${testDir}/a`, `${testDir}/c`, (err) => {
-          expect(err).to.not.exist()
-          done()
-        })
-      })
+      await ipfs.files.mv(`${testDir}/a`, `${testDir}/c`)
     })
 
-    it('should move dir, expect no error', (done) => {
+    it('should move dir, expect no error', async () => {
       const testDir = `/test-${hat()}`
 
-      ipfs.files.mkdir(`${testDir}/lv1/lv2`, { parents: true }, (err) => {
-        expect(err).to.not.exist()
-
-        ipfs.files.mv('/test/lv1/lv2', '/test/lv1/lv4', (err) => {
-          expect(err).to.not.exist()
-          done()
-        })
-      })
+      await ipfs.files.mkdir(`${testDir}/lv1/lv2`, { p: true })
+      await ipfs.files.mv('/test/lv1/lv2', '/test/lv1/lv4')
     })
   })
 }

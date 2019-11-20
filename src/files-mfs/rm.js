@@ -1,7 +1,6 @@
 /* eslint-env mocha */
 'use strict'
 
-const series = require('async/series')
 const hat = require('hat')
 const { getDescribe, getIt, expect } = require('../utils/mocha')
 
@@ -32,42 +31,33 @@ module.exports = (createCommon, options) => {
 
     after((done) => common.teardown(done))
 
-    it('should not remove not found file/dir, expect error', (done) => {
+    it('should not remove not found file/dir, expect error', () => {
       const testDir = `/test-${hat()}`
 
-      ipfs.files.rm(`${testDir}/a`, (err) => {
-        expect(err).to.exist()
-        done()
-      })
+      return expect(ipfs.files.rm(`${testDir}/a`)).to.eventually.be.rejected()
     })
 
-    it('should remove file, expect no error', (done) => {
+    it('should remove file, expect no error', async () => {
       const testDir = `/test-${hat()}`
 
-      series([
-        (cb) => ipfs.files.mkdir(testDir, { parents: true }, cb),
-        (cb) => ipfs.files.write(`${testDir}/c`, Buffer.from('Hello, world!'), { create: true }, cb)
-      ], (err) => {
-        expect(err).to.not.exist()
+      await ipfs.files.mkdir(testDir, { p: true })
+      await ipfs.files.write(`${testDir}/c`, Buffer.from('Hello, world!'), { create: true })
 
-        ipfs.files.rm(`${testDir}/c`, (err) => {
-          expect(err).to.not.exist()
-          done()
-        })
-      })
+      await ipfs.files.rm(`${testDir}/c`)
+
+      const contents = await ipfs.files.ls(testDir)
+      expect(contents).to.be.an('array').and.to.be.empty()
     })
 
-    it('should remove dir, expect no error', (done) => {
+    it('should remove dir, expect no error', async () => {
       const testDir = `/test-${hat()}`
 
-      ipfs.files.mkdir(`${testDir}/lv1/lv2`, { parents: true }, (err) => {
-        expect(err).to.not.exist()
+      await ipfs.files.mkdir(`${testDir}/lv1/lv2`, { p: true })
 
-        ipfs.files.rm(`${testDir}/lv1/lv2`, { recursive: true }, (err) => {
-          expect(err).to.not.exist()
-          done()
-        })
-      })
+      await ipfs.files.rm(`${testDir}/lv1/lv2`, { recursive: true })
+
+      const lv1Contents = await ipfs.files.ls(`${testDir}/lv1`)
+      expect(lv1Contents).to.be.an('array').and.to.be.empty()
     })
   })
 }

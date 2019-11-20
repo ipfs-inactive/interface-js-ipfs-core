@@ -1,7 +1,6 @@
 /* eslint-env mocha */
 'use strict'
 
-const series = require('async/series')
 const hat = require('hat')
 const { getDescribe, getIt, expect } = require('../utils/mocha')
 
@@ -32,32 +31,23 @@ module.exports = (createCommon, options) => {
 
     after((done) => common.teardown(done))
 
-    it('should not flush not found file/dir, expect error', (done) => {
+    it('should not flush not found file/dir, expect error', async () => {
       const testDir = `/test-${hat()}`
 
-      ipfs.files.flush(`${testDir}/404`, (err) => {
+      try {
+        await ipfs.files.flush(`${testDir}/404`)
+      } catch (err) {
         expect(err).to.exist()
-        done()
-      })
+      }
     })
 
-    it('should flush root', (done) => {
-      ipfs.files.flush((err) => {
-        expect(err).to.not.exist()
-        done()
-      })
-    })
+    it('should flush root', () => ipfs.files.flush())
 
-    it('should flush specific dir', (done) => {
+    it('should flush specific dir', async () => {
       const testDir = `/test-${hat()}`
 
-      series([
-        (cb) => ipfs.files.mkdir(testDir, { parents: true }, cb),
-        (cb) => ipfs.files.flush(testDir, cb)
-      ], (err) => {
-        expect(err).to.not.exist()
-        done()
-      })
+      await ipfs.files.mkdir(testDir, { p: true })
+      await ipfs.files.flush(testDir)
     })
   })
 }
