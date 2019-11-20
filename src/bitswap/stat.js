@@ -30,17 +30,9 @@ module.exports = (createCommon, options) => {
 
     after((done) => common.teardown(done))
 
-    it('should get bitswap stats', (done) => {
-      ipfs.bitswap.stat((err, res) => {
-        expectIsBitswap(err, res)
-        done()
-      })
-    })
-
-    it('should get bitswap stats (promised)', () => {
-      return ipfs.bitswap.stat().then((res) => {
-        expectIsBitswap(null, res)
-      })
+    it('should get bitswap stats', async () => {
+      const res = await ipfs.bitswap.stat()
+      expectIsBitswap(null, res)
     })
 
     it('should not get bitswap stats when offline', function (done) {
@@ -52,7 +44,7 @@ module.exports = (createCommon, options) => {
         (node, cb) => node.stop((err) => cb(err, node))
       ], (err, node) => {
         expect(err).to.not.exist()
-        node.bitswap.wantlist((err) => {
+        node.bitswap.stat((err) => {
           expect(err).to.exist()
           done()
         })
