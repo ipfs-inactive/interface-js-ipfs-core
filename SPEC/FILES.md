@@ -79,7 +79,6 @@ If no `content` is passed, then the path is treated as an empty directory
 - quiet (boolean, default false): writes a minimal output.
 - quieter (boolean, default false): writes only final hash.
 - rawLeaves (boolean, default false): if true, DAG leaves will contain raw file data and not be wrapped in a protobuf.
-- recursive (boolean, default false): for when a Path is passed, this option can be enabled to add recursively all the files.
 - shardSplitThreshold (integer, default 1000): specifies the maximum size of unsharded directory that can be generated.
 - silent (boolean, default false): writes no output.
 - trickle (boolean, default false): if true will use the trickle DAG format for DAG generation.
