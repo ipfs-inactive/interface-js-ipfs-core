@@ -2,7 +2,6 @@
 'use strict'
 
 const CID = require('cids')
-const auto = require('async/auto')
 const { getDescribe, getIt, expect } = require('../utils/mocha')
 
 module.exports = (createCommon, options) => {
@@ -10,28 +9,18 @@ module.exports = (createCommon, options) => {
   const it = getIt(options)
   const common = createCommon()
 
-  describe('.block.stat', () => {
+  describe('.block.stat', function () {
+    this.timeout(60 * 1000)
     const data = Buffer.from('blorb')
     let ipfs, hash
 
-    before(function (done) {
-      // CI takes longer to instantiate the daemon, so we need to increase the
-      // timeout for the before step
-      this.timeout(60 * 1000)
-
-      auto({
-        factory: (cb) => common.setup(cb),
-        ipfs: ['factory', (res, cb) => res.factory.spawnNode(cb)],
-        block: ['ipfs', (res, cb) => res.ipfs.block.put(data, cb)]
-      }, (err, res) => {
-        if (err) return done(err)
-        ipfs = res.ipfs
-        hash = res.block.cid.multihash
-        done()
-      })
+    before(async () => {
+      ipfs = await common.setup()
+      const block = await ipfs.block.put(data)
+      hash = block.cid.multihash
     })
 
-    after((done) => common.teardown(done))
+    after(() => common.teardown())
 
     it('should stat by CID', async () => {
       const cid = new CID(hash)

@@ -11,25 +11,15 @@ module.exports = (createCommon, options) => {
   const it = getIt(options)
   const common = createCommon()
 
-  describe('.block.put', () => {
+  describe('.block.put', function () {
+    this.timeout(60 * 1000)
     let ipfs
 
-    before(function (done) {
-      // CI takes longer to instantiate the daemon, so we need to increase the
-      // timeout for the before step
-      this.timeout(60 * 1000)
-
-      common.setup((err, factory) => {
-        expect(err).to.not.exist()
-        factory.spawnNode((err, node) => {
-          expect(err).to.not.exist()
-          ipfs = node
-          done()
-        })
-      })
+    before(async () => {
+      ipfs = await common.setup()
     })
 
-    after((done) => common.teardown(done))
+    after(() => common.teardown())
 
     it('should put a buffer, using defaults', async () => {
       const expectedHash = 'QmPv52ekjS75L4JmHpXVeuJ5uX2ecSfSZo88NSyxwA3rAQ'
@@ -81,7 +71,8 @@ module.exports = (createCommon, options) => {
     it('should error with array of blocks', () => {
       const blob = Buffer.from('blorb')
 
-      return expect(ipfs.block.put([blob, blob])).to.eventually.be.rejected.and.be.an.instanceOf(Error)
+      return expect(ipfs.block.put([blob, blob])).to.eventually.be.rejected
+        .and.be.an.instanceOf(Error)
     })
   })
 }
