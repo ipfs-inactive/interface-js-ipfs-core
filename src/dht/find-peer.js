@@ -1,9 +1,7 @@
 /* eslint-env mocha */
 'use strict'
 
-const { spawnNodesWithId } = require('../utils/spawn')
 const { getDescribe, getIt, expect } = require('../utils/mocha')
-const { connect } = require('../utils/swarm')
 
 module.exports = (createCommon, options) => {
   const describe = getDescribe(options)
@@ -16,30 +14,13 @@ module.exports = (createCommon, options) => {
     let nodeA
     let nodeB
 
-    before(function (done) {
-      // CI takes longer to instantiate the daemon, so we need to increase the
-      // timeout for the before step
-      this.timeout(60 * 1000)
-
-      common.setup((err, factory) => {
-        expect(err).to.not.exist()
-
-        spawnNodesWithId(2, factory, (err, nodes) => {
-          expect(err).to.not.exist()
-
-          nodeA = nodes[0]
-          nodeB = nodes[1]
-
-          connect(nodeB, nodeA.peerId.addresses[0], done)
-        })
-      })
+    before(async () => {
+      nodeA = await common.setup()
+      nodeB = await common.setup()
+      await nodeB.swarm.connect(nodeA.peerId.addresses[0])
     })
 
-    after(function (done) {
-      this.timeout(50 * 1000)
-
-      common.teardown(done)
-    })
+    after(() => common.teardown())
 
     it('should find other peers', async () => {
       const res = await nodeA.dht.findPeer(nodeB.peerId.id)

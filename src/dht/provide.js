@@ -2,9 +2,7 @@
 'use strict'
 
 const CID = require('cids')
-const { spawnNodesWithId } = require('../utils/spawn')
 const { getDescribe, getIt, expect } = require('../utils/mocha')
-const { connect } = require('../utils/swarm')
 
 module.exports = (createCommon, options) => {
   const describe = getDescribe(options)
@@ -16,27 +14,13 @@ module.exports = (createCommon, options) => {
 
     let ipfs
 
-    before(function (done) {
-      // CI takes longer to instantiate the daemon, so we need to increase the
-      // timeout for the before step
-      this.timeout(60 * 1000)
-
-      common.setup((err, factory) => {
-        expect(err).to.not.exist()
-
-        spawnNodesWithId(2, factory, (err, nodes) => {
-          expect(err).to.not.exist()
-          ipfs = nodes[0]
-          connect(ipfs, nodes[1].peerId.addresses[0], done)
-        })
-      })
+    before(async () => {
+      ipfs = await common.setup()
+      const nodeB = await common.setup()
+      await ipfs.swarm.connect(nodeB.peerId.addresses[0])
     })
 
-    after(function (done) {
-      this.timeout(50 * 1000)
-
-      common.teardown(done)
-    })
+    after(() => common.teardown())
 
     it('should provide local CID', async () => {
       const res = await ipfs.add(Buffer.from('test'))
