@@ -2,7 +2,6 @@
 /* eslint-env mocha */
 'use strict'
 
-const { spawnNodeWithId } = require('../utils/spawn')
 const { getDescribe, getIt, expect } = require('../utils/mocha')
 const delay = require('delay')
 const CID = require('cids')
@@ -16,21 +15,12 @@ module.exports = (createCommon, options) => {
     let ipfs
     let nodeId
 
-    before(function (done) {
-      common.setup((err, factory) => {
-        expect(err).to.not.exist()
-
-        spawnNodeWithId(factory, (err, node) => {
-          expect(err).to.not.exist()
-
-          ipfs = node
-          nodeId = node.peerId.id
-          done()
-        })
-      })
+    before(async () => {
+      ipfs = await common.setup()
+      nodeId = ipfs.peerId.id
     })
 
-    after((done) => common.teardown(done))
+    after(() => common.teardown())
 
     it('should resolve a record default options', async function () {
       this.timeout(20 * 1000)
