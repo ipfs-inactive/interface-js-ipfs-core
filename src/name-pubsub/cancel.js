@@ -4,7 +4,6 @@
 
 const PeerId = require('peer-id')
 
-const { spawnNodeWithId } = require('../utils/spawn')
 const { getDescribe, getIt, expect } = require('../utils/mocha')
 
 module.exports = (createCommon, options) => {
@@ -16,26 +15,12 @@ module.exports = (createCommon, options) => {
     let ipfs
     let nodeId
 
-    before(function (done) {
-      // CI takes longer to instantiate the daemon, so we need to increase the
-      // timeout for the before step
-      this.timeout(60 * 1000)
-
-      common.setup((err, factory) => {
-        expect(err).to.not.exist()
-
-        spawnNodeWithId(factory, (err, node) => {
-          expect(err).to.not.exist()
-
-          ipfs = node
-          nodeId = node.peerId.id
-
-          done()
-        })
-      })
+    before(async () => {
+      ipfs = await common.setup()
+      nodeId = ipfs.peerId.id
     })
 
-    after((done) => common.teardown(done))
+    after(() => common.teardown())
 
     it('should return false when the name that is intended to cancel is not subscribed', async function () {
       this.timeout(60 * 1000)
