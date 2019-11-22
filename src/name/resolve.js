@@ -132,20 +132,11 @@ module.exports = (createCommon, options) => {
     let ipfs
     this.retries(5)
 
-    before(function (done) {
-      common.setup((err, factory) => {
-        expect(err).to.not.exist()
-
-        factory.spawnNode((err, node) => {
-          expect(err).to.not.exist()
-
-          ipfs = node
-          done()
-        })
-      })
+    before(async () => {
+      ipfs = await common.setup()
     })
 
-    after((done) => common.teardown(done))
+    after(() => common.teardown())
 
     it('should resolve /ipns/ipfs.io', async () => {
       return expect(await ipfs.name.resolve('/ipns/ipfs.io'))
