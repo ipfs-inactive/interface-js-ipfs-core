@@ -8,30 +8,16 @@ module.exports = (createCommon, options) => {
   const it = getIt(options)
   const common = createCommon()
 
-  describe('.stop', () => {
+  describe('.stop', function () {
+    this.timeout(60 * 1000)
     let ipfs
 
-    before(function (done) {
-      // CI takes longer to instantiate the daemon, so we need to increase the
-      // timeout for the before step
-      this.timeout(60 * 1000)
-
-      common.setup((err, factory) => {
-        expect(err).to.not.exist()
-        factory.spawnNode((err, node) => {
-          expect(err).to.not.exist()
-          ipfs = node
-          done()
-        })
-      })
-    })
-
-    after((done) => {
-      common.teardown(done)
+    before(async () => {
+      ipfs = await common.setup()
     })
 
     // must be last test to run
-    it('should stop the node2', async function () {
+    it('should stop the node', async function () {
       this.timeout(10 * 1000)
 
       await ipfs.stop()

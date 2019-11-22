@@ -12,20 +12,11 @@ module.exports = (createCommon, options) => {
     this.timeout(60 * 1000)
     let ipfs
 
-    before(function (done) {
-      common.setup((err, factory) => {
-        expect(err).to.not.exist()
-        factory.spawnNode((err, node) => {
-          expect(err).to.not.exist()
-          ipfs = node
-          done()
-        })
-      })
+    before(async () => {
+      ipfs = await common.setup()
     })
 
-    after((done) => {
-      common.teardown(done)
-    })
+    after(() => common.teardown())
 
     it('should get the node ID', async () => {
       const res = await ipfs.id()
