@@ -13,23 +13,12 @@ module.exports = (createCommon, suiteName, ipfsRefs, options) => {
   const common = createCommon()
 
   describe(suiteName, function () {
-    this.timeout(40 * 1000)
+    this.timeout(60 * 1000)
 
     let ipfs, pbRootCb, dagRootCid
 
-    before(function (done) {
-      // CI takes longer to instantiate the daemon, so we need to increase the
-      // timeout for the before step
-      this.timeout(60 * 1000)
-
-      common.setup((err, factory) => {
-        expect(err).to.not.exist()
-        factory.spawnNode((err, node) => {
-          expect(err).to.not.exist()
-          ipfs = node
-          done()
-        })
-      })
+    before(async () => {
+      ipfs = await common.setup()
     })
 
     before(async function () {
@@ -42,7 +31,7 @@ module.exports = (createCommon, suiteName, ipfsRefs, options) => {
       dagRootCid = cid
     })
 
-    after((done) => common.teardown(done))
+    after(() => common.teardown())
 
     for (const [name, options] of Object.entries(getRefsTests())) {
       const { path, params, expected, expectError, expectTimeout } = options

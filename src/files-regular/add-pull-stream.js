@@ -12,26 +12,13 @@ module.exports = (createCommon, options) => {
   const common = createCommon()
 
   describe('.addPullStream', function () {
-    this.timeout(40 * 1000)
+    this.timeout(60 * 1000)
 
     let ipfs
 
-    before(function (done) {
-      // CI takes longer to instantiate the daemon, so we need to increase the
-      // timeout for the before step
-      this.timeout(60 * 1000)
+    before(async () => { ipfs = await common.setup() })
 
-      common.setup((err, factory) => {
-        expect(err).to.not.exist()
-        factory.spawnNode((err, node) => {
-          expect(err).to.not.exist()
-          ipfs = node
-          done()
-        })
-      })
-    })
-
-    after((done) => common.teardown(done))
+    after(() => common.teardown())
 
     it('should add pull stream of valid files and dirs', async function () {
       const content = (name) => ({

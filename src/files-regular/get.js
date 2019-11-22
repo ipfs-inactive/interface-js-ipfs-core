@@ -3,7 +3,6 @@
 
 const { fixtures } = require('./utils')
 const bs58 = require('bs58')
-const parallel = require('async/parallel')
 const CID = require('cids')
 const { getDescribe, getIt, expect } = require('../utils/mocha')
 
@@ -13,33 +12,17 @@ module.exports = (createCommon, options) => {
   const common = createCommon()
 
   describe('.get', function () {
-    this.timeout(40 * 1000)
+    this.timeout(60 * 1000)
 
     let ipfs
 
-    before(function (done) {
-      // CI takes longer to instantiate the daemon, so we need to increase the
-      // timeout for the before step
-      this.timeout(60 * 1000)
-
-      common.setup((err, factory) => {
-        expect(err).to.not.exist()
-        factory.spawnNode((err, node) => {
-          expect(err).to.not.exist()
-          ipfs = node
-          done()
-        })
-      })
+    before(async () => {
+      ipfs = await common.setup()
+      await ipfs.add(fixtures.smallFile.data)
+      await ipfs.add(fixtures.bigFile.data)
     })
 
-    before((done) => {
-      parallel([
-        (cb) => ipfs.add(fixtures.smallFile.data, cb),
-        (cb) => ipfs.add(fixtures.bigFile.data, cb)
-      ], done)
-    })
-
-    after((done) => common.teardown(done))
+    after(() => common.teardown())
 
     it('should get with a base58 encoded multihash', async () => {
       const files = await ipfs.get(fixtures.smallFile.cid)
