@@ -8,7 +8,7 @@ function waitForWantlistKey (ipfs, key, opts = {}) {
   let list = { Keys: [] }
 
   const start = Date.now()
-  const test = () => !list.Keys.some(k => k['/'] === key)
+  const findKey = () => !list.Keys.some(k => k['/'] === key)
 
   const iteratee = async () => {
     if (Date.now() - start > opts.timeout) {
@@ -18,7 +18,7 @@ function waitForWantlistKey (ipfs, key, opts = {}) {
     list = await ipfs.bitswap.wantlist(opts.peerId)
   }
 
-  return pWhilst(test, iteratee)
+  return pWhilst(findKey, iteratee)
 }
 
 module.exports.waitForWantlistKey = waitForWantlistKey
