@@ -52,8 +52,7 @@ module.exports = (createCommon, options) => {
       const rmRes = await ipfs.bootstrap.rm(null, { all: true })
       const removedPeers = rmRes.Peers
 
-      // TODO: fix bootstrap.rm as it's not returning all the nodes when all option is passed
-      // expect(removedPeers).to.eql(addedPeers)
+      expect(removedPeers).to.eql(addedPeers)
     })
   })
 }
