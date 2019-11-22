@@ -10,26 +10,13 @@ module.exports = (createCommon, options) => {
   const common = createCommon()
 
   describe('.files.rm', function () {
-    this.timeout(40 * 1000)
+    this.timeout(60 * 1000)
 
     let ipfs
 
-    before(function (done) {
-      // CI takes longer to instantiate the daemon, so we need to increase the
-      // timeout for the before step
-      this.timeout(60 * 1000)
+    before(async () => { ipfs = await common.setup() })
 
-      common.setup((err, factory) => {
-        expect(err).to.not.exist()
-        factory.spawnNode((err, node) => {
-          expect(err).to.not.exist()
-          ipfs = node
-          done()
-        })
-      })
-    })
-
-    after((done) => common.teardown(done))
+    after(() => common.teardown())
 
     it('should not remove not found file/dir, expect error', () => {
       const testDir = `/test-${hat()}`
@@ -40,7 +27,7 @@ module.exports = (createCommon, options) => {
     it('should remove file, expect no error', async () => {
       const testDir = `/test-${hat()}`
 
-      await ipfs.files.mkdir(testDir, { p: true })
+      await ipfs.files.mkdir(testDir, { parents: true })
       await ipfs.files.write(`${testDir}/c`, Buffer.from('Hello, world!'), { create: true })
 
       await ipfs.files.rm(`${testDir}/c`)
@@ -52,7 +39,7 @@ module.exports = (createCommon, options) => {
     it('should remove dir, expect no error', async () => {
       const testDir = `/test-${hat()}`
 
-      await ipfs.files.mkdir(`${testDir}/lv1/lv2`, { p: true })
+      await ipfs.files.mkdir(`${testDir}/lv1/lv2`, { parents: true })
 
       await ipfs.files.rm(`${testDir}/lv1/lv2`, { recursive: true })
 

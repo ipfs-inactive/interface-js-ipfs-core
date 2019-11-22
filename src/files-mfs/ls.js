@@ -11,26 +11,13 @@ module.exports = (createCommon, options) => {
   const common = createCommon()
 
   describe('.files.ls', function () {
-    this.timeout(40 * 1000)
+    this.timeout(60 * 1000)
 
     let ipfs
 
-    before(function (done) {
-      // CI takes longer to instantiate the daemon, so we need to increase the
-      // timeout for the before step
-      this.timeout(60 * 1000)
+    before(async () => { ipfs = await common.setup() })
 
-      common.setup((err, factory) => {
-        expect(err).to.not.exist()
-        factory.spawnNode((err, node) => {
-          expect(err).to.not.exist()
-          ipfs = node
-          done()
-        })
-      })
-    })
-
-    after((done) => common.teardown(done))
+    after(() => common.teardown())
 
     it('should not ls not found file/dir, expect error', () => {
       const testDir = `/test-${hat()}`
@@ -41,7 +28,7 @@ module.exports = (createCommon, options) => {
     it('should ls directory', async () => {
       const testDir = `/test-${hat()}`
 
-      await ipfs.files.mkdir(`${testDir}/lv1`, { p: true })
+      await ipfs.files.mkdir(`${testDir}/lv1`, { parents: true })
       await ipfs.files.write(`${testDir}/b`, Buffer.from('Hello, world!'), { create: true })
 
       const info = await ipfs.files.ls(testDir)
@@ -55,7 +42,7 @@ module.exports = (createCommon, options) => {
     it('should ls directory with long option', async () => {
       const testDir = `/test-${hat()}`
 
-      await ipfs.files.mkdir(`${testDir}/lv1`, { p: true })
+      await ipfs.files.mkdir(`${testDir}/lv1`, { parents: true })
       await ipfs.files.write(`${testDir}/b`, Buffer.from('Hello, world!'), { create: true })
 
       const info = await ipfs.files.ls(testDir, { long: true })

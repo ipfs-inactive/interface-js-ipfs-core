@@ -11,28 +11,14 @@ module.exports = (createCommon, options) => {
   const common = createCommon()
 
   describe('.files.stat', function () {
-    this.timeout(40 * 1000)
+    this.timeout(60 * 1000)
 
     let ipfs
 
-    before(function (done) {
-      // CI takes longer to instantiate the daemon, so we need to increase the
-      // timeout for the before step
-      this.timeout(60 * 1000)
-
-      common.setup((err, factory) => {
-        expect(err).to.not.exist()
-        factory.spawnNode((err, node) => {
-          expect(err).to.not.exist()
-          ipfs = node
-          done()
-        })
-      })
-    })
-
+    before(async () => { ipfs = await common.setup() })
     before(async () => { await ipfs.add(fixtures.smallFile.data) })
 
-    after((done) => common.teardown(done))
+    after(() => common.teardown())
 
     it('should not stat not found file/dir, expect error', function () {
       const testDir = `/test-${hat()}`
@@ -43,7 +29,7 @@ module.exports = (createCommon, options) => {
     it('should stat file', async function () {
       const testDir = `/test-${hat()}`
 
-      await ipfs.files.mkdir(testDir, { p: true })
+      await ipfs.files.mkdir(testDir, { parents: true })
       await ipfs.files.write(`${testDir}/b`, Buffer.from('Hello, world!'), { create: true })
 
       const stat = await ipfs.files.stat(`${testDir}/b`)
@@ -63,7 +49,7 @@ module.exports = (createCommon, options) => {
     it('should stat dir', async function () {
       const testDir = `/test-${hat()}`
 
-      await ipfs.files.mkdir(testDir, { p: true })
+      await ipfs.files.mkdir(testDir, { parents: true })
       await ipfs.files.write(`${testDir}/a`, Buffer.from('Hello, world!'), { create: true })
 
       const stat = await ipfs.files.stat(testDir)
