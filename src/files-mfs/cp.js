@@ -10,7 +10,7 @@ module.exports = (createCommon, options) => {
   const it = getIt(options)
   const common = createCommon()
 
-  describe.only('.files.cp', function () {
+  describe('.files.cp', function () {
     this.timeout(60 * 1000)
 
     let ipfs
