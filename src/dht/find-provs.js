@@ -19,11 +19,14 @@ module.exports = (createCommon, options) => {
   const common = createCommon()
 
   describe('.dht.findProvs', function () {
+    this.timeout(80 * 1000)
+
     let nodeA
     let nodeB
     let nodeC
 
-    before(async () => {
+    before(async function () {
+      this.timeout(60 * 1000)
       nodeA = await common.setup()
       nodeB = await common.setup()
       nodeC = await common.setup()
@@ -37,6 +40,8 @@ module.exports = (createCommon, options) => {
 
     let providedCid
     before('add providers for the same cid', async function () {
+      this.timeout(10 * 1000)
+
       const cids = await Promise.all([
         nodeB.object.new('unixfs-dir'),
         nodeC.object.new('unixfs-dir')
