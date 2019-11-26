@@ -10,14 +10,9 @@ module.exports = (createCommon, options) => {
 
   describe('.stop', function () {
     this.timeout(60 * 1000)
-    let ipfs
 
-    before(async () => {
-      ipfs = await common.setup()
-    })
-
-    // must be last test to run
     it('should stop the node', async function () {
+      const ipfs = await common.setup()
       this.timeout(10 * 1000)
 
       await ipfs.stop()
