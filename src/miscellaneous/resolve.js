@@ -77,6 +77,8 @@ module.exports = (createCommon, options) => {
     })
 
     it('should resolve IPNS link recursively', async function () {
+      this.timeout(20 * 1000)
+
       const node = await common.setup()
       await ipfs.swarm.connect(node.peerId.addresses.find((a) => a.includes('127.0.0.1')))
 

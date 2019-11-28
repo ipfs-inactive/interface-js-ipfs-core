@@ -11,11 +11,15 @@ module.exports = (createCommon, options) => {
   const it = getIt(options)
   const common = createCommon()
 
-  describe('.name.pubsub.cancel', function () {
+  describe('.name.pubsub.cancel', () => {
     let ipfs
     let nodeId
 
-    before(async () => {
+    before(async function () {
+      // CI takes longer to instantiate the daemon, so we need to increase the
+      // timeout for the before step
+      this.timeout(60 * 1000)
+
       ipfs = await common.setup()
       nodeId = ipfs.peerId.id
     })

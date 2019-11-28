@@ -10,13 +10,16 @@ module.exports = (createCommon, options) => {
   const it = getIt(options)
   const common = createCommon()
 
-  describe('.bitswap.wantlist', function () {
-    this.timeout(60 * 1000)
+  describe('.bitswap.wantlist', () => {
     let ipfsA
     let ipfsB
     const key = 'QmUBdnXXPyoDFXj3Hj39dNJ5VkN3QFRskXxcGaYFBB8CNR'
 
-    before(async () => {
+    before(async function () {
+      // CI takes longer to instantiate the daemon, so we need to increase the
+      // timeout for the before step
+      this.timeout(60 * 1000)
+
       ipfsA = await common.setup()
       ipfsB = await common.setup()
 
@@ -26,7 +29,11 @@ module.exports = (createCommon, options) => {
       await ipfsA.swarm.connect(ipfsB.peerId.addresses[0])
     })
 
-    after(() => common.teardown())
+    after(function () {
+      this.timeout(30 * 1000)
+
+      return common.teardown()
+    })
 
     it('should get the wantlist', () => {
       return waitForWantlistKey(ipfsB, key)
@@ -36,7 +43,9 @@ module.exports = (createCommon, options) => {
       return waitForWantlistKey(ipfsA, key, { peerId: ipfsB.peerId.id })
     })
 
-    it('should not get the wantlist when offline', async () => {
+    it('should not get the wantlist when offline', async function () {
+      this.timeout(60 * 1000)
+
       const node = await createCommon().setup()
       await node.stop()
 
