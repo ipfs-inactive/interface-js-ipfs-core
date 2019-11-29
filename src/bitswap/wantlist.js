@@ -24,7 +24,7 @@ module.exports = (createCommon, options) => {
       ipfsB = await common.setup()
 
       // Add key to the wantlist for ipfsB
-      ipfsB.block.get(key, () => {})
+      ipfsB.block.get(key).catch(() => {})
 
       await ipfsA.swarm.connect(ipfsB.peerId.addresses[0])
     })
@@ -39,7 +39,7 @@ module.exports = (createCommon, options) => {
       return waitForWantlistKey(ipfsB, key)
     })
 
-    it('should get the wantlist by peer ID for a diffreent node', () => {
+    it('should get the wantlist by peer ID for a different node', () => {
       return waitForWantlistKey(ipfsA, key, { peerId: ipfsB.peerId.id })
     })
 
@@ -49,7 +49,7 @@ module.exports = (createCommon, options) => {
       const node = await createCommon().setup()
       await node.stop()
 
-      return expect(node.bitswap.stat()).to.eventually.be.rejected()
+      return expect(node.bitswap.wantlist()).to.eventually.be.rejected()
     })
   })
 }
