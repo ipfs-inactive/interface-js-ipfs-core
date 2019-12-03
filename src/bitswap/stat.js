@@ -32,7 +32,7 @@ module.exports = (common, options) => {
       const node = await common.node()
       await node.stop()
 
-      return expect(node.bitswap.stat()).to.eventually.be.rejected()
+      return expect(node.api.bitswap.stat()).to.eventually.be.rejected()
     })
   })
 }

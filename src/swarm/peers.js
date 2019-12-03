@@ -23,7 +23,7 @@ module.exports = (common, options) => {
 
     before(async () => {
       ipfsA = await common.setup()
-      ipfsB = await common.setup({ type: 'js' })
+      ipfsB = await common.setup({ type: 'go' })
       await ipfsA.swarm.connect(ipfsB.peerId.addresses[0])
       await delay(60 * 1000) // wait for open streams in the connection available
     })
@@ -85,7 +85,7 @@ module.exports = (common, options) => {
 
     it('should list peers only once', async () => {
       const nodeA = await common.setup()
-      const nodeB = await common.setup({ type: 'js' })
+      const nodeB = await common.setup({ type: 'go' })
       await nodeA.swarm.connect(nodeB.peerId.addresses[0])
       await delay(1000)
       const peersA = await nodeA.swarm.peers()
@@ -105,7 +105,7 @@ module.exports = (common, options) => {
         '/ip4/127.0.0.1/tcp/26546/ws'
       ])
       const nodeA = await common.setup({ ipfsOptions: { config: configA } })
-      const nodeB = await common.setup({ type: 'js', ipfsOptions: { config: configB } })
+      const nodeB = await common.setup({ type: 'go', ipfsOptions: { config: configB } })
       await nodeA.swarm.connect(nodeB.peerId.addresses[0])
       await delay(1000)
       const peersA = await nodeA.swarm.peers()

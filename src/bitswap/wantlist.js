@@ -26,7 +26,6 @@ module.exports = (common, options) => {
 
       ipfsA = await common.setup()
       ipfsB = await common.setup({ type: 'js' })
-      await ipfsA.swarm.connect(ipfsB.peerId.addresses[0])
       // Add key to the wantlist for ipfsB
       ipfsB.block.get(key).catch(() => {})
     })
@@ -52,7 +51,7 @@ module.exports = (common, options) => {
       const node = await common.node()
       await node.stop()
 
-      return expect(node.bitswap.wantlist()).to.eventually.be.rejected()
+      return expect(node.api.bitswap.stat()).to.eventually.be.rejected()
     })
   })
 }

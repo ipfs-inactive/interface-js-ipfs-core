@@ -19,10 +19,9 @@ module.exports = (common, options) => {
       const ipfs = await common.node()
 
       await ipfs.stop()
-
       // Trying to stop an already stopped node should return an error
       // as the node can't respond to requests anymore
-      return expect(ipfs.stop()).to.eventually.be.rejected()
+      return expect(ipfs.api.stop()).to.eventually.be.rejected()
     })
   })
 }

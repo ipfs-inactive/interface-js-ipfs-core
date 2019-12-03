@@ -30,10 +30,8 @@ module.exports = (common, options) => {
       this.timeout(100 * 1000)
 
       ipfs1 = await common.setup()
-      ipfs2 = await common.setup({ type: 'js' })
+      ipfs2 = await common.setup({ type: 'go' })
     })
-
-    after(() => common.teardown())
 
     beforeEach(() => {
       topic = getTopic()
