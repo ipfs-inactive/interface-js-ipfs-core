@@ -25,7 +25,7 @@ module.exports = (common, options) => {
       this.timeout(60 * 1000)
 
       ipfsA = await common.setup()
-      ipfsB = await common.setup({ type: 'js' })
+      ipfsB = await common.setup({ type: 'go' })
       // Add key to the wantlist for ipfsB
       ipfsB.block.get(key).catch(() => {})
     })
