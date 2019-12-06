@@ -2,6 +2,7 @@
 'use strict'
 
 const PeerId = require('peer-id')
+const promisify = require('es6-promisify')
 
 const { getDescribe, getIt, expect } = require('../utils/mocha')
 
@@ -37,7 +38,7 @@ module.exports = (createCommon, options) => {
     it('should cancel a subscription correctly returning true', async function () {
       this.timeout(300 * 1000)
 
-      const peerId = await PeerId.create({ bits: 512 })
+      const peerId = await promisify(PeerId.create)({ bits: 512 })
 
       const id = peerId.toB58String()
       const ipnsPath = `/ipns/${id}`
