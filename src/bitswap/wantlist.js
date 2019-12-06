@@ -35,10 +35,12 @@ module.exports = (createCommon, options) => {
     })
 
     it('should get the wantlist', () => {
+      this.timeout(60 * 1000)
       return waitForWantlistKey(ipfsB, key)
     })
 
     it('should get the wantlist by peer ID for a different node', () => {
+      this.timeout(60 * 1000)
       return waitForWantlistKey(ipfsA, key, { peerId: ipfsB.peerId.id })
     })
 
