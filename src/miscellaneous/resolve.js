@@ -75,7 +75,7 @@ module.exports = (createCommon, options) => {
       expect(isIpfs.ipfsPath(resolved)).to.be.true()
     })
 
-    it.only('should resolve IPNS link recursively', async function () {
+    it('should resolve IPNS link recursively', async function () {
       this.timeout(20 * 1000)
 
       const node = await common.setup()
