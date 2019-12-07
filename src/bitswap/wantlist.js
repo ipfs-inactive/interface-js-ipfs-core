@@ -34,12 +34,12 @@ module.exports = (createCommon, options) => {
       return common.teardown()
     })
 
-    it('should get the wantlist', () => {
+    it('should get the wantlist', function () {
       this.timeout(60 * 1000)
       return waitForWantlistKey(ipfsB, key)
     })
 
-    it('should get the wantlist by peer ID for a different node', () => {
+    it('should get the wantlist by peer ID for a different node', function () {
       this.timeout(60 * 1000)
       return waitForWantlistKey(ipfsA, key, { peerId: ipfsB.peerId.id })
     })
