@@ -7,9 +7,9 @@ const { waitForPeers, getTopic } = require('./utils')
 const { getDescribe, getIt, expect } = require('../utils/mocha')
 const delay = require('delay')
 
-/** @typedef { import("ipfsd-ctl").TestsInterface } TestsInterface */
+/** @typedef { import("ipfsd-ctl/src/factory") } Factory */
 /**
- * @param {TestsInterface} common
+ * @param {Factory} common
  * @param {Object} options
  */
 module.exports = (common, options) => {
@@ -24,13 +24,9 @@ module.exports = (common, options) => {
     let topic
     let subscribedTopics = []
 
-    before(async function () {
-      // CI takes longer to instantiate the daemon, so we need to increase the
-      // timeout for the before step
-      this.timeout(100 * 1000)
-
-      ipfs1 = await common.setup()
-      ipfs2 = await common.setup({ type: 'go' })
+    before(async () => {
+      ipfs1 = (await common.spawn()).api
+      ipfs2 = (await common.spawn({ type: 'go' })).api
     })
 
     beforeEach(() => {
@@ -48,7 +44,7 @@ module.exports = (common, options) => {
       await delay(100)
     })
 
-    after(() => common.teardown())
+    after(() => common.clean())
 
     describe('single node', () => {
       it('should subscribe to one topic', async () => {

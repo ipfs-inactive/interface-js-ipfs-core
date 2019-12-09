@@ -13,9 +13,9 @@ async function fakeCid () {
   return new CID(0, 'dag-pb', mh)
 }
 
-/** @typedef { import("ipfsd-ctl").TestsInterface } TestsInterface */
+/** @typedef { import("ipfsd-ctl/src/factory") } Factory */
 /**
- * @param {TestsInterface} common
+ * @param {Factory} common
  * @param {Object} options
  */
 module.exports = (common, options) => {
@@ -28,20 +28,16 @@ module.exports = (common, options) => {
     let nodeC
 
     before(async () => {
-      nodeA = await common.setup()
-      nodeB = await common.setup()
-      nodeC = await common.setup()
+      nodeA = (await common.spawn()).api
+      nodeB = (await common.spawn()).api
+      nodeC = (await common.spawn()).api
       await Promise.all([
         nodeB.swarm.connect(nodeA.peerId.addresses[0]),
         nodeC.swarm.connect(nodeB.peerId.addresses[0])
       ])
     })
 
-    after(function () {
-      this.timeout(50 * 1000)
-
-      return common.teardown()
-    })
+    after(() => common.clean())
 
     let providedCid
     before('add providers for the same cid', async function () {

@@ -6,9 +6,9 @@ const { getTopic } = require('./utils')
 const { getDescribe, getIt, expect } = require('../utils/mocha')
 const delay = require('delay')
 
-/** @typedef { import("ipfsd-ctl").TestsInterface } TestsInterface */
+/** @typedef { import("ipfsd-ctl/src/factory") } Factory */
 /**
- * @param {TestsInterface} common
+ * @param {Factory} common
  * @param {Object} options
  */
 module.exports = (common, options) => {
@@ -20,15 +20,11 @@ module.exports = (common, options) => {
 
     let ipfs
 
-    before(async function () {
-      // CI takes longer to instantiate the daemon, so we need to increase the
-      // timeout for the before step
-      this.timeout(60 * 1000)
-
-      ipfs = await common.setup()
+    before(async () => {
+      ipfs = (await common.spawn()).api
     })
 
-    after(() => common.teardown())
+    after(() => common.clean())
 
     // Browser/worker has max ~5 open HTTP requests to the same origin
     const count = isBrowser || isWebWorker || isElectronRenderer ? 5 : 10

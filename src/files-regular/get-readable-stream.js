@@ -6,9 +6,9 @@ const through = require('through2')
 const { getDescribe, getIt, expect } = require('../utils/mocha')
 const getStream = require('get-stream')
 
-/** @typedef { import("ipfsd-ctl").TestsInterface } TestsInterface */
+/** @typedef { import("ipfsd-ctl/src/factory") } Factory */
 /**
- * @param {TestsInterface} common
+ * @param {Factory} common
  * @param {Object} options
  */
 module.exports = (common, options) => {
@@ -20,16 +20,12 @@ module.exports = (common, options) => {
 
     let ipfs
 
-    before(async function () {
-      // CI takes longer to instantiate the daemon, so we need to increase the
-      // timeout for the before step
-      this.timeout(60 * 1000)
-
-      ipfs = await common.setup()
+    before(async () => {
+      ipfs = (await common.spawn()).api
       await ipfs.add(fixtures.smallFile.data)
     })
 
-    after(() => common.teardown())
+    after(() => common.clean())
 
     it('should return a Readable Stream of Readable Streams', async () => {
       const stream = ipfs.getReadableStream(fixtures.smallFile.cid)

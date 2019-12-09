@@ -5,9 +5,9 @@ const { getTopic } = require('./utils')
 const { getDescribe, getIt, expect } = require('../utils/mocha')
 const delay = require('delay')
 
-/** @typedef { import("ipfsd-ctl").TestsInterface } TestsInterface */
+/** @typedef { import("ipfsd-ctl/src/factory") } Factory */
 /**
- * @param {TestsInterface} common
+ * @param {Factory} common
  * @param {Object} options
  */
 module.exports = (common, options) => {
@@ -20,7 +20,7 @@ module.exports = (common, options) => {
     let ipfs
     let subscribedTopics = []
     before(async () => {
-      ipfs = await common.setup()
+      ipfs = (await common.spawn()).api
     })
 
     afterEach(async () => {
@@ -31,7 +31,7 @@ module.exports = (common, options) => {
       await delay(100)
     })
 
-    after(() => common.teardown())
+    after(() => common.clean())
 
     it('should return an empty list when no topics are subscribed', async () => {
       const topics = await ipfs.pubsub.ls()

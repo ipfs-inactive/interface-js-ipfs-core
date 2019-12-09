@@ -3,9 +3,9 @@
 
 const { getDescribe, getIt, expect } = require('../utils/mocha')
 
-/** @typedef { import("ipfsd-ctl").TestsInterface } TestsInterface */
+/** @typedef { import("ipfsd-ctl/src/factory") } Factory */
 /**
- * @param {TestsInterface} common
+ * @param {Factory} common
  * @param {Object} options
  */
 module.exports = (common, options) => {
@@ -15,15 +15,11 @@ module.exports = (common, options) => {
   describe('.version', () => {
     let ipfs
 
-    before(async function () {
-      // CI takes longer to instantiate the daemon, so we need to increase the
-      // timeout for the before step
-      this.timeout(60 * 1000)
-
-      ipfs = await common.setup()
+    before(async () => {
+      ipfs = (await common.spawn()).api
     })
 
-    after(() => common.teardown())
+    after(() => common.clean())
 
     it('should get the node version', async () => {
       const result = await ipfs.version()

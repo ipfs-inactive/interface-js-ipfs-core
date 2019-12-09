@@ -8,9 +8,9 @@ const CID = require('cids')
 const multihash = require('multihashes')
 const { getDescribe, getIt, expect } = require('../utils/mocha')
 
-/** @typedef { import("ipfsd-ctl").TestsInterface } TestsInterface */
+/** @typedef { import("ipfsd-ctl/src/factory") } Factory */
 /**
- * @param {TestsInterface} common
+ * @param {Factory} common
  * @param {Object} options
  */
 module.exports = (common, options) => {
@@ -20,15 +20,9 @@ module.exports = (common, options) => {
   describe('.dag.put', () => {
     let ipfs
 
-    before(async function () {
-      // CI takes longer to instantiate the daemon, so we need to increase the
-      // timeout for the before step
-      this.timeout(60 * 1000)
+    before(async () => { ipfs = (await common.spawn()).api })
 
-      ipfs = await common.setup()
-    })
-
-    after(() => common.teardown())
+    after(() => common.clean())
 
     let pbNode
     let cborNode

@@ -4,9 +4,9 @@
 const CID = require('cids')
 const { getDescribe, getIt, expect } = require('../utils/mocha')
 
-/** @typedef { import("ipfsd-ctl").TestsInterface } TestsInterface */
+/** @typedef { import("ipfsd-ctl/src/factory") } Factory */
 /**
- * @param {TestsInterface} common
+ * @param {Factory} common
  * @param {Object} options
  */
 module.exports = (common, options) => {
@@ -17,17 +17,13 @@ module.exports = (common, options) => {
     const data = Buffer.from('blorb')
     let ipfs, hash
 
-    before(async function () {
-      // CI takes longer to instantiate the daemon, so we need to increase the
-      // timeout for the before step
-      this.timeout(60 * 1000)
-
-      ipfs = await common.setup()
+    before(async () => {
+      ipfs = (await common.spawn()).api
       const block = await ipfs.block.put(data)
       hash = block.cid.multihash
     })
 
-    after(() => common.teardown())
+    after(() => common.clean())
 
     it('should stat by CID', async () => {
       const cid = new CID(hash)

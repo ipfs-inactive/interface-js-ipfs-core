@@ -6,9 +6,9 @@ const PeerId = require('peer-id')
 const delay = require('delay')
 const { getDescribe, getIt, expect } = require('../utils/mocha')
 
-/** @typedef { import("ipfsd-ctl").TestsInterface } TestsInterface */
+/** @typedef { import("ipfsd-ctl/src/factory") } Factory */
 /**
- * @param {TestsInterface} common
+ * @param {Factory} common
  * @param {Object} options
  */
 module.exports = (common, options) => {
@@ -22,13 +22,15 @@ module.exports = (common, options) => {
     let ipfsB
 
     before(async () => {
-      ipfsA = await common.setup()
-      ipfsB = await common.setup({ type: 'go' })
+      ipfsA = (await common.spawn()).api
+      ipfsB = (await common.spawn({ type: 'go' })).api
       await ipfsA.swarm.connect(ipfsB.peerId.addresses[0])
-      await delay(60 * 1000) // wait for open streams in the connection available
+      /* TODO: Seen if we still need this after this is fixed
+         https://github.com/ipfs/js-ipfs/issues/2601 gets resolved */
+      // await delay(60 * 1000) // wait for open streams in the connection available
     })
 
-    after(() => common.teardown())
+    after(() => common.clean())
 
     it('should list peers this node is connected to', async () => {
       const peers = await ipfsA.swarm.peers()
@@ -84,8 +86,8 @@ module.exports = (common, options) => {
     }
 
     it('should list peers only once', async () => {
-      const nodeA = await common.setup()
-      const nodeB = await common.setup({ type: 'go' })
+      const nodeA = (await common.spawn()).api
+      const nodeB = (await common.spawn({ type: 'go' })).api
       await nodeA.swarm.connect(nodeB.peerId.addresses[0])
       await delay(1000)
       const peersA = await nodeA.swarm.peers()
@@ -104,8 +106,8 @@ module.exports = (common, options) => {
         '/ip4/127.0.0.1/tcp/26545/ws',
         '/ip4/127.0.0.1/tcp/26546/ws'
       ])
-      const nodeA = await common.setup({ ipfsOptions: { config: configA } })
-      const nodeB = await common.setup({ type: 'go', ipfsOptions: { config: configB } })
+      const nodeA = (await common.spawn({ ipfsOptions: { config: configA } })).api
+      const nodeB = (await common.spawn({ type: 'js', ipfsOptions: { config: configB } })).api
       await nodeA.swarm.connect(nodeB.peerId.addresses[0])
       await delay(1000)
       const peersA = await nodeA.swarm.peers()

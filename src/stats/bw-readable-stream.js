@@ -5,9 +5,9 @@ const { expectIsBandwidth } = require('./utils')
 const { getDescribe, getIt } = require('../utils/mocha')
 const getStream = require('get-stream')
 
-/** @typedef { import("ipfsd-ctl").TestsInterface } TestsInterface */
+/** @typedef { import("ipfsd-ctl/src/factory") } Factory */
 /**
- * @param {TestsInterface} common
+ * @param {Factory} common
  * @param {Object} options
  */
 module.exports = (common, options) => {
@@ -17,15 +17,11 @@ module.exports = (common, options) => {
   describe('.stats.bwReadableStream', () => {
     let ipfs
 
-    before(async function () {
-      // CI takes longer to instantiate the daemon, so we need to increase the
-      // timeout for the before step
-      this.timeout(60 * 1000)
-
-      ipfs = await common.setup()
+    before(async () => {
+      ipfs = (await common.spawn()).api
     })
 
-    after(() => common.teardown())
+    after(() => common.clean())
 
     it('should get bandwidth stats over readable stream', async () => {
       const stream = ipfs.stats.bwReadableStream()

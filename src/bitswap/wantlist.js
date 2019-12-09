@@ -4,9 +4,9 @@
 const { getDescribe, getIt, expect } = require('../utils/mocha')
 const { waitForWantlistKey } = require('./utils')
 
-/** @typedef { import("ipfsd-ctl").TestsInterface } TestsInterface */
+/** @typedef { import("ipfsd-ctl/src/factory") } Factory */
 /**
- * @param {TestsInterface} common
+ * @param {Factory} common
  * @param {Object} options
  */
 module.exports = (common, options) => {
@@ -19,22 +19,14 @@ module.exports = (common, options) => {
     let ipfsB
     const key = 'QmUBdnXXPyoDFXj3Hj39dNJ5VkN3QFRskXxcGaYFBB8CNR'
 
-    before(async function () {
-      // CI takes longer to instantiate the daemon, so we need to increase the
-      // timeout for the before step
-      this.timeout(60 * 1000)
-
-      ipfsA = await common.setup()
-      ipfsB = await common.setup({ type: 'go' })
+    before(async () => {
+      ipfsA = (await common.spawn()).api
+      ipfsB = (await common.spawn({ type: 'go' })).api
       // Add key to the wantlist for ipfsB
       ipfsB.block.get(key).catch(() => {})
     })
 
-    after(function () {
-      this.timeout(30 * 1000)
-
-      return common.teardown()
-    })
+    after(() => common.clean())
 
     it('should get the wantlist', function () {
       return waitForWantlistKey(ipfsB, key)
@@ -48,7 +40,7 @@ module.exports = (common, options) => {
     })
 
     it('should not get the wantlist when offline', async () => {
-      const node = await common.node()
+      const node = await common.spawn()
       await node.stop()
 
       return expect(node.api.bitswap.stat()).to.eventually.be.rejected()

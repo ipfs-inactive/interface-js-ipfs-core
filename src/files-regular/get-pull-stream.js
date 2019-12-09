@@ -5,9 +5,9 @@ const { fixtures } = require('./utils')
 const { getDescribe, getIt, expect } = require('../utils/mocha')
 const pullToPromise = require('pull-to-promise')
 
-/** @typedef { import("ipfsd-ctl").TestsInterface } TestsInterface */
+/** @typedef { import("ipfsd-ctl/src/factory") } Factory */
 /**
- * @param {TestsInterface} common
+ * @param {Factory} common
  * @param {Object} options
  */
 module.exports = (common, options) => {
@@ -19,17 +19,11 @@ module.exports = (common, options) => {
 
     let ipfs
 
-    before(async function () {
-      // CI takes longer to instantiate the daemon, so we need to increase the
-      // timeout for the before step
-      this.timeout(60 * 1000)
-
-      ipfs = await common.setup()
-    })
+    before(async () => { ipfs = (await common.spawn()).api })
 
     before(() => ipfs.add(fixtures.smallFile.data))
 
-    after(() => common.teardown())
+    after(() => common.clean())
 
     it('should return a Pull Stream of Pull Streams', async () => {
       const stream = ipfs.getPullStream(fixtures.smallFile.cid)

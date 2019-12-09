@@ -4,9 +4,9 @@
 const { getDescribe, getIt, expect } = require('../utils/mocha')
 const isPlainObject = require('is-plain-object')
 
-/** @typedef { import("ipfsd-ctl").TestsInterface } TestsInterface */
+/** @typedef { import("ipfsd-ctl/src/factory") } Factory */
 /**
- * @param {TestsInterface} common
+ * @param {Factory} common
  * @param {Object} options
  */
 module.exports = (common, options) => {
@@ -17,9 +17,9 @@ module.exports = (common, options) => {
     this.timeout(30 * 1000)
     let ipfs
 
-    before(async () => { ipfs = await common.setup() })
+    before(async () => { ipfs = (await common.spawn()).api })
 
-    after(() => common.teardown())
+    after(() => common.clean())
 
     it('should retrieve the whole config', async () => {
       const config = await ipfs.config.get()

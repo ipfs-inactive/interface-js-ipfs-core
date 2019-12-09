@@ -6,9 +6,9 @@ const hat = require('hat')
 const { fixture } = require('./utils')
 const { getDescribe, getIt, expect } = require('../utils/mocha')
 
-/** @typedef { import("ipfsd-ctl").TestsInterface } TestsInterface */
+/** @typedef { import("ipfsd-ctl/src/factory") } Factory */
 /**
- * @param {TestsInterface} common
+ * @param {Factory} common
  * @param {Object} options
  */
 module.exports = (common, options) => {
@@ -20,17 +20,13 @@ module.exports = (common, options) => {
     let ipfs
     let nodeId
 
-    before(async function () {
-      // CI takes longer to instantiate the daemon, so we need to increase the
-      // timeout for the before step
-      this.timeout(60 * 1000)
-
-      ipfs = await common.setup()
+    before(async () => {
+      ipfs = (await common.spawn()).api
       nodeId = ipfs.peerId.id
       await ipfs.add(fixture.data, { pin: false })
     })
 
-    after(() => common.teardown())
+    after(() => common.clean())
 
     it('should publish an IPNS record with the default params', async function () {
       this.timeout(50 * 1000)

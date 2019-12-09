@@ -3,9 +3,9 @@
 
 const { getDescribe, getIt, expect } = require('../utils/mocha')
 
-/** @typedef { import("ipfsd-ctl").TestsInterface } TestsInterface */
+/** @typedef { import("ipfsd-ctl/src/factory") } Factory */
 /**
- * @param {TestsInterface} common
+ * @param {Factory} common
  * @param {Object} options
  */
 module.exports = (common, options) => {
@@ -20,9 +20,9 @@ module.exports = (common, options) => {
 
     let ipfs
 
-    before(async () => { ipfs = await common.setup() })
+    before(async () => { ipfs = (await common.spawn()).api })
 
-    after(() => common.teardown())
+    after(() => common.clean())
 
     it('should return an error when called with an invalid arg', () => {
       return expect(ipfs.bootstrap.rm(invalidArg)).to.eventually.be.rejected

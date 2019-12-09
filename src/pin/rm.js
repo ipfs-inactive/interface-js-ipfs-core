@@ -4,9 +4,9 @@
 const { fixtures } = require('./utils')
 const { getDescribe, getIt, expect } = require('../utils/mocha')
 
-/** @typedef { import("ipfsd-ctl").TestsInterface } TestsInterface */
+/** @typedef { import("ipfsd-ctl/src/factory") } Factory */
 /**
- * @param {TestsInterface} common
+ * @param {Factory} common
  * @param {Object} options
  */
 module.exports = (common, options) => {
@@ -18,14 +18,14 @@ module.exports = (common, options) => {
 
     let ipfs
     before(async () => {
-      ipfs = await common.setup()
+      ipfs = (await common.spawn()).api
       await ipfs.add(fixtures.files[0].data, { pin: false })
       await ipfs.pin.add(fixtures.files[0].cid, { recursive: true })
       await ipfs.add(fixtures.files[1].data, { pin: false })
       await ipfs.pin.add(fixtures.files[1].cid, { recursive: false })
     })
 
-    after(() => common.teardown())
+    after(() => common.clean())
 
     it('should remove a recursive pin', async () => {
       const removedPinset = await ipfs.pin.rm(fixtures.files[0].cid, { recursive: true })

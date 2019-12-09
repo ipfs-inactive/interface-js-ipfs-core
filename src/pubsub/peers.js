@@ -5,9 +5,9 @@ const { waitForPeers, getTopic } = require('./utils')
 const { getDescribe, getIt, expect } = require('../utils/mocha')
 const delay = require('delay')
 
-/** @typedef { import("ipfsd-ctl").TestsInterface } TestsInterface */
+/** @typedef { import("ipfsd-ctl/src/factory") } Factory */
 /**
- * @param {TestsInterface} common
+ * @param {Factory} common
  * @param {Object} options
  */
 module.exports = (common, options) => {
@@ -22,9 +22,9 @@ module.exports = (common, options) => {
     let ipfs3
     let subscribedTopics = []
     before(async () => {
-      ipfs1 = await common.setup()
-      ipfs2 = await common.setup({ type: 'go' })
-      ipfs3 = await common.setup({ type: 'go' })
+      ipfs1 = (await common.spawn()).api
+      ipfs2 = (await common.spawn({ type: 'go' })).api
+      ipfs3 = (await common.spawn({ type: 'go' })).api
 
       const ipfs2Addr = ipfs2.peerId.addresses.find((a) => a.includes('127.0.0.1'))
       const ipfs3Addr = ipfs3.peerId.addresses.find((a) => a.includes('127.0.0.1'))
@@ -44,7 +44,7 @@ module.exports = (common, options) => {
       await delay(100)
     })
 
-    after(() => common.teardown())
+    after(() => common.clean())
 
     it('should not error when not subscribed to a topic', async () => {
       const topic = getTopic()

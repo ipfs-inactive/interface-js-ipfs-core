@@ -3,9 +3,9 @@
 
 const { getDescribe, getIt, expect } = require('../utils/mocha')
 
-/** @typedef { import("ipfsd-ctl").TestsInterface } TestsInterface */
+/** @typedef { import("ipfsd-ctl/src/factory") } Factory */
 /**
- * @param {TestsInterface} common
+ * @param {Factory} common
  * @param {Object} options
  */
 module.exports = (common, options) => {
@@ -18,21 +18,13 @@ module.exports = (common, options) => {
     let nodeA
     let nodeB
 
-    before(async function () {
-      // CI takes longer to instantiate the daemon, so we need to increase the
-      // timeout for the before step
-      this.timeout(60 * 1000)
-
-      nodeA = await common.setup()
-      nodeB = await common.setup()
+    before(async () => {
+      nodeA = (await common.spawn()).api
+      nodeB = (await common.spawn()).api
       await nodeB.swarm.connect(nodeA.peerId.addresses[0])
     })
 
-    after(function () {
-      this.timeout(50 * 1000)
-
-      return common.teardown()
-    })
+    after(() => common.clean())
 
     it('should find other peers', async () => {
       const res = await nodeA.dht.findPeer(nodeB.peerId.id)

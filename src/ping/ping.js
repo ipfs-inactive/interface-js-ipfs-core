@@ -4,9 +4,9 @@
 const { getDescribe, getIt, expect } = require('../utils/mocha')
 const { expectIsPingResponse, isPong } = require('./utils')
 
-/** @typedef { import("ipfsd-ctl").TestsInterface } TestsInterface */
+/** @typedef { import("ipfsd-ctl/src/factory") } Factory */
 /**
- * @param {TestsInterface} common
+ * @param {Factory} common
  * @param {Object} options
  */
 module.exports = (common, options) => {
@@ -19,17 +19,13 @@ module.exports = (common, options) => {
     let ipfsA
     let ipfsB
 
-    before(async function () {
-      // CI takes longer to instantiate the daemon, so we need to increase the
-      // timeout for the before step
-      this.timeout(60 * 1000)
-
-      ipfsA = await common.setup()
-      ipfsB = await common.setup({ type: 'js' })
+    before(async () => {
+      ipfsA = (await common.spawn()).api
+      ipfsB = (await common.spawn({ type: 'js' })).api
       await ipfsA.swarm.connect(ipfsB.peerId.addresses[0])
     })
 
-    after(() => common.teardown())
+    after(() => common.clean())
 
     it('should send the specified number of packets', async () => {
       const count = 3

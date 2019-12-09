@@ -4,9 +4,9 @@
 const { getDescribe, getIt, expect } = require('../utils/mocha')
 const hat = require('hat')
 
-/** @typedef { import("ipfsd-ctl").TestsInterface } TestsInterface */
+/** @typedef { import("ipfsd-ctl/src/factory") } Factory */
 /**
- * @param {TestsInterface} common
+ * @param {Factory} common
  * @param {Object} options
  */
 module.exports = (common, options) => {
@@ -16,9 +16,9 @@ module.exports = (common, options) => {
   describe('.block.rm', () => {
     let ipfs
 
-    before(async () => { ipfs = await common.setup() })
+    before(async () => { ipfs = (await common.spawn()).api })
 
-    after(() => common.teardown())
+    after(() => common.clean())
 
     it('should remove by CID object', async () => {
       const cid = await ipfs.dag.put(Buffer.from(hat()), {

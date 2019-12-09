@@ -6,9 +6,9 @@ const pull = require('pull-stream')
 const { getDescribe, getIt, expect } = require('../utils/mocha')
 const pullToPromise = require('pull-to-promise')
 
-/** @typedef { import("ipfsd-ctl").TestsInterface } TestsInterface */
+/** @typedef { import("ipfsd-ctl/src/factory") } Factory */
 /**
- * @param {TestsInterface} common
+ * @param {Factory} common
  * @param {Object} options
  */
 module.exports = (common, options) => {
@@ -20,15 +20,9 @@ module.exports = (common, options) => {
 
     let ipfs
 
-    before(async function () {
-      // CI takes longer to instantiate the daemon, so we need to increase the
-      // timeout for the before step
-      this.timeout(60 * 1000)
+    before(async () => { ipfs = (await common.spawn()).api })
 
-      ipfs = await common.setup()
-    })
-
-    after(() => common.teardown())
+    after(() => common.clean())
 
     it('should add pull stream of valid files and dirs', async function () {
       const content = (name) => ({

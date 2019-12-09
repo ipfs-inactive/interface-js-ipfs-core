@@ -5,9 +5,9 @@ const { getDescribe, getIt, expect } = require('../utils/mocha')
 const delay = require('delay')
 const CID = require('cids')
 
-/** @typedef { import("ipfsd-ctl").TestsInterface } TestsInterface */
+/** @typedef { import("ipfsd-ctl/src/factory") } Factory */
 /**
- * @param {TestsInterface} common
+ * @param {Factory} common
  * @param {Object} options
  */
 module.exports = (common, options) => {
@@ -19,11 +19,11 @@ module.exports = (common, options) => {
     let nodeId
 
     before(async () => {
-      ipfs = await common.setup()
+      ipfs = (await common.spawn()).api
       nodeId = ipfs.peerId.id
     })
 
-    after(() => common.teardown())
+    after(() => common.clean())
 
     it('should resolve a record default options', async function () {
       this.timeout(20 * 1000)
@@ -135,10 +135,10 @@ module.exports = (common, options) => {
     this.retries(5)
 
     before(async () => {
-      ipfs = await common.setup()
+      ipfs = (await common.spawn()).api
     })
 
-    after(() => common.teardown())
+    after(() => common.clean())
 
     it('should resolve /ipns/ipfs.io', async () => {
       return expect(await ipfs.name.resolve('/ipns/ipfs.io'))

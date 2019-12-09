@@ -3,9 +3,9 @@
 
 const { getDescribe, getIt, expect } = require('../utils/mocha')
 
-/** @typedef { import("ipfsd-ctl").TestsInterface } TestsInterface */
+/** @typedef { import("ipfsd-ctl/src/factory") } Factory */
 /**
- * @param {TestsInterface} common
+ * @param {Factory} common
  * @param {Object} options
  */
 module.exports = (common, options) => {
@@ -16,7 +16,7 @@ module.exports = (common, options) => {
     this.timeout(60 * 1000)
 
     it('should stop the node', async () => {
-      const ipfs = await common.node()
+      const ipfs = await common.spawn()
 
       await ipfs.stop()
       // Trying to stop an already stopped node should return an error

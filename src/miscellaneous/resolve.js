@@ -7,9 +7,9 @@ const hat = require('hat')
 const multibase = require('multibase')
 const { getDescribe, getIt, expect } = require('../utils/mocha')
 
-/** @typedef { import("ipfsd-ctl").TestsInterface } TestsInterface */
+/** @typedef { import("ipfsd-ctl/src/factory") } Factory */
 /**
- * @param {TestsInterface} common
+ * @param {Factory} common
  * @param {Object} options
  */
 module.exports = (common, options) => {
@@ -21,10 +21,10 @@ module.exports = (common, options) => {
     let ipfs
 
     before(async () => {
-      ipfs = await common.setup()
+      ipfs = (await common.spawn()).api
     })
 
-    after(() => common.teardown())
+    after(() => common.clean())
 
     it('should resolve an IPFS hash', async () => {
       const content = loadFixture('test/fixtures/testfile.txt', 'interface-ipfs-core')
@@ -81,7 +81,7 @@ module.exports = (common, options) => {
 
     it('should resolve IPNS link recursively', async function () {
       this.timeout(20 * 1000)
-      const node = await common.setup({ type: 'go' })
+      const node = (await common.spawn({ type: 'go' })).api
       await ipfs.swarm.connect(node.peerId.addresses[0])
       const [{ path }] = await ipfs.add(Buffer.from('should resolve a record recursive === true'))
       const { id: keyId } = await ipfs.key.gen('key-name', { type: 'rsa', size: 2048 })
