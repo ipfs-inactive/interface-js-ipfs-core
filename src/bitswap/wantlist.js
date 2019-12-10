@@ -24,6 +24,7 @@ module.exports = (common, options) => {
       ipfsB = (await common.spawn({ type: 'go' })).api
       // Add key to the wantlist for ipfsB
       ipfsB.block.get(key).catch(() => {})
+      await ipfsA.swarm.connect(ipfsB.peerId.addresses[0])
     })
 
     after(() => common.clean())

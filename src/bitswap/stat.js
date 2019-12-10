@@ -13,7 +13,7 @@ module.exports = (common, options) => {
   const describe = getDescribe(options)
   const it = getIt(options)
 
-  describe('.bitswap.stat', () => {
+  describe('.bitswap.stat', function () {
     this.timeout(60 * 1000)
     let ipfs
 
