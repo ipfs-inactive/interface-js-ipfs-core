@@ -53,9 +53,9 @@ module.exports.createServer = () => {
 
   server.stop = () => new Promise((resolve, reject) => {
     server.once('error', reject)
-    server.close(() => {
+    server.close((err) => {
       server.removeListener('error', reject)
-      resolve()
+      err ? reject(err) : resolve()
     })
   })
 
