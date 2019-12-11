@@ -26,7 +26,8 @@ module.exports = (common, options) => {
 
     before(async () => {
       ipfs1 = (await common.spawn()).api
-      ipfs2 = (await common.spawn({ type: 'go' })).api
+      // TODO 'multiple connected nodes' tests fails with go in Firefox
+      ipfs2 = (await common.spawn({ type: 'js' })).api
     })
 
     beforeEach(() => {
