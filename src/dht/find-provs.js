@@ -22,7 +22,8 @@ module.exports = (common, options) => {
   const describe = getDescribe(options)
   const it = getIt(options)
 
-  describe('.dht.findProvs', () => {
+  describe('.dht.findProvs', function () {
+    this.timeout(20000)
     let nodeA
     let nodeB
     let nodeC
