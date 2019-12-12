@@ -37,5 +37,29 @@ module.exports = (common, options) => {
     it('should not make already existent directory', () => {
       return expect(ipfs.files.mkdir('/')).to.eventually.be.rejected()
     })
+
+    it('should make directory and specify mode', async function () {
+      const testPath = `/test-${hat()}`
+      const mode = parseInt('0321', 8)
+
+      await ipfs.files.mkdir(testPath, {
+        mode
+      })
+
+      const stats = await ipfs.files.stat(testPath)
+      expect(stats).to.have.property('mode', mode)
+    })
+
+    it('should make directory and specify mtime', async function () {
+      const testPath = `/test-${hat()}`
+      const mtime = Math.round(Date.now() / 1000)
+
+      await ipfs.files.mkdir(testPath, {
+        mtime
+      })
+
+      const stats = await ipfs.files.stat(testPath)
+      expect(stats).to.have.property('mtime', mtime)
+    })
   })
 }

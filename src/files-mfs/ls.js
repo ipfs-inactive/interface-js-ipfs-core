@@ -38,8 +38,8 @@ module.exports = (common, options) => {
       const info = await ipfs.files.ls(testDir)
 
       expect(info.sort((a, b) => a.name.localeCompare(b.name))).to.eql([
-        { name: 'b', type: 0, size: 0, hash: '' },
-        { name: 'lv1', type: 0, size: 0, hash: '' }
+        { name: 'b', type: 0, size: 0, hash: '', mode: parseInt('0644', 8) },
+        { name: 'lv1', type: 0, size: 0, hash: '', mode: parseInt('0755', 8) }
       ])
     })
 
@@ -56,13 +56,15 @@ module.exports = (common, options) => {
           name: 'b',
           type: 0,
           size: 13,
-          hash: 'QmcZojhwragQr5qhTeFAmELik623Z21e3jBTpJXoQ9si1T'
+          hash: 'QmcZojhwragQr5qhTeFAmELik623Z21e3jBTpJXoQ9si1T',
+          mode: parseInt('0644', 8)
         },
         {
           name: 'lv1',
           type: 1,
           size: 0,
-          hash: 'QmUNLLsPACCz1vLxQVkXqqLX5R1X345qqfHbsf67hvA3Nn'
+          hash: 'QmUNLLsPACCz1vLxQVkXqqLX5R1X345qqfHbsf67hvA3Nn',
+          mode: parseInt('0755', 8)
         }
       ])
     })
@@ -97,7 +99,8 @@ module.exports = (common, options) => {
         hash: '',
         name: fileName,
         size: 0,
-        type: 0
+        type: 0,
+        mode: parseInt('0644', 8)
       }])
     })
   })

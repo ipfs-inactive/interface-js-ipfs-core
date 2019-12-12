@@ -299,5 +299,24 @@ module.exports = (common, options) => {
 
       await expectTimeout(ipfs.object.get(files[0].hash), 4000)
     })
+
+    it('should add with metadata', async function () {
+      this.slow(10 * 1000)
+      const content = String(Math.random() + Date.now())
+      const mtime = Math.round(Date.now() / 1000)
+      const mode = parseInt('0777', 8)
+
+      const files = await ipfs.add({
+        content: Buffer.from(content),
+        mtime,
+        mode
+      })
+      expect(files).to.have.length(1)
+
+      const stats = await ipfs.files.stat(`/ipfs/${files[0].hash}`)
+
+      expect(stats).to.have.property('mtime', mtime)
+      expect(stats).to.have.property('mode', mode)
+    })
   })
 }

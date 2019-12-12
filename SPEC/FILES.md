@@ -24,6 +24,7 @@ The regular, top-level API for add, cat, get and ls Files on IPFS
 The Files API, aka MFS (Mutable File System)
 
 _Explore the Mutable File System through interactive coding challenges in our [ProtoSchool tutorial](https://proto.school/#/mutable-file-system/)._
+  - [files.chmod](#fileschmod)
   - [files.cp](#filescp)
   - [files.flush](#filesflush)
   - [files.ls](#filesls)
@@ -36,6 +37,7 @@ _Explore the Mutable File System through interactive coding challenges in our [P
   - [files.readReadableStream](#filesreadreadablestream)
   - [files.rm](#filesrm)
   - [files.stat](#filesstat)
+  - [files.touch](#filestouch)
   - [files.write](#fileswrite)
 
 ### ⚠️ Note
@@ -58,6 +60,8 @@ Where `data` may be:
 {
     path: '/tmp/myfile.txt', // The file path
     content: <data> // A Buffer, Readable Stream, Pull Stream or File with the contents of the file
+    mode: '0755' // optional string or integer mode to store the entry with
+    mtime: 192399399 // optional integer mtime to store the entry with
 }
 ```
 If no `content` is passed, then the path is treated as an empty directory
@@ -759,6 +763,54 @@ A great source of [examples][] can be found in the tests for this API.
 
 The Mutable File System (MFS) is a virtual file system on top of IPFS that exposes a Unix like API over a virtual directory. It enables users to write and read from paths without having to worry about updating the graph. It enables things like [ipfs-blob-store](https://github.com/ipfs/ipfs-blob-store) to exist.
 
+#### `files.chmod`
+
+> Change mode for files and directories
+
+##### `ipfs.files.chmod(path, mode, [options])`
+
+Where:
+
+- `path` is the path to the entry to modify.  It might be:
+  - An existing MFS path to a file or a directory (e.g. `/my-dir/my-file.txt`)
+  - An IPFS path (e.g. `/ipfs/QmWGeRAEgtsHW3ec7U4qW2CyVy7eA2mFRVbk1nb24jFyks`)
+  - A [CID][cid] instance (e.g. `new CID('QmWGeRAEgtsHW3ec7U4qW2CyVy7eA2mFRVbk1nb24jFyks')`)
+- `mode` is the new file mode.  It might be:
+  - A string octal, e.g. `'0755'`
+  - A string modification of the existing mode, e.g. `'+x'`, `'-gw'`, etc
+  - An integer, e.g. the returned value from `parseInt('0755', 8)`
+  - null, in which case the mode property will be removed
+- `options` is an optional Object that might contain the following keys:
+  - `recursive` is a Boolean value that indicates if `mode` should be applied to all sub files/directories of `path` (default: false)
+  - `format` is what type of nodes to write any modified entries as (default: `dag-pb`)
+  - `hashAlg` is which algorithm to use when creating CIDs for modified entries. (default: `sha2-256`) [The list of all possible values]( https://github.com/multiformats/js-multihash/blob/master/src/constants.js#L5-L343)
+  - `flush` is a Boolean value to decide whether or not to immediately flush MFS changes to disk (default: true)
+  - `cidVersion`: the CID version to use for any updated entries (integer, default 0)
+
+UnixFS entries are stored as protobufs and since protobufs cannot represent `null` values, setting `mode` to `0` will reset the mode to the default value of `0644` for files and `0755` for directories.
+
+**Returns**
+
+| Type | Description |
+| -------- | -------- |
+| `Promise<void>` | If action is successfully completed. Otherwise an error will be thrown |
+
+**Example:**
+
+```JavaScript
+// To give a file -rwxrwxrwx permissions
+await ipfs.files.chmod('/path/to/file.txt', parseInt('0777', 8))
+
+// Alternatively
+await ipfs.files.chmod('/path/to/file.txt', '+rwx')
+
+// You can omit the leading `0` too
+await ipfs.files.chmod('/path/to/file.txt', '777')
+
+// Reset a file to default permissions
+await ipfs.files.chmod('/path/to/file.txt', null)
+```
+
 #### `files.cp`
 
 > Copy files.
@@ -821,6 +873,8 @@ Where:
   - `format` is what type of nodes to write any newly created directories as (default: `dag-pb`)
   - `hashAlg` is which algorithm to use when creating CIDs for newly created directories (default: `sha2-256`) [The list of all possible values]( https://github.com/multiformats/js-multihash/blob/master/src/constants.js#L5-L343)
   - `flush` is a Boolean value to decide whether or not to immediately flush MFS changes to disk  (default: true)
+  - `mode`: optional UnixFS mode to create the directory with
+  - `mtime`: optional modification time to create the directory with
 
 **Returns**
 
@@ -882,6 +936,44 @@ console.log(stats)
 //   blocks: 1,
 //   type: 'file'
 // }
+```
+
+#### `files.touch`
+
+> Update the mtime of a file or directory
+
+##### `ipfs.files.touch(path, [mtime], [options])`
+
+Where:
+
+- `path` is the path to the file or directory to update. It might be:
+  - An existing MFS path to a file or directory (e.g. `/my-dir/a.txt`)
+  - An IPFS path (e.g. `/ipfs/QmWGeRAEgtsHW3ec7U4qW2CyVy7eA2mFRVbk1nb24jFyks`)
+  - A [CID][cid] instance (e.g. `new CID('QmWGeRAEgtsHW3ec7U4qW2CyVy7eA2mFRVbk1nb24jFyks')`)
+- `mtime` is the time in seconds since or before the Unix Epoch to set the mtime to, or null to remove the mtime property  (default: now)
+- `options` is an optional Object that might contain the following keys:
+  - `format` is what type of nodes to write any modified entries as (default: `dag-pb`)
+  - `hashAlg` is which algorithm to use when creating CIDs for modified entries. (default: `sha2-256`) [The list of all possible values]( https://github.com/multiformats/js-multihash/blob/master/src/constants.js#L5-L343)
+  - `flush` is a Boolean value to decide whether or not to immediately flush MFS changes to disk (default: true)
+  - `cidVersion`: the CID version to use for any updated entries (integer, default 0)
+
+**Returns**
+
+| Type | Description |
+| -------- | -------- |
+| `Promise<void>` | If action is successfully completed. Otherwise an error will be thrown |
+
+**Example:**
+
+```JavaScript
+// set the mtime to the current time
+await ipfs.files.touch('/path/to/file.txt')
+
+// set the mtime to a specific time
+await ipfs.files.touch('/path/to/file.txt', Math.round(new Date('May 23, 2014 14:45:14 -0700').getTime() / 1000))
+
+// remove the mtime property
+await ipfs.files.touch('/path/to/file.txt', null)
 ```
 
 #### `files.rm`
@@ -1036,6 +1128,8 @@ Where:
   - `length` is an Integer with the maximum number of bytes to read (default: Read all bytes from `content`)
   - `rawLeaves`: if true, DAG leaves will contain raw file data and not be wrapped in a protobuf (boolean, default false)
   - `cidVersion`: the CID version to use when storing the data (storage keys are based on the CID, including its version) (integer, default 0)
+  - `mode`: optional UnixFS mode to create or update the file with
+  - `mtime`: optional modification to create or update the file with
 
 **Returns**
 

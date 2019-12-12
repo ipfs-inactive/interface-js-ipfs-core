@@ -45,5 +45,33 @@ module.exports = (common, options) => {
       const stats = await ipfs.files.stat(testPath)
       expect(stats.type).to.equal('file')
     })
+
+    it('should write file and specify mode', async function () {
+      const testPath = `/test-${hat()}`
+      const mode = parseInt('0321', 8)
+
+      await ipfs.files.write(testPath, Buffer.from('Hello, world!'), {
+        create: true,
+        parents: true,
+        mode
+      })
+
+      const stats = await ipfs.files.stat(testPath)
+      expect(stats).to.have.property('mode', mode)
+    })
+
+    it('should write file and specify mtime', async function () {
+      const testPath = `/test-${hat()}`
+      const mtime = Math.round(Date.now() / 1000)
+
+      await ipfs.files.write(testPath, Buffer.from('Hello, world!'), {
+        create: true,
+        parents: true,
+        mtime
+      })
+
+      const stats = await ipfs.files.stat(testPath)
+      expect(stats).to.have.property('mtime', mtime)
+    })
   })
 }
