@@ -312,6 +312,16 @@ module.exports = (common, options) => {
       expect(res[0].hash).to.equal(expectedHash)
     })
 
+    it('should add with cid-version=1', async () => {
+      const expectedCid = 'bafkreiaoumr4mhytmxmaav7qbe2vpsmsxkdvyelbws5orak5u6bjrekuz4'
+      const options = { cidVersion: 1 }
+
+      const res = await ipfs.add('should add with cid-version=1', options)
+
+      expect(res).to.have.length(1)
+      expect(res[0].hash).to.equal(expectedCid)
+    })
+
     it('should add with cid-version=1 and raw-leaves=false', async () => {
       const expectedCid = 'bafybeifj7nuqlszk47q4jvdvaurqlb7ihbqfjxofg4hfcy53oc2s5tlg5m'
       const options = { cidVersion: 1, rawLeaves: false }
