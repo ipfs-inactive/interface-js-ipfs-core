@@ -56,6 +56,11 @@ module.exports = (common, options) => {
       }))
     })
 
+    it('should get dag node with options as the second param and cid with path', async function () {
+      const result = await ipfs.dag.get(`/ipfs/${cidCbor}/pb`, { localResolve: true })
+      expect(result.value._data).to.be.deep.eq(nodePb._data)
+    })
+
     it('should get a dag-pb node', async () => {
       const cid = await ipfs.dag.put(pbNode, {
         format: 'dag-pb',
