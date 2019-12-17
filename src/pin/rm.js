@@ -3,6 +3,7 @@
 
 const { fixtures } = require('./utils')
 const { getDescribe, getIt, expect } = require('../utils/mocha')
+const all = require('it-all')
 
 /** @typedef { import("ipfsd-ctl/src/factory") } Factory */
 /**
@@ -19,9 +20,9 @@ module.exports = (common, options) => {
     let ipfs
     before(async () => {
       ipfs = (await common.spawn()).api
-      await ipfs.add(fixtures.files[0].data, { pin: false })
+      await all(ipfs.add(fixtures.files[0].data, { pin: false }))
       await ipfs.pin.add(fixtures.files[0].cid, { recursive: true })
-      await ipfs.add(fixtures.files[1].data, { pin: false })
+      await all(ipfs.add(fixtures.files[1].data, { pin: false }))
       await ipfs.pin.add(fixtures.files[1].cid, { recursive: false })
     })
 
@@ -33,7 +34,7 @@ module.exports = (common, options) => {
         hash: fixtures.files[0].cid
       }])
 
-      const pinset = await ipfs.pin.ls({ type: 'recursive' })
+      const pinset = await all(ipfs.pin.ls({ type: 'recursive' }))
       expect(pinset).to.not.deep.include({
         hash: fixtures.files[0].cid,
         type: 'recursive'
@@ -46,7 +47,7 @@ module.exports = (common, options) => {
         hash: fixtures.files[1].cid
       }])
 
-      const pinset = await ipfs.pin.ls({ type: 'direct' })
+      const pinset = await all(ipfs.pin.ls({ type: 'direct' }))
       expect(pinset).to.not.deep.include({
         hash: fixtures.files[1].cid
       })

@@ -1,7 +1,6 @@
 /* eslint-env mocha */
 'use strict'
 
-const pEachSeries = require('p-each-series')
 const dagPB = require('ipld-dag-pb')
 const DAGNode = dagPB.DAGNode
 const dagCBOR = require('ipld-dag-cbor')
@@ -38,13 +37,8 @@ module.exports = (common, options) => {
       }
       cidCbor = await dagCBOR.util.cid(dagCBOR.util.serialize(nodeCbor))
 
-      await pEachSeries([
-        { node: nodePb, multicodec: 'dag-pb', hashAlg: 'sha2-256' },
-        { node: nodeCbor, multicodec: 'dag-cbor', hashAlg: 'sha2-256' }
-      ], (el) => ipfs.dag.put(el.node, {
-        format: el.multicodec,
-        hashAlg: el.hashAlg
-      }))
+      await ipfs.dag.put(nodePb, { format: 'dag-pb', hashAlg: 'sha2-256' })
+      await ipfs.dag.put(nodeCbor, { format: 'dag-cbor', hashAlg: 'sha2-256' })
     })
 
     it('should get tree with CID', async () => {

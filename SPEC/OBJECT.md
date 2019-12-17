@@ -11,9 +11,6 @@
 * [object.patch.appendData](#objectpatchappenddata)
 * [object.patch.setData](#objectpatchsetdata)
 
-### ⚠️ Note
-Although not listed in the documentation, all the following APIs that actually return a **promise** can also accept a **final callback** parameter.
-
 #### `object.new`
 
 > Create a new MerkleDAG node, using a specific layout. Caveat: So far, only UnixFS object layouts are supported.
@@ -129,14 +126,14 @@ A great source of [examples][] can be found in the tests for this API.
 
 | Type | Description |
 | -------- | -------- |
-| `Promise<Buffer>` | A Buffer with the data that the MerkleDAG node contained |
+| `Promise<Buffer>` | An Promise that resolves to Buffer objects with the data that the MerkleDAG node contained |
 
 **Example:**
 
 ```JavaScript
-const multihash = 'QmPb5f92FxKPYdT3QNBd1GKiL4tZUXUrzF4Hkpdr3Gf1gK'
+const cid = 'QmPb5f92FxKPYdT3QNBd1GKiL4tZUXUrzF4Hkpdr3Gf1gK'
 
-const data = await ipfs.object.data(multihash)
+const data = await ipfs.object.data(cid)
 console.log(data.toString())
 // Logs:
 // some data

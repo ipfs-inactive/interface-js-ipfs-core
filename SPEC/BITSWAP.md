@@ -3,9 +3,6 @@
 * [bitswap.wantlist](#bitswapwantlist)
 * [bitswap.stat](#bitswapstat)
 
-### ⚠️ Note
-Although not listed in the documentation, all the following APIs that actually return a **promise** can also accept a **final callback** parameter.
-
 ### `bitswap.wantlist`
 
 > Returns the wantlist, optionally filtered by peer ID

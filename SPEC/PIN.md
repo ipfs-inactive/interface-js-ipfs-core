@@ -4,9 +4,6 @@
 * [pin.ls](#pinls)
 * [pin.rm](#pinrm)
 
-### ⚠️ Note
-Although not listed in the documentation, all the following APIs that actually return a **promise** can also accept a **final callback** parameter.
-
 #### `pin.add`
 
 > Adds an IPFS object to the pinset and also stores it to the IPFS repo. pinset is the set of hashes currently pinned (not gc'able).
@@ -53,28 +50,24 @@ A great source of [examples][] can be found in the tests for this API.
 Where:
 
 - `cid` - a [CID][cid] instance or CID as a string or an array of CIDs.
-- `options` is an object that can contain the following keys:
-  - 'type' - Return also the type of pin (direct, indirect or recursive)
+- `options` - is an object that can contain the following keys:
+  - `type` - filter by this type of pin ("recursive", "direct" or "indirect")
 
 **Returns**
 
 | Type | Description |
 | -------- | -------- |
-| `Promise<Array>` | An array of current pinned objects |
-
-an array of objects with keys `hash` and `type` is returned.
+| `AsyncIterable<{ hash: string, type: string }>` | An async iterable that yields currently pinned objects with `hash` and `type` properties. `hash` is a string CID of the pinned node, `type` is the pin type ("recursive", "direct" or "indirect") |
 
 **Example:**
 
 ```JavaScript
-const pinset = await ipfs.pin.ls()
-console.log(pinset)
-// Logs
-// [
-//   { hash: Qmc5XkteJdb337s7VwFBAGtiaoj2QCEzyxtNRy3iMudc3E, type: 'recursive' },
-//   { hash: QmZbj5ruYneZb8FuR9wnLqJCpCXMQudhSdWhdhp5U1oPWJ, type: 'indirect' },
-//   { hash: QmSo73bmN47gBxMNqbdV6rZ4KJiqaArqJ1nu5TvFhqqj1R, type: 'indirect' }
-// ]
+for await (const { hash, type } of ipfs.pin.ls()) {
+  console.log(pinset)
+}
+// { hash: Qmc5XkteJdb337s7VwFBAGtiaoj2QCEzyxtNRy3iMudc3E, type: 'recursive' }
+// { hash: QmZbj5ruYneZb8FuR9wnLqJCpCXMQudhSdWhdhp5U1oPWJ, type: 'indirect' }
+// { hash: QmSo73bmN47gBxMNqbdV6rZ4KJiqaArqJ1nu5TvFhqqj1R, type: 'indirect' }
 ```
 
 A great source of [examples][] can be found in the tests for this API.

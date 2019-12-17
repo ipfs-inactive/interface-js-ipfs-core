@@ -2,8 +2,9 @@
 'use strict'
 
 const { fixtures } = require('./utils')
-const { getDescribe, getIt, expect } = require('../utils/mocha')
+const { getDescribe, getIt, expect } = require('./utils/mocha')
 const CID = require('cids')
+const all = require('it-all')
 
 const randomName = prefix => `${prefix}${Math.round(Math.random() * 1000)}`
 
@@ -46,22 +47,22 @@ module.exports = (common, options) => {
         emptyDir('files/empty')
       ]
 
-      const res = await ipfs.add(dirs)
+      const res = await all(ipfs.add(dirs))
 
       const root = res[res.length - 1]
       expect(root.path).to.equal('test-folder')
-      expect(root.hash).to.equal(fixtures.directory.cid)
+      expect(root.cid.toString()).to.equal(fixtures.directory.cid)
 
       const cid = 'QmVvjDy7yF7hdnqE8Hrf4MHo5ABDtb5AbX6hWbD3Y42bXP'
-      const files = await ipfs.ls(cid)
+      const files = await all(ipfs.ls(cid))
 
-      expect(files).to.eql([
+      const expectedFiles = [
         {
           depth: 1,
           name: 'alice.txt',
           path: 'QmVvjDy7yF7hdnqE8Hrf4MHo5ABDtb5AbX6hWbD3Y42bXP/alice.txt',
           size: 11685,
-          hash: 'QmZyUEQVuRK3XV7L9Dk26pg6RVSgaYkiSTEdnT2kZZdwoi',
+          cid: new CID('QmZyUEQVuRK3XV7L9Dk26pg6RVSgaYkiSTEdnT2kZZdwoi'),
           type: 'file'
         },
         {
@@ -69,7 +70,7 @@ module.exports = (common, options) => {
           name: 'empty-folder',
           path: 'QmVvjDy7yF7hdnqE8Hrf4MHo5ABDtb5AbX6hWbD3Y42bXP/empty-folder',
           size: 0,
-          hash: 'QmUNLLsPACCz1vLxQVkXqqLX5R1X345qqfHbsf67hvA3Nn',
+          cid: new CID('QmUNLLsPACCz1vLxQVkXqqLX5R1X345qqfHbsf67hvA3Nn'),
           type: 'dir'
         },
         {
@@ -77,7 +78,7 @@ module.exports = (common, options) => {
           name: 'files',
           path: 'QmVvjDy7yF7hdnqE8Hrf4MHo5ABDtb5AbX6hWbD3Y42bXP/files',
           size: 0,
-          hash: 'QmZ25UfTqXGz9RsEJFg7HUAuBcmfx5dQZDXQd2QEZ8Kj74',
+          cid: new CID('QmZ25UfTqXGz9RsEJFg7HUAuBcmfx5dQZDXQd2QEZ8Kj74'),
           type: 'dir'
         },
         {
@@ -85,7 +86,7 @@ module.exports = (common, options) => {
           name: 'holmes.txt',
           path: 'QmVvjDy7yF7hdnqE8Hrf4MHo5ABDtb5AbX6hWbD3Y42bXP/holmes.txt',
           size: 581878,
-          hash: 'QmR4nFjTu18TyANgC65ArNWp5Yaab1gPzQ4D8zp7Kx3vhr',
+          cid: new CID('QmR4nFjTu18TyANgC65ArNWp5Yaab1gPzQ4D8zp7Kx3vhr'),
           type: 'file'
         },
         {
@@ -93,7 +94,7 @@ module.exports = (common, options) => {
           name: 'jungle.txt',
           path: 'QmVvjDy7yF7hdnqE8Hrf4MHo5ABDtb5AbX6hWbD3Y42bXP/jungle.txt',
           size: 2294,
-          hash: 'QmT6orWioMiSqXXPGsUi71CKRRUmJ8YkuueV2DPV34E9y9',
+          cid: new CID('QmT6orWioMiSqXXPGsUi71CKRRUmJ8YkuueV2DPV34E9y9'),
           type: 'file'
         },
         {
@@ -101,10 +102,21 @@ module.exports = (common, options) => {
           name: 'pp.txt',
           path: 'QmVvjDy7yF7hdnqE8Hrf4MHo5ABDtb5AbX6hWbD3Y42bXP/pp.txt',
           size: 4540,
-          hash: 'QmVwdDCY4SPGVFnNCiZnX5CtzwWDn6kAM98JXzKxE3kCmn',
+          cid: new CID('QmVwdDCY4SPGVFnNCiZnX5CtzwWDn6kAM98JXzKxE3kCmn'),
           type: 'file'
         }
-      ])
+      ]
+
+      expect(files).to.have.length(expectedFiles.length)
+
+      expectedFiles.forEach((f, i) => {
+        expect(f.depth).to.equal(files[i].depth)
+        expect(f.name).to.equal(files[i].name)
+        expect(f.path).to.equal(files[i].path)
+        expect(f.size).to.equal(files[i].size)
+        expect(f.cid.toString()).to.equal(files[i].cid.toString())
+        expect(f.type).to.equal(files[i].type)
+      })
     })
 
     it('should ls files added as CIDv0 with a CIDv1', async () => {
@@ -115,18 +127,18 @@ module.exports = (common, options) => {
         { path: `${dir}/${randomName('F1')}`, content: Buffer.from(randomName('D1')) }
       ]
 
-      const res = await ipfs.add(input, { cidVersion: 0 })
+      const res = await all(ipfs.add(input, { cidVersion: 0 }))
 
-      const cidv0 = new CID(res[res.length - 1].hash)
+      const cidv0 = res[res.length - 1].cid
       expect(cidv0.version).to.equal(0)
 
       const cidv1 = cidv0.toV1()
 
-      const output = await ipfs.ls(cidv1)
+      const output = await all(ipfs.ls(cidv1))
       expect(output.length).to.equal(input.length)
 
-      output.forEach(({ hash }) => {
-        expect(res.find(file => file.hash === hash)).to.exist()
+      output.forEach(({ cid }) => {
+        expect(res.find(file => file.cid.toString() === cid.toString())).to.exist()
       })
     })
 
@@ -138,27 +150,27 @@ module.exports = (common, options) => {
         { path: `${dir}/${randomName('F1')}`, content: Buffer.from(randomName('D1')) }
       ]
 
-      const res = await ipfs.add(input, { cidVersion: 1, rawLeaves: false })
+      const res = await all(ipfs.add(input, { cidVersion: 1, rawLeaves: false }))
 
-      const cidv1 = new CID(res[res.length - 1].hash)
+      const cidv1 = res[res.length - 1].cid
       expect(cidv1.version).to.equal(1)
 
       const cidv0 = cidv1.toV1()
 
-      const output = await ipfs.ls(cidv0)
+      const output = await all(ipfs.ls(cidv0))
       expect(output.length).to.equal(input.length)
 
-      output.forEach(({ hash }) => {
-        expect(res.find(file => file.hash === hash)).to.exist()
+      output.forEach(({ cid }) => {
+        expect(res.find(file => file.cid.toString() === cid.toString())).to.exist()
       })
     })
 
     it('should correctly handle a non existing hash', () => {
-      return expect(ipfs.ls('surelynotavalidhashheh?')).to.eventually.be.rejected()
+      return expect(all(ipfs.ls('surelynotavalidhashheh?'))).to.eventually.be.rejected()
     })
 
     it('should correctly handle a non existing path', () => {
-      return expect(ipfs.ls('QmRNjDeKStKGTQXnJ2NFqeQ9oW/folder_that_isnt_there')).to.eventually.be.rejected()
+      return expect(all(ipfs.ls('QmRNjDeKStKGTQXnJ2NFqeQ9oW/folder_that_isnt_there'))).to.eventually.be.rejected()
     })
 
     it('should ls files by path', async () => {
@@ -169,12 +181,12 @@ module.exports = (common, options) => {
         { path: `${dir}/${randomName('F1')}`, content: Buffer.from(randomName('D1')) }
       ]
 
-      const res = await ipfs.add(input)
-      const output = await ipfs.ls(`/ipfs/${res[res.length - 1].hash}`)
+      const res = await all(ipfs.add(input))
+      const output = await all(ipfs.ls(`/ipfs/${res[res.length - 1].cid}`))
       expect(output.length).to.equal(input.length)
 
-      output.forEach(({ hash }) => {
-        expect(res.find(file => file.hash === hash)).to.exist()
+      output.forEach(({ cid }) => {
+        expect(res.find(file => file.cid.toString() === cid.toString())).to.exist()
       })
     })
   })

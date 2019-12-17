@@ -3,6 +3,7 @@
 
 const { fixtures } = require('./utils')
 const { getDescribe, getIt, expect } = require('../utils/mocha')
+const all = require('it-all')
 
 /** @typedef { import("ipfsd-ctl/src/factory") } Factory */
 /**
@@ -20,7 +21,7 @@ module.exports = (common, options) => {
     before(async () => {
       ipfs = (await common.spawn()).api
       await Promise.all(fixtures.files.map(file => {
-        return ipfs.add(file.data, { pin: false })
+        return all(ipfs.add(file.data, { pin: false }))
       }))
     })
 

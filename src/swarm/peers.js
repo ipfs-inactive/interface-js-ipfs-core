@@ -2,7 +2,7 @@
 'use strict'
 
 const multiaddr = require('multiaddr')
-const PeerId = require('peer-id')
+const CID = require('cids')
 const delay = require('delay')
 const { getDescribe, getIt, expect } = require('../utils/mocha')
 
@@ -41,7 +41,7 @@ module.exports = (common, options) => {
       expect(peer).to.have.a.property('addr')
       expect(multiaddr.isMultiaddr(peer.addr)).to.equal(true)
       expect(peer).to.have.a.property('peer')
-      expect(PeerId.isPeerId(peer.peer)).to.equal(true)
+      expect(CID.isCID(peer.peer)).to.equal(true)
       expect(peer).to.not.have.a.property('latency')
 
       /* TODO: These assertions must be uncommented as soon as

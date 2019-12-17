@@ -7,6 +7,7 @@ const hat = require('hat')
 const { getDescribe, getIt, expect } = require('../utils/mocha')
 const { asDAGLink } = require('./utils')
 const CID = require('cids')
+const all = require('it-all')
 
 /** @typedef { import("ipfsd-ctl/src/factory") } Factory */
 /**
@@ -87,10 +88,10 @@ module.exports = (common, options) => {
     it('should get links from CBOR object', async () => {
       const hashes = []
 
-      const res1 = await ipfs.add(Buffer.from('test data'))
+      const res1 = await all(ipfs.add(Buffer.from('test data')))
       hashes.push(res1[0].hash)
 
-      const res2 = await ipfs.add(Buffer.from('more test data'))
+      const res2 = await all(ipfs.add(Buffer.from('more test data')))
       hashes.push(res2[0].hash)
 
       const obj = {
