@@ -3,6 +3,7 @@
 
 const hat = require('hat')
 const concat = require('it-concat')
+const all = require('it-all')
 const { fixtures } = require('../utils')
 const { getDescribe, getIt, expect } = require('../utils/mocha')
 
@@ -45,10 +46,8 @@ module.exports = (common, options) => {
     })
 
     it('should read from outside of mfs', async () => {
-      const [{
-        hash
-      }] = await ipfs.add(fixtures.smallFile.data)
-      const testFileData = await concat(ipfs.files.read(`/ipfs/${hash}`))
+      const [{ cid }] = await all(ipfs.add(fixtures.smallFile.data))
+      const testFileData = await concat(ipfs.files.read(`/ipfs/${cid}`))
       expect(testFileData.slice()).to.eql(fixtures.smallFile.data)
     })
   })

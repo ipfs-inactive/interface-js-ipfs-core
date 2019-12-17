@@ -138,7 +138,7 @@ module.exports = (common, options) => {
         content: data
       }))
 
-      const node = await ipfs.object.get(result[0].hash)
+      const node = await ipfs.object.get(result[0].cid)
       const meta = UnixFs.unmarshal(node.Data)
 
       expect(meta.fileSize()).to.equal(data.length)

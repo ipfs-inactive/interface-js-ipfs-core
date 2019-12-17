@@ -29,9 +29,7 @@ module.exports = (common, options) => {
 
     it('should add a pin', async () => {
       const pinset = await ipfs.pin.add(fixtures.files[0].cid, { recursive: false })
-      expect(pinset).to.deep.include({
-        hash: fixtures.files[0].cid
-      })
+      expect(pinset.map(p => p.cid.toString())).to.include(fixtures.files[0].cid)
     })
   })
 }

@@ -30,7 +30,7 @@ module.exports = (common, options) => {
     it('should provide local CID', async () => {
       const res = await all(ipfs.add(Buffer.from('test')))
 
-      await all(ipfs.dht.provide(new CID(res[0].hash)))
+      await all(ipfs.dht.provide(res[0].cid))
     })
 
     it('should not provide if block not found locally', () => {
@@ -48,18 +48,12 @@ module.exports = (common, options) => {
         { content: Buffer.from('t1') }
       ]))
 
-      await all(ipfs.dht.provide([
-        new CID(res[0].hash),
-        new CID(res[1].hash)
-      ]))
+      await all(ipfs.dht.provide(res.map(f => f.cid)))
     })
 
     it('should provide a CIDv1', async () => {
       const res = await all(ipfs.add(Buffer.from('test'), { cidVersion: 1 }))
-
-      const cid = new CID(res[0].hash)
-
-      await all(ipfs.dht.provide(cid))
+      await all(ipfs.dht.provide(res[0].cid))
     })
 
     it('should error on non CID arg', () => {

@@ -11,7 +11,7 @@ async function waitForWantlistKey (ipfs, key, opts = {}) {
   while (Date.now() < end) {
     const list = await ipfs.bitswap.wantlist(opts.peerId)
 
-    if (list && list.Keys && list.Keys.some(k => k['/'] === key)) {
+    if (list.some(cid => cid.toString() === key)) {
       return
     }
 

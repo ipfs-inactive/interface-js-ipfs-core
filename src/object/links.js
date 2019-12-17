@@ -6,7 +6,6 @@ const DAGNode = dagPB.DAGNode
 const hat = require('hat')
 const { getDescribe, getIt, expect } = require('../utils/mocha')
 const { asDAGLink } = require('./utils')
-const CID = require('cids')
 const all = require('it-all')
 
 /** @typedef { import("ipfsd-ctl/src/factory") } Factory */
@@ -89,16 +88,16 @@ module.exports = (common, options) => {
       const hashes = []
 
       const res1 = await all(ipfs.add(Buffer.from('test data')))
-      hashes.push(res1[0].hash)
+      hashes.push(res1[0].cid)
 
       const res2 = await all(ipfs.add(Buffer.from('more test data')))
-      hashes.push(res2[0].hash)
+      hashes.push(res2[0].cid)
 
       const obj = {
         some: 'data',
-        mylink: new CID(hashes[0]),
+        mylink: hashes[0],
         myobj: {
-          anotherLink: new CID(hashes[1])
+          anotherLink: hashes[1]
         }
       }
       const cid = await ipfs.dag.put(obj)
@@ -112,8 +111,8 @@ module.exports = (common, options) => {
       // expect(names).includes('myobj/anotherLink')
 
       const cids = [links[0].Hash.toString(), links[1].Hash.toString()]
-      expect(cids).includes(hashes[0])
-      expect(cids).includes(hashes[1])
+      expect(cids).includes(hashes[0].toString())
+      expect(cids).includes(hashes[1].toString())
     })
 
     it('returns error for request without argument', () => {

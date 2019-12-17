@@ -54,7 +54,7 @@ module.exports = (common, options) => {
 
       const res = await all(ipfs.add(input, { cidVersion: 0 }))
 
-      const cidv0 = new CID(res[0].hash)
+      const cidv0 = res[0].cid
       expect(cidv0.version).to.equal(0)
 
       const cidv1 = cidv0.toV1()
@@ -68,7 +68,7 @@ module.exports = (common, options) => {
 
       const res = await all(ipfs.add(input, { cidVersion: 1, rawLeaves: false }))
 
-      const cidv1 = new CID(res[0].hash)
+      const cidv1 = res[0].cid
       expect(cidv1.version).to.equal(1)
 
       const cidv0 = cidv1.toV0()
@@ -98,7 +98,7 @@ module.exports = (common, options) => {
       const file = await filesAdded.find((f) => f.path === 'a')
       expect(file).to.exist()
 
-      const data = await concat(ipfs.cat(`/ipfs/${file.hash}/testfile.txt`))
+      const data = await concat(ipfs.cat(`/ipfs/${file.cid}/testfile.txt`))
 
       expect(data.toString()).to.contain('Plz add me!')
     })
@@ -111,7 +111,7 @@ module.exports = (common, options) => {
       const file = filesAdded.find((f) => f.path === 'a')
       expect(file).to.exist()
 
-      const data = await concat(ipfs.cat(`/ipfs/${file.hash}/b/testfile.txt`))
+      const data = await concat(ipfs.cat(`/ipfs/${file.cid}/b/testfile.txt`))
       expect(data.toString()).to.contain('Plz add me!')
     })
 
@@ -142,7 +142,7 @@ module.exports = (common, options) => {
 
       const dir = files[0]
 
-      const err = await expect(concat(ipfs.cat(dir.hash))).to.be.rejected()
+      const err = await expect(concat(ipfs.cat(dir.cid))).to.be.rejected()
       expect(err.message).to.contain('this dag node is a directory')
     })
 

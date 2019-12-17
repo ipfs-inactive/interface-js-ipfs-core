@@ -5,7 +5,6 @@ const dagPB = require('ipld-dag-pb')
 const DAGNode = dagPB.DAGNode
 const dagCBOR = require('ipld-dag-cbor')
 const Unixfs = require('ipfs-unixfs')
-const CID = require('cids')
 const all = require('it-all')
 const { getDescribe, getIt, expect } = require('../utils/mocha')
 
@@ -157,7 +156,7 @@ module.exports = (common, options) => {
 
       const res = await all(ipfs.add(input, { cidVersion: 1, rawLeaves: false }))
 
-      const cidv1 = new CID(res[0].hash)
+      const cidv1 = res[0].cid
       expect(cidv1.version).to.equal(1)
 
       const cidv0 = cidv1.toV0()

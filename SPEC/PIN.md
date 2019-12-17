@@ -14,19 +14,19 @@ Where:
 
 - `hash` is an IPFS multihash.
 - `options` is an object that can contain the following keys
-  - 'recursive' - Recursively pin the object linked. Type: bool. Default: `true`
+  - `recursive` - Recursively pin the object linked. Type: bool. Default: `true`
 
 **Returns**
 
 | Type | Description |
 | -------- | -------- |
-| `Promise<Array>` | An array of objects that represent the files that were pinned |
+| `Promise<{ cid: CID }>` | An array of objects that represent the files that were pinned |
 
 an array of objects is returned, each of the form:
 
 ```JavaScript
 {
-  hash: 'QmHash'
+  cid: CID('QmHash')
 }
 ```
 
@@ -36,7 +36,7 @@ an array of objects is returned, each of the form:
 const pinset = await ipfs.pin.add('QmWATWQ7fVPP2EFGu71UkfnqhYXDYH566qy47CnJDgvs8u')
 console.log(pinset)
 // Logs:
-// [ { hash: 'QmWATWQ7fVPP2EFGu71UkfnqhYXDYH566qy47CnJDgvs8u' } ]
+// [ { cid: CID('QmWATWQ7fVPP2EFGu71UkfnqhYXDYH566qy47CnJDgvs8u') } ]
 ```
 
 A great source of [examples][] can be found in the tests for this API.
@@ -57,17 +57,17 @@ Where:
 
 | Type | Description |
 | -------- | -------- |
-| `AsyncIterable<{ hash: string, type: string }>` | An async iterable that yields currently pinned objects with `hash` and `type` properties. `hash` is a string CID of the pinned node, `type` is the pin type ("recursive", "direct" or "indirect") |
+| `AsyncIterable<{ cid: CID, type: string }>` | An async iterable that yields currently pinned objects with `cid` and `type` properties. `cid` is a [CID][cid] of the pinned node, `type` is the pin type ("recursive", "direct" or "indirect") |
 
 **Example:**
 
 ```JavaScript
-for await (const { hash, type } of ipfs.pin.ls()) {
-  console.log(pinset)
+for await (const { cid, type } of ipfs.pin.ls()) {
+  console.log({ cid, type })
 }
-// { hash: Qmc5XkteJdb337s7VwFBAGtiaoj2QCEzyxtNRy3iMudc3E, type: 'recursive' }
-// { hash: QmZbj5ruYneZb8FuR9wnLqJCpCXMQudhSdWhdhp5U1oPWJ, type: 'indirect' }
-// { hash: QmSo73bmN47gBxMNqbdV6rZ4KJiqaArqJ1nu5TvFhqqj1R, type: 'indirect' }
+// { cid: CID(Qmc5XkteJdb337s7VwFBAGtiaoj2QCEzyxtNRy3iMudc3E), type: 'recursive' }
+// { cid: CID(QmZbj5ruYneZb8FuR9wnLqJCpCXMQudhSdWhdhp5U1oPWJ), type: 'indirect' }
+// { cid: CID(QmSo73bmN47gBxMNqbdV6rZ4KJiqaArqJ1nu5TvFhqqj1R), type: 'indirect' }
 ```
 
 A great source of [examples][] can be found in the tests for this API.
@@ -87,14 +87,15 @@ Where:
 
 | Type | Description |
 | -------- | -------- |
-| `Promise<Array>` | An array of unpinned objects |
+| `Promise<{ cid: CID }>` | An array of unpinned objects |
 
 **Example:**
 
 ```JavaScript
-const pinset = await ipfs.pin.rm(hash)
+const pinset = await ipfs.pin.rm('QmWATWQ7fVPP2EFGu71UkfnqhYXDYH566qy47CnJDgvs8u')
 console.log(pinset)
 // prints the hashes that were unpinned
+// [ { cid: CID('QmWATWQ7fVPP2EFGu71UkfnqhYXDYH566qy47CnJDgvs8u') } ]
 ```
 
 A great source of [examples][] can be found in the tests for this API.

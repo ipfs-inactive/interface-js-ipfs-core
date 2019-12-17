@@ -50,7 +50,7 @@ module.exports = (common, options) => {
 
       const res = await all(ipfs.add(input, { cidVersion: 0 }))
 
-      const cidv0 = new CID(res[0].hash)
+      const cidv0 = res[0].cid
       expect(cidv0.version).to.equal(0)
 
       const cidv1 = cidv0.toV1()
@@ -64,7 +64,7 @@ module.exports = (common, options) => {
 
       const res = await all(ipfs.add(input, { cidVersion: 1, rawLeaves: false }))
 
-      const cidv1 = new CID(res[0].hash)
+      const cidv1 = res[0].cid
       expect(cidv1.version).to.equal(1)
 
       const cidv0 = cidv1.toV0()
@@ -105,7 +105,7 @@ module.exports = (common, options) => {
       const root = res[res.length - 1]
 
       expect(root.path).to.equal('test-folder')
-      expect(root.hash).to.equal(fixtures.directory.cid)
+      expect(root.cid.toString()).to.equal(fixtures.directory.cid)
 
       let files = await all((async function * () {
         for await (let { path, content } of ipfs.get(fixtures.directory.cid)) {
@@ -156,7 +156,7 @@ module.exports = (common, options) => {
 
       filesAdded.forEach(async (file) => {
         if (file.path === 'a') {
-          const files = await all(ipfs.get(`/ipfs/${file.hash}/testfile.txt`))
+          const files = await all(ipfs.get(`/ipfs/${file.cid}/testfile.txt`))
           expect(files).to.be.length(1)
           expect((await concat(files[0].content)).toString()).to.contain('Plz add me!')
         }
@@ -173,7 +173,7 @@ module.exports = (common, options) => {
 
       filesAdded.forEach(async (file) => {
         if (file.path === 'a') {
-          const files = await all(ipfs.get(`/ipfs/${file.hash}/testfile.txt`))
+          const files = await all(ipfs.get(`/ipfs/${file.cid}/testfile.txt`))
           expect(files).to.be.length(1)
           expect((await concat(files[0].content)).toString()).to.contain('Plz add me!')
         }

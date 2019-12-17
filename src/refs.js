@@ -321,7 +321,7 @@ function loadDagContent (ipfs, node) {
   const store = {
     putData: async (data) => {
       const res = await all(ipfs.add(data))
-      return res[0].hash
+      return res[0].cid
     },
     putLinks: (links) => {
       const obj = {}
