@@ -65,7 +65,7 @@
     "p-map-series": "^2.1.0",
     "p-timeout": "^3.2.0",
     "p-times": "^2.1.0",
-    "peer-id": "~0.12.2",
+    "peer-id": "~0.13.6",
     "peer-info": "~0.15.1",
     "pull-stream": "^3.6.11",
     "pull-to-promise": "^1.0.1",
