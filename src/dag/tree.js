@@ -4,6 +4,7 @@
 const dagPB = require('ipld-dag-pb')
 const DAGNode = dagPB.DAGNode
 const dagCBOR = require('ipld-dag-cbor')
+const all = require('it-all')
 const { getDescribe, getIt, expect } = require('../utils/mocha')
 
 /** @typedef { import("ipfsd-ctl/src/factory") } Factory */
@@ -42,7 +43,7 @@ module.exports = (common, options) => {
     })
 
     it('should get tree with CID', async () => {
-      const paths = await ipfs.dag.tree(cidCbor)
+      const paths = await all(ipfs.dag.tree(cidCbor))
       expect(paths).to.eql([
         'pb',
         'someData'
@@ -50,19 +51,19 @@ module.exports = (common, options) => {
     })
 
     it('should get tree with CID and path', async () => {
-      const paths = await ipfs.dag.tree(cidCbor, 'someData')
+      const paths = await all(ipfs.dag.tree(cidCbor, 'someData'))
       expect(paths).to.eql([])
     })
 
     it('should get tree with CID and path as String', async () => {
       const cidCborStr = cidCbor.toBaseEncodedString()
 
-      const paths = await ipfs.dag.tree(cidCborStr + '/someData')
+      const paths = await all(ipfs.dag.tree(cidCborStr + '/someData'))
       expect(paths).to.eql([])
     })
 
     it('should get tree with CID recursive (accross different formats)', async () => {
-      const paths = await ipfs.dag.tree(cidCbor, { recursive: true })
+      const paths = await all(ipfs.dag.tree(cidCbor, { recursive: true }))
       expect(paths).to.have.members([
         'pb',
         'someData',
@@ -72,7 +73,7 @@ module.exports = (common, options) => {
     })
 
     it('should get tree with CID and path recursive', async () => {
-      const paths = await ipfs.dag.tree(cidCbor, 'pb', { recursive: true })
+      const paths = await all(ipfs.dag.tree(cidCbor, 'pb', { recursive: true }))
       expect(paths).to.have.members([
         'Links',
         'Data'
