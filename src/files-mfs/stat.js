@@ -62,7 +62,6 @@ module.exports = (common, options) => {
         type: 'directory',
         blocks: 1,
         size: 0,
-        cumulativeSize: 130,
         withLocality: false
       })
       expect(stat.local).to.be.undefined()
