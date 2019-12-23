@@ -61,7 +61,7 @@ Where `data` may be:
     path: '/tmp/myfile.txt', // The file path
     content: <data> // A Buffer, Readable Stream, Pull Stream or File with the contents of the file
     mode: '0755' // optional string or integer mode to store the entry with. strings will be interpreted as a base 8 number
-    mtime: Date // optional mtime to store the entry with
+    mtime: <time> // A Date object, an object with `{ sec, nsecs }` properties or the output of `process.hrtime()` or `process.hrtime.bigint()`
 }
 ```
 If no `content` is passed, then the path is treated as an empty directory
@@ -103,7 +103,7 @@ an array of objects is returned, each of the form:
   path: '/tmp/myfile.txt',
   hash: 'QmHash', // base58 encoded multihash
   mode: Number,
-  mtime: Date,
+  mtime: { secs: Number, nsecs: Number },
   size: 123
 }
 ```
@@ -142,14 +142,14 @@ The `results` array:
     "path": "tmp",
     "hash": "QmWXdjNC362aPDtwHPUE9o2VMqPeNeCQuTBTv1NsKtwypg",
     "mode": 493,
-    "mtime": Date,
+    "mtime": { secs: Number, nsecs: Number },
     "size": 67
   },
   {
     "path": "/tmp/myfile.txt",
     "hash": "QmNz1UBzpdd4HfZ3qir3aPiRdX5a93XwTuDNyXRc6PKhWW",
     "mode": 420,
-    "mtime": Date,
+    "mtime": { secs: Number, nsecs: Number },
     "size": 11
   }
 ]
@@ -190,7 +190,7 @@ stream.on('data', function (file) {
   //   path: '/tmp/myfile.txt',
   //   hash: 'QmHash' // base58 encoded multihash
   //   mode: Number,
-  //   mtime: Date,
+  //   mtime: { secs: Number, nsecs: Number },
   //   size: 123
   // }
 })
@@ -220,7 +220,7 @@ Returns a Pull Stream, where objects can be written of the forms
   path: '/tmp/myfile.txt', // The file path
   content: <data> // A Buffer, Readable Stream, Pull Stream or File with the contents of the file
   mode: '0755' // optional string or integer mode to store the entry with. strings will be interpreted as a base 8 number
-  mtime: Date // optional mtime to store the entry with
+  mtime: <time> // A Date object, an object with `{ sec, nsecs }` properties or the output of `process.hrtime()` or `process.hrtime.bigint()
 }
 ```
 
@@ -248,7 +248,7 @@ pull(
     //   path: '/tmp/myfile.txt',
     //   hash: 'QmHash' // base58 encoded multihash
     //   mode: Number
-    //   mtime: Date
+    //   mtime: { secs: Number, nsecs: Number }
     //   size: 123
     // }
   })
@@ -337,7 +337,7 @@ an array of objects is returned, each of the form:
   path: '/tmp/myfile.txt',
   hash: 'QmHash', // base58 encoded multihash
   mode: Number,
-  mtime: Date,
+  mtime: { secs: Number, nsecs: Number },
   size: 123
 }
 ```
@@ -533,7 +533,7 @@ the yielded objects are of the form:
   path: '/tmp/myfile.txt',
   content: <Readable stream>,
   mode: Number,
-  mtime: Date
+  mtime: { secs: Number, nsecs: Number }
 }
 ```
 
@@ -587,7 +587,7 @@ the yielded objects are of the form:
   path: '/tmp/myfile.txt',
   content: <Pull Stream>,
   mode: Number,
-  mtime: Date
+  mtime: { secs: Number, nsecs: Number }
 }
 ```
 
@@ -650,7 +650,7 @@ an array of objects is returned, each of the form:
   hash: 'QmZyUEQVuRK3XV7L9Dk26pg6RVSgaYkiSTEdnT2kZZdwoi',
   type: 'file',
   mode: Number,
-  mtime: Date
+  mtime: { secs: Number, nsecs: Number }
 }
 ```
 
@@ -702,7 +702,7 @@ the yielded objects are of the form:
   hash: 'QmZyUEQVuRK3XV7L9Dk26pg6RVSgaYkiSTEdnT2kZZdwoi',
   type: 'file',
   mode: Number,
-  mtime: Date
+  mtime: { secs: Number, nsecs: Number }
 }
 ```
 
@@ -757,7 +757,7 @@ the yielded objects are of the form:
   hash: 'QmZyUEQVuRK3XV7L9Dk26pg6RVSgaYkiSTEdnT2kZZdwoi',
   type: 'file',
   mode: Number,
-  mtime: Date
+  mtime: { secs: Number, nsecs: Number }
 }
 ```
 
@@ -894,7 +894,7 @@ Where:
   - `hashAlg` is which algorithm to use when creating CIDs for newly created directories (default: `sha2-256`) [The list of all possible values]( https://github.com/multiformats/js-multihash/blob/master/src/constants.js#L5-L343)
   - `flush` is a Boolean value to decide whether or not to immediately flush MFS changes to disk  (default: true)
   - `mode`: optional UnixFS mode to create the directory with - a number or a string that will be interpreted as a base 8 number
-  - `mtime`: optional modification [Date] to create the directory with
+  - `mtime`: A Date object, an object with `{ sec, nsecs }` properties or the output of `process.hrtime()` or `process.hrtime.bigint()
 
 **Returns**
 
@@ -971,7 +971,7 @@ Where:
   - An IPFS path (e.g. `/ipfs/QmWGeRAEgtsHW3ec7U4qW2CyVy7eA2mFRVbk1nb24jFyks`)
   - A [CID][cid] instance (e.g. `new CID('QmWGeRAEgtsHW3ec7U4qW2CyVy7eA2mFRVbk1nb24jFyks')`)
 - `options` is an optional Object that might contain the following keys:
-  - `mtime` is a [Date] that represents the number seconds since or before the Unix Epoch to set the mtime to, or null to remove the mtime property  (default: now)
+  - `mtime` A Date object, an object with `{ sec, nsecs }` properties or the output of `process.hrtime()` or `process.hrtime.bigint()`  (default: now)
   - `format` is what type of nodes to write any modified entries as (default: `dag-pb`)
   - `hashAlg` is which algorithm to use when creating CIDs for modified entries. (default: `sha2-256`) [The list of all possible values]( https://github.com/multiformats/js-multihash/blob/master/src/constants.js#L5-L343)
   - `flush` is a Boolean value to decide whether or not to immediately flush MFS changes to disk (default: true)
@@ -1148,7 +1148,7 @@ Where:
   - `rawLeaves`: if true, DAG leaves will contain raw file data and not be wrapped in a protobuf (boolean, default false)
   - `cidVersion`: the CID version to use when storing the data (storage keys are based on the CID, including its version) (integer, default 0)
   - `mode`: optional UnixFS mode to create or update the file with - a number or a string that will be interpreted as a base 8 number
-  - `mtime`: optional modification [Date] to create or update the file with
+  - `mtime`: A Date object, an object with `{ sec, nsecs }` properties or the output of `process.hrtime()` or `process.hrtime.bigint()`
 
 **Returns**
 
@@ -1258,7 +1258,7 @@ each object contains the following keys:
 - `size` the size of the file in bytes
 - `hash` the hash of the file
 - `mode` the UnixFS mode as a Number
-- `mtime` the UnixFS mtime as a Date
+- `mtime` an objects with numeric `secs` and `nsecs` properties
 
 **Example:**
 
@@ -1304,7 +1304,7 @@ the yielded objects contain the following keys:
 - `size` the size of the file in bytes
 - `hash` the hash of the file
 - `mode` the UnixFS mode as a Number
-- `mtime` the UnixFS mtime as a Date
+- `mtime` an object with numeric `secs` and `nsecs` properties
 
 **Example:**
 
@@ -1348,7 +1348,7 @@ the yielded objects contain the following keys:
   - `size` the size of the file in bytes
   - `hash` the hash of the file
   - `mode` the UnixFS mode as a Number
-  - `mtime` the UnixFS mtime as a Date
+  - `mtime` an object with numeric `secs` and `nsecs` properties
 
 **Example:**
 
@@ -1371,4 +1371,3 @@ A great source of [examples][] can be found in the tests for this API.
 [file]: https://developer.mozilla.org/en-US/docs/Web/API/File
 [cid]: https://www.npmjs.com/package/cids
 [blob]: https://developer.mozilla.org/en-US/docs/Web/API/Blob
-[Date]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date
