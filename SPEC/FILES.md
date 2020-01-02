@@ -807,7 +807,6 @@ Where:
   - An integer, e.g. the returned value from `parseInt('0755', 8)`
 - `options` is an optional Object that might contain the following keys:
   - `recursive` is a Boolean value that indicates if `mode` should be applied to all sub files/directories of `path` (default: false)
-  - `format` is what type of nodes to write any modified entries as (default: `dag-pb`)
   - `hashAlg` is which algorithm to use when creating CIDs for modified entries. (default: `sha2-256`) [The list of all possible values]( https://github.com/multiformats/js-multihash/blob/master/src/constants.js#L5-L343)
   - `flush` is a Boolean value to decide whether or not to immediately flush MFS changes to disk (default: true)
   - `cidVersion`: the CID version to use for any updated entries (integer, default 0)
@@ -972,7 +971,6 @@ Where:
   - A [CID][cid] instance (e.g. `new CID('QmWGeRAEgtsHW3ec7U4qW2CyVy7eA2mFRVbk1nb24jFyks')`)
 - `options` is an optional Object that might contain the following keys:
   - `mtime` Either a ` Date` object, an object with `{ sec, nsecs }` properties or the output of `process.hrtime()`  (default: now)
-  - `format` is what type of nodes to write any modified entries as (default: `dag-pb`)
   - `hashAlg` is which algorithm to use when creating CIDs for modified entries. (default: `sha2-256`) [The list of all possible values]( https://github.com/multiformats/js-multihash/blob/master/src/constants.js#L5-L343)
   - `flush` is a Boolean value to decide whether or not to immediately flush MFS changes to disk (default: true)
   - `cidVersion`: the CID version to use for any updated entries (integer, default 0)
