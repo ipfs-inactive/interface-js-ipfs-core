@@ -23,6 +23,15 @@ module.exports = (common, options) => {
 
     after(() => common.clean())
 
+    it('should ls mfs root by default', async () => {
+      const folder = `test-folder-${Math.random()}`
+
+      await ipfs.files.mkdir(`/${folder}`)
+      const files = await ipfs.files.ls()
+
+      expect(files.find(file => file.name === folder)).to.be.ok()
+    })
+
     it('should not ls not found file/dir, expect error', () => {
       const testDir = `/test-${hat()}`
 

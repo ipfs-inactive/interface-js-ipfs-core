@@ -27,6 +27,14 @@ module.exports = (common, options) => {
 
     after(() => common.clean())
 
+    it('should send the default number of packets', async () => {
+      const responses = await ipfsA.ping(ipfsB.peerId.id)
+      responses.forEach(expectIsPingResponse)
+
+      const pongs = responses.filter(isPong)
+      expect(pongs.length).to.equal(10)
+    })
+
     it('should send the specified number of packets', async () => {
       const count = 3
       const responses = await ipfsA.ping(ipfsB.peerId.id, { count })

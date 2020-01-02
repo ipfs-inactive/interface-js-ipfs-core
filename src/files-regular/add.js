@@ -4,6 +4,8 @@
 const { fixtures } = require('./utils')
 const Readable = require('readable-stream').Readable
 const pull = require('pull-stream')
+const mh = require('multihashes')
+const CID = require('cids')
 const expectTimeout = require('../utils/expect-timeout')
 const { getDescribe, getIt, expect } = require('../utils/mocha')
 const { supportsFileReader } = require('ipfs-utils/src/supports')
@@ -298,6 +300,83 @@ module.exports = (common, options) => {
       expect(files).to.have.length(1)
 
       await expectTimeout(ipfs.object.get(files[0].hash), 4000)
+    })
+
+    it('should add empty path and buffer content', async () => {
+      const expectedHash = 'QmWfVY9y3xjsixTgbd9AorQxH7VtMpzfx2HaWtsoUYecaX'
+      const content = Buffer.from('hello')
+
+      const res = await ipfs.add([{ path: '', content }])
+
+      expect(res).to.have.length(1)
+      expect(res[0].hash).to.equal(expectedHash)
+    })
+
+    it('should add with cid-version=1', async () => {
+      const expectedCid = 'bafkreiaoumr4mhytmxmaav7qbe2vpsmsxkdvyelbws5orak5u6bjrekuz4'
+      const options = { cidVersion: 1 }
+
+      const res = await ipfs.add('should add with cid-version=1', options)
+
+      expect(res).to.have.length(1)
+      expect(res[0].hash).to.equal(expectedCid)
+    })
+
+    it('should add with cid-version=1 and raw-leaves=false', async () => {
+      const expectedCid = 'bafybeifj7nuqlszk47q4jvdvaurqlb7ihbqfjxofg4hfcy53oc2s5tlg5m'
+      const options = { cidVersion: 1, rawLeaves: false }
+
+      const res = await ipfs.add('.add with cid-version=1 and raw-leaves=false', options)
+
+      expect(res).to.have.length(1)
+      expect(res[0].hash).to.equal(expectedCid)
+    })
+
+    it('should pin by default', async () => {
+      const initialPins = await ipfs.pin.ls()
+
+      await ipfs.add('should add pins by default')
+
+      const pinsAfterAdd = await ipfs.pin.ls()
+
+      expect(pinsAfterAdd.length).to.eql(initialPins.length + 1)
+    })
+
+    it('should not pin with pin=false', async () => {
+      const initialPins = await ipfs.pin.ls()
+
+      await ipfs.add('should not pin with pin=false', { pin: false })
+
+      const pinsAfterAdd = await ipfs.pin.ls()
+
+      expect(pinsAfterAdd.length).to.eql(initialPins.length)
+    })
+
+    // TODO: Test against all algorithms Object.keys(mh.names)
+    // This subset is known to work with both go-ipfs and js-ipfs as of 2017-09-05
+    const HASH_ALGS = [
+      'sha1',
+      'sha2-256',
+      'sha2-512',
+      // 'keccak-224', // go throws
+      'keccak-256',
+      // 'keccak-384', // go throws
+      'keccak-512'
+    ]
+    HASH_ALGS.forEach((name) => {
+      it(`should add with hash=${name} and raw-leaves=false`, async () => {
+        const file = {
+          path: `${name}.txt`,
+          content: `should add with hash=${name} and raw-leaves=false`
+        }
+        const options = { hashAlg: name, rawLeaves: false }
+
+        const res = await ipfs.add([file], options)
+
+        expect(res).to.have.length(1)
+        const cid = new CID(res[0].hash)
+        expect(mh.decode(cid.multihash).name).to.equal(name)
+      })
     })
   })
 }

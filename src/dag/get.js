@@ -56,6 +56,11 @@ module.exports = (common, options) => {
       }))
     })
 
+    it('should get dag node with options as the second param and cid with path', async function () {
+      const result = await ipfs.dag.get(`/ipfs/${cidCbor}/pb`, { localResolve: true })
+      expect(result.value._data).to.be.deep.eq(nodePb._data)
+    })
+
     it('should get a dag-pb node', async () => {
       const cid = await ipfs.dag.put(pbNode, {
         format: 'dag-pb',
@@ -209,6 +214,30 @@ module.exports = (common, options) => {
 
       const result = await ipfs.dag.get(cid)
       expect(result.value).to.deep.equal(buf)
+    })
+
+    // This should be skipped in js-ipfs because it loads all the formats
+    it('should error when missing DAG resolver for multicodec from requested CID', async () => {
+      const block = await ipfs.block.put(Buffer.from([0, 1, 2, 3]), {
+        cid: new CID('z8mWaJ1dZ9fH5EetPuRsj8jj26pXsgpsr')
+      })
+      await expect(ipfs.dag.get(block.cid)).to.be.rejectedWith('Missing IPLD format "git-raw"')
+    })
+
+    it('should error for invalid string CID input', async () => {
+      try {
+        await expect(ipfs.dag.get('INVALID CID')).to.be.rejected()
+      } catch (err) {
+        expect(err.code).to.equal('ERR_INVALID_CID')
+      }
+    })
+
+    it('should error for invalid buffer CID input', async () => {
+      try {
+        await expect(ipfs.dag.get(Buffer.from('INVALID CID'))).to.be.rejected()
+      } catch (err) {
+        expect(err.code).to.equal('ERR_INVALID_CID')
+      }
     })
   })
 }
