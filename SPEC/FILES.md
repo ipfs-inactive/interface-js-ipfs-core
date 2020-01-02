@@ -220,7 +220,7 @@ Returns a Pull Stream, where objects can be written of the forms
   path: '/tmp/myfile.txt', // The file path
   content: <data> // A Buffer, Readable Stream, Pull Stream or File with the contents of the file
   mode: '0755' // optional string or integer mode to store the entry with. strings will be interpreted as a base 8 number
-  mtime: <time> // A Date object, an object with `{ sec, nsecs }` properties or the output of `process.hrtime()` or `process.hrtime.bigint()
+  `mtime` Either a ` Date` object, an object with `{ sec, nsecs }` properties or the output of `process.hrtime()`  (default: now)
 }
 ```
 
