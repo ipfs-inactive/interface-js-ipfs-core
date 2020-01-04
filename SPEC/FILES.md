@@ -61,7 +61,7 @@ Where `data` may be:
     path: '/tmp/myfile.txt', // The file path
     content: <data> // A Buffer, Readable Stream, Pull Stream or File with the contents of the file
     mode: '0755' // optional string or integer mode to store the entry with. strings will be interpreted as a base 8 number
-    mtime: <time> // A Date object, an object with `{ sec, nsecs }` properties or the output of `process.hrtime()` or `process.hrtime.bigint()`
+    mtime: <time> // optional value representing the modification time of the entry - either a `Date` object, an object with `{ secs, nsecs }` properties where `secs` is the number of seconds since (positive) or before (negative) the Unix Epoch began and `nsecs` is the number of nanoseconds since the last full second, or the output of `process.hrtime()`
 }
 ```
 If no `content` is passed, then the path is treated as an empty directory
@@ -220,7 +220,7 @@ Returns a Pull Stream, where objects can be written of the forms
   path: '/tmp/myfile.txt', // The file path
   content: <data> // A Buffer, Readable Stream, Pull Stream or File with the contents of the file
   mode: '0755' // optional string or integer mode to store the entry with. strings will be interpreted as a base 8 number
-  `mtime` Either a ` Date` object, an object with `{ sec, nsecs }` properties or the output of `process.hrtime()`  (default: now)
+  mtime: <time> // optional value representing the modification time of the entry - either a `Date` object, an object with `{ secs, nsecs }` properties where `secs` is the number of seconds since (positive) or before (negative) the Unix Epoch began and `nsecs` is the number of nanoseconds since the last full second, or the output of `process.hrtime()`
 }
 ```
 
@@ -893,7 +893,7 @@ Where:
   - `hashAlg` is which algorithm to use when creating CIDs for newly created directories (default: `sha2-256`) [The list of all possible values]( https://github.com/multiformats/js-multihash/blob/master/src/constants.js#L5-L343)
   - `flush` is a Boolean value to decide whether or not to immediately flush MFS changes to disk  (default: true)
   - `mode`: optional UnixFS mode to create the directory with - a number or a string that will be interpreted as a base 8 number
-  - `mtime`: A Date object, an object with `{ sec, nsecs }` properties or the output of `process.hrtime()` or `process.hrtime.bigint()
+  - `mtime`: A Date object, an object with `{ secs, nsecs }` properties where `secs` is the number of seconds since (positive) or before (negative) the Unix Epoch began and `nsecs` is the number of nanoseconds since the last full second, or the output of [`process.hrtime()`](https://nodejs.org/api/process.html#process_process_hrtime_time)
 
 **Returns**
 
