@@ -803,7 +803,7 @@ Where:
   - A [CID][cid] instance (e.g. `new CID('QmWGeRAEgtsHW3ec7U4qW2CyVy7eA2mFRVbk1nb24jFyks')`)
 - `mode` is the new file mode.  It might be:
   - A string octal, e.g. `'0755'`
-  - A string modification of the existing mode, e.g. `'+x'`, `'-gw'`, etc
+  - A string modification of the existing mode, e.g. `'a+x'`, `'g-w'`, etc
   - An integer, e.g. the returned value from `parseInt('0755', 8)`
 - `options` is an optional Object that might contain the following keys:
   - `recursive` is a Boolean value that indicates if `mode` should be applied to all sub files/directories of `path` (default: false)
