@@ -2,6 +2,7 @@
 'use strict'
 
 const { getDescribe, getIt, expect } = require('../utils/mocha')
+const PeerId = require('peer-id')
 
 /** @typedef { import("ipfsd-ctl/src/factory") } Factory */
 /**
@@ -32,7 +33,7 @@ module.exports = (common, options) => {
       peers = await ipfsA.swarm.peers()
       expect(peers).to.have.length.above(0)
 
-      await ipfsA.swarm.disconnect(ipfsB.peerId.addresses[0])
+      await ipfsA.swarm.disconnect(PeerId.createFromCID(ipfsB.peerId.id))
 
       peers = await ipfsA.swarm.peers()
       expect(peers).to.have.length(0)
