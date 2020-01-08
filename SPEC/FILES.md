@@ -60,7 +60,7 @@ Where `data` may be:
 {
     path: '/tmp/myfile.txt', // The file path
     content: <data> // A Buffer, Readable Stream, Pull Stream or File with the contents of the file
-    mode: '0755' // optional string or integer mode to store the entry with. strings will be interpreted as a base 8 number
+    mode: <Number> // optional integer mode to store the entry with
     mtime: <time> // optional value representing the modification time of the entry - either a `Date` object, an object with `{ secs, nsecs }` properties where `secs` is the number of seconds since (positive) or before (negative) the Unix Epoch began and `nsecs` is the number of nanoseconds since the last full second, or the output of `process.hrtime()`
 }
 ```
@@ -219,7 +219,7 @@ Returns a Pull Stream, where objects can be written of the forms
 {
   path: '/tmp/myfile.txt', // The file path
   content: <data> // A Buffer, Readable Stream, Pull Stream or File with the contents of the file
-  mode: '0755' // optional string or integer mode to store the entry with. strings will be interpreted as a base 8 number
+  mode: <Number> // optional integer mode to store the entry with
   mtime: <time> // optional value representing the modification time of the entry - either a `Date` object, an object with `{ secs, nsecs }` properties where `secs` is the number of seconds since (positive) or before (negative) the Unix Epoch began and `nsecs` is the number of nanoseconds since the last full second, or the output of `process.hrtime()`
 }
 ```
