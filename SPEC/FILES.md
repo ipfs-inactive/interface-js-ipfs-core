@@ -802,9 +802,8 @@ Where:
   - An IPFS path (e.g. `/ipfs/QmWGeRAEgtsHW3ec7U4qW2CyVy7eA2mFRVbk1nb24jFyks`)
   - A [CID][cid] instance (e.g. `new CID('QmWGeRAEgtsHW3ec7U4qW2CyVy7eA2mFRVbk1nb24jFyks')`)
 - `mode` is the new file mode.  It might be:
-  - A string octal, e.g. `'0755'`
   - A string modification of the existing mode, e.g. `'a+x'`, `'g-w'`, etc
-  - An integer, e.g. the returned value from `parseInt('0755', 8)`
+  - An integer, e.g. the returned value from `parseInt('0755', 8)` or `0o755`
 - `options` is an optional Object that might contain the following keys:
   - `recursive` is a Boolean value that indicates if `mode` should be applied to all sub files/directories of `path` (default: false)
   - `hashAlg` is which algorithm to use when creating CIDs for modified entries. (default: `sha2-256`) [The list of all possible values]( https://github.com/multiformats/js-multihash/blob/master/src/constants.js#L5-L343)
