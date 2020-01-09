@@ -70,18 +70,34 @@ module.exports = (common, options) => {
     it('ls directory with long option should include metadata', async () => {
       const testDir = `/test-${hat()}`
 
-      await ipfs.files.mkdir(`${testDir}/lv1`, { parents: true })
-      await ipfs.files.write(`${testDir}/b`, Buffer.from('Hello, world!'), { create: true })
+      await ipfs.files.mkdir(`${testDir}/lv1`, {
+        parents: true,
+        mtime: {
+          secs: 5
+        }
+      })
+      await ipfs.files.write(`${testDir}/b`, Buffer.from('Hello, world!'), {
+        create: true,
+        mtime: {
+          secs: 5
+        }
+      })
 
       const entries = await ipfs.files.ls(testDir, { long: true })
 
       expect(entries).to.have.lengthOf(2)
-      expect(entries).to.have.nested.property('[0].hash', 'QmcZojhwragQr5qhTeFAmELik623Z21e3jBTpJXoQ9si1T')
-      expect(entries).to.have.nested.property('[0].mode', parseInt('0644', 8))
-      expect(entries).to.have.nested.deep.property('[0].mtime')
-      expect(entries).to.have.nested.property('[1].hash', 'QmUNLLsPACCz1vLxQVkXqqLX5R1X345qqfHbsf67hvA3Nn')
-      expect(entries).to.have.nested.property('[1].mode', parseInt('0755', 8))
-      expect(entries).to.have.nested.deep.property('[1].mtime')
+      expect(entries).to.have.nested.property('[0].hash', 'QmTVnczjg445RUAEYNH1wvhVa2rnPoWMfHMxQc6W7HHoyM')
+      expect(entries).to.have.nested.property('[0].mode', 0o0644)
+      expect(entries).to.have.nested.deep.property('[0].mtime', {
+        secs: 5,
+        nsecs: 0
+      })
+      expect(entries).to.have.nested.property('[1].hash', 'QmXkBjmbtWUxXLa3s541UBSzPgvaAR7b8X3Amcp5D1VKTQ')
+      expect(entries).to.have.nested.property('[1].mode', 0o0755)
+      expect(entries).to.have.nested.deep.property('[1].mtime', {
+        secs: 5,
+        nsecs: 0
+      })
     })
 
     it('should ls from outside of mfs', async () => {

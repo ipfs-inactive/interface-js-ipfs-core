@@ -90,8 +90,8 @@ module.exports = (common, options) => {
 
     it('should make directory and specify mtime as timespec', async function () {
       await testMtime({
-        EpochSeconds: 5,
-        EpochNanoseconds: 0
+        Seconds: 5,
+        FractionalNanoseconds: 0
       }, {
         secs: 5,
         nsecs: 0

@@ -45,10 +45,7 @@ module.exports = (common, options) => {
       })
 
       const stat = await ipfs.files.stat(testPath)
-      expect(stat).to.have.deep.property('mtime', {
-        secs: 0,
-        nsecs: 0
-      })
+      expect(stat).to.not.have.property('mtime')
 
       await ipfs.files.touch(testPath)
 
@@ -110,8 +107,8 @@ module.exports = (common, options) => {
 
     it('should set mtime as timespec', async function () {
       await testMtime({
-        EpochSeconds: 5,
-        EpochNanoseconds: 0
+        Seconds: 5,
+        FractionalNanoseconds: 0
       }, {
         secs: 5,
         nsecs: 0

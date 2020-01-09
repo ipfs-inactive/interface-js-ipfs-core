@@ -357,8 +357,8 @@ module.exports = (common, options) => {
     it('should add with mtime as timespec', async function () {
       this.slow(10 * 1000)
       await testMtime({
-        EpochSeconds: 5,
-        EpochNanoseconds: 0
+        Seconds: 5,
+        FractionalNanoseconds: 0
       }, {
         secs: 5,
         nsecs: 0
