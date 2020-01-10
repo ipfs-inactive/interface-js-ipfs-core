@@ -13,7 +13,7 @@ module.exports = (common, options) => {
   const describe = getDescribe(options)
   const it = getIt(options)
 
-  describe.only('.files.flush', function () {
+  describe('.files.flush', function () {
     this.timeout(40 * 1000)
 
     let ipfs
