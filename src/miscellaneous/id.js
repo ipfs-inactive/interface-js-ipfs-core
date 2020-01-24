@@ -2,6 +2,7 @@
 'use strict'
 
 const { getDescribe, getIt, expect } = require('../utils/mocha')
+const Multiaddr = require('multiaddr')
 
 /** @typedef { import("ipfsd-ctl/src/factory") } Factory */
 /**
@@ -24,8 +25,21 @@ module.exports = (common, options) => {
 
     it('should get the node ID', async () => {
       const res = await ipfs.id()
-      expect(res).to.have.a.property('id')
+      expect(res).to.have.a.property('id').that.is.a('string')
       expect(res).to.have.a.property('publicKey')
+      expect(res).to.have.a.property('addresses').that.is.an('array').and.all.satisfy(ma => {
+        const isString = (ma instanceof String || typeof ma === 'string')
+        const asString = new Multiaddr(ma).toString()
+
+        // TODO: remove when go-IPFS returns nu-school /p2p/ multiaddrs
+        if (ma.includes('/ipfs/')) {
+          ma = ma.replace(/ipfs/g, 'p2p')
+        }
+
+        return isString && asString === ma
+      })
+      expect(res).to.have.a.property('agentVersion').that.is.a('string')
+      expect(res).to.have.a.property('protocolVersion').that.is.a('string')
     })
   })
 }

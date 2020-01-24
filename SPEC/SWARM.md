@@ -131,7 +131,7 @@ A great source of [examples][] can be found in the tests for this API.
 The returned array has the following form:
 
 - `addr: Multiaddr`
-- `peer: CID`
+- `peer: String`
 - `latency: String` - Only if `verbose: true`  was passed
 - `muxer: String` - The type of stream muxer the peer is usng
 - `streams: string[]` - Only if `verbose: true`, a list of currently open streams
