@@ -3,6 +3,7 @@
 
 const { getDescribe, getIt, expect } = require('../utils/mocha')
 const Multiaddr = require('multiaddr')
+const CID = require('cids')
 
 /** @typedef { import("ipfsd-ctl/src/factory") } Factory */
 /**
@@ -26,6 +27,7 @@ module.exports = (common, options) => {
     it('should get the node ID', async () => {
       const res = await ipfs.id()
       expect(res).to.have.a.property('id').that.is.a('string')
+      expect(CID.isCID(res.id)).to.equal(true)
       expect(res).to.have.a.property('publicKey')
       expect(res).to.have.a.property('addresses').that.is.an('array').and.all.satisfy(ma => {
         const isString = (ma instanceof String || typeof ma === 'string')
