@@ -42,7 +42,7 @@ module.exports = (common, options) => {
       expect(peer).to.have.a.property('addr')
       expect(multiaddr.isMultiaddr(peer.addr)).to.equal(true)
       expect(peer).to.have.a.property('peer').that.is.a('string')
-      expect(CID.isCID(peer.peer)).to.equal(true)
+      expect(CID.isCID(new CID(peer.peer))).to.equal(true)
       expect(peer).to.not.have.a.property('latency')
 
       /* TODO: These assertions must be uncommented as soon as
