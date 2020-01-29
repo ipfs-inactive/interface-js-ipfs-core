@@ -108,7 +108,7 @@ module.exports = (common, options) => {
         '/ip4/127.0.0.1/tcp/26546/ws'
       ])
       const nodeA = (await common.spawn({ ipfsOptions: { config: configA } })).api
-      const nodeB = (await common.spawn({ type: 'js', ipfsOptions: { config: configB } })).api
+      const nodeB = (await common.spawn({ ipfsOptions: { config: configB } })).api
       await nodeA.swarm.connect(nodeB.peerId.addresses[0])
       await delay(1000)
       const peersA = await nodeA.swarm.peers()
