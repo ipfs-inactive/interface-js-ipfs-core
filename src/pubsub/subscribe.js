@@ -17,7 +17,7 @@ module.exports = (common, options) => {
   const it = getIt(options)
 
   describe('.pubsub.subscribe', function () {
-    this.timeout(80 * 1000)
+    this.timeout(20 * 1000)
 
     let ipfs1
     let ipfs2
@@ -26,8 +26,6 @@ module.exports = (common, options) => {
 
     before(async () => {
       ipfs1 = (await common.spawn()).api
-      // TODO 'multiple connected nodes' tests fails with go in Firefox
-      // and JS is flaky everywhere
       ipfs2 = (await common.spawn({ type: 'go' })).api
     })
 
@@ -166,12 +164,18 @@ module.exports = (common, options) => {
         const msgStream2 = pushable()
 
         const sub1 = msg => {
-          msgStream1.push(msg)
-          msgStream1.end()
+          // Support firefox https://github.com/ipfs/js-ipfs-http-client/blob/master/src/pubsub/subscribe.js#L27-L37
+          if (msg.data.length !== 0) {
+            msgStream1.push(msg)
+            msgStream1.end()
+          }
         }
         const sub2 = msg => {
-          msgStream2.push(msg)
-          msgStream2.end()
+          // Support firefox https://github.com/ipfs/js-ipfs-http-client/blob/master/src/pubsub/subscribe.js#L27-L37
+          if (msg.data.length !== 0) {
+            msgStream2.push(msg)
+            msgStream2.end()
+          }
         }
 
         await Promise.all([
@@ -200,12 +204,18 @@ module.exports = (common, options) => {
         const msgStream2 = pushable()
 
         const sub1 = msg => {
-          msgStream1.push(msg)
-          msgStream1.end()
+          // Support firefox https://github.com/ipfs/js-ipfs-http-client/blob/master/src/pubsub/subscribe.js#L27-L37
+          if (msg.data.length !== 0) {
+            msgStream1.push(msg)
+            msgStream1.end()
+          }
         }
         const sub2 = msg => {
-          msgStream2.push(msg)
-          msgStream2.end()
+          // Support firefox https://github.com/ipfs/js-ipfs-http-client/blob/master/src/pubsub/subscribe.js#L27-L37
+          if (msg.data.length !== 0) {
+            msgStream2.push(msg)
+            msgStream2.end()
+          }
         }
 
         await Promise.all([
@@ -233,16 +243,22 @@ module.exports = (common, options) => {
         const msgStream2 = pushable()
 
         const sub1 = msg => {
-          msgStream1.push(msg)
-          sub1.called++
-          if (sub1.called === outbox.length) msgStream1.end()
+          // Support firefox https://github.com/ipfs/js-ipfs-http-client/blob/master/src/pubsub/subscribe.js#L27-L37
+          if (msg.data.length !== 0) {
+            msgStream1.push(msg)
+            sub1.called++
+            if (sub1.called === outbox.length) msgStream1.end()
+          }
         }
         sub1.called = 0
 
         const sub2 = msg => {
-          msgStream2.push(msg)
-          sub2.called++
-          if (sub2.called === outbox.length) msgStream2.end()
+          // Support firefox https://github.com/ipfs/js-ipfs-http-client/blob/master/src/pubsub/subscribe.js#L27-L37
+          if (msg.data.length !== 0) {
+            msgStream2.push(msg)
+            sub2.called++
+            if (sub2.called === outbox.length) msgStream2.end()
+          }
         }
         sub2.called = 0
 
@@ -274,9 +290,12 @@ module.exports = (common, options) => {
         const msgStream = pushable()
 
         const sub = msg => {
-          msgStream.push(msg)
-          sub.called++
-          if (sub.called === count) msgStream.end()
+          // Support firefox https://github.com/ipfs/js-ipfs-http-client/blob/master/src/pubsub/subscribe.js#L27-L37
+          if (msg.data.length !== 0) {
+            msgStream.push(msg)
+            sub.called++
+            if (sub.called === count) msgStream.end()
+          }
         }
         sub.called = 0
 
