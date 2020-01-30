@@ -24,7 +24,7 @@ module.exports = (common, options) => {
 
     before(async () => {
       ipfsA = (await common.spawn()).api
-      ipfsB = (await common.spawn({ type: 'go' })).api
+      ipfsB = (await common.spawn()).api
       await ipfsA.swarm.connect(ipfsB.peerId.addresses[0])
       /* TODO: Seen if we still need this after this is fixed
          https://github.com/ipfs/js-ipfs/issues/2601 gets resolved */
@@ -88,7 +88,7 @@ module.exports = (common, options) => {
 
     it('should list peers only once', async () => {
       const nodeA = (await common.spawn()).api
-      const nodeB = (await common.spawn({ type: 'go' })).api
+      const nodeB = (await common.spawn()).api
       await nodeA.swarm.connect(nodeB.peerId.addresses[0])
       await delay(1000)
       const peersA = await nodeA.swarm.peers()
