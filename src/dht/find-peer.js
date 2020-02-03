@@ -30,7 +30,7 @@ module.exports = (common, options) => {
       const nodeBId = await nodeB.id()
       const res = await nodeA.dht.findPeer(nodeBId.id)
       const id = res.id.toString()
-
+      console.info(nodeBId.addresses)
       const nodeAddresses = nodeBId.addresses.map((addr) => addr.nodeAddress())
       const peerAddresses = res.addrs.map(ma => ma.nodeAddress())
 
