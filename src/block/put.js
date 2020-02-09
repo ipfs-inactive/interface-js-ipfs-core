@@ -46,7 +46,7 @@ module.exports = (common, options) => {
     })
 
     it('should put a buffer, using CID string', async () => {
-      const expectedCid = 'bafyreidykglsfhoixmivffc5uwhcgshx4j465xwqntbmu43nb2dzqwfvae'
+      const expectedCid = 'bafyreietui4xdkiu4xvmx4fi2jivjtndbhb4drzpxomrjvd4mdz4w2avra'
       const blob = Buffer.from(JSON.stringify({ hello: 'world' }))
 
       const block = await ipfs.block.put(blob, { cid: expectedCid })
