@@ -45,6 +45,16 @@ module.exports = (common, options) => {
       expect(block.cid.multihash).to.eql(multihash.fromB58String(expectedHash))
     })
 
+    it('should put a buffer, using CID string', async () => {
+      const expectedCid = 'bafyreidykglsfhoixmivffc5uwhcgshx4j465xwqntbmu43nb2dzqwfvae'
+      const blob = Buffer.from(JSON.stringify({ hello: 'world' }))
+
+      const block = await ipfs.block.put(blob, { cid: expectedCid })
+
+      expect(block.data).to.be.eql(blob)
+      expect(block.cid.toString()).to.eql(expectedCid)
+    })
+
     it('should put a buffer, using options', async () => {
       const blob = Buffer.from(`TEST${Date.now()}`)
 
