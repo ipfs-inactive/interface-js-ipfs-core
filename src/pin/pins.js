@@ -173,7 +173,7 @@ module.exports = (common, options) => {
         return expect(last(ipfs.pin.add(falseHash, { timeout: '2s' })))
           .to.eventually.be.rejected()
           // TODO: http api TimeoutErrors do not have this property
-          //.with.a.property('code').that.equals('ERR_TIMEOUT')
+          // .with.a.property('code').that.equals('ERR_TIMEOUT')
       })
 
       // TODO block rm breaks subsequent tests
@@ -326,7 +326,7 @@ module.exports = (common, options) => {
         ])
       })
 
-      it('should list indirect pins for CID (no match)', async () => {
+      it('should list indirect pins for CID (no match)', () => {
         return expect(all(ipfs.pin.ls(pins.root, { type: 'indirect' })))
           .to.eventually.be.rejected()
       })
@@ -427,6 +427,20 @@ module.exports = (common, options) => {
           cid: child,
           type: 'indirect'
         })
+      })
+    })
+
+    describe('ls', () => {
+      it('should throw error for invalid non-string pin type option', () => {
+        return expect(all(ipfs.pin.ls({ type: 6 })))
+          .to.eventually.be.rejected()
+          .with.property('code').that.equals('ERR_INVALID_PIN_TYPE')
+      })
+
+      it('should throw error for invalid string pin type option', () => {
+        return expect(all(ipfs.pin.ls({ type: '__proto__' })))
+          .to.eventually.be.rejected()
+          .with.property('code').that.equals('ERR_INVALID_PIN_TYPE')
       })
     })
   })
