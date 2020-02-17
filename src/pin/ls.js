@@ -4,7 +4,6 @@
 const { fixtures } = require('./utils')
 const { getDescribe, getIt, expect } = require('../utils/mocha')
 const all = require('it-all')
-const last = require('it-last')
 const drain = require('it-drain')
 
 /** @typedef { import("ipfsd-ctl/src/factory") } Factory */
