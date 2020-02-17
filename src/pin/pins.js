@@ -2,7 +2,6 @@
 'use strict'
 
 const { getDescribe, getIt, expect } = require('../utils/mocha')
-const fs = require('fs')
 const {
   DAGNode
 } = require('ipld-dag-pb')
@@ -10,19 +9,19 @@ const all = require('it-all')
 const last = require('it-last')
 const drain = require('it-drain')
 const CID = require('cids')
-const path = require('path')
 
 // fixture structure:
 //  planets/
 //   solar-system.md
 //   mercury/
 //    wiki.md
-const pins = {
+/* const pins = {
   root: new CID('QmTAMavb995EHErSrKo7mB8dYkpaSJxu6ys1a6XJyB2sys'),
   solarWiki: new CID('QmTMbkDfvHwq3Aup6Nxqn3KKw9YnoKzcZvuArAfQ9GF3QG'),
   mercuryDir: new CID('QmbJCNKXJqVK8CzbjpNFz2YekHwh3CSHpBA86uqYg3sJ8q'),
   mercuryWiki: new CID('QmVgSHAdMxFAuMP2JiMAYkB8pCWP1tcB9djqvq8GKAFiHi')
-}
+} */
+let pins
 const pinTypes = {
   direct: 'direct',
   recursive: 'recursive',
@@ -42,13 +41,13 @@ module.exports = (common, options) => {
   describe('pin', function () {
     this.timeout(50 * 1000)
 
-    const fixtures = [
-      path.resolve(path.join(__dirname, '../../test/fixtures/planets/mercury/wiki.md')),
-      path.resolve(path.join(__dirname, '../../test/fixtures/planets/solar-system.md'))
-    ].map(path => ({
-      path,
-      content: fs.readFileSync(path)
-    }))
+    const fixtures = [{
+      path: 'planets/mercury/wiki.md',
+      content: 'solar system content'
+    }, {
+      path: 'planets/solar-system.md',
+      content: 'wiki content'
+    }]
 
     let ipfs
 
@@ -85,7 +84,18 @@ module.exports = (common, options) => {
 
     before(async () => {
       ipfs = (await common.spawn()).api
-      await drain(ipfs.add(fixtures))
+      const added = (await all(ipfs.add(fixtures))).reduce((acc, curr) => {
+        acc[curr.path] = curr.cid
+
+        return acc
+      }, {})
+
+      pins = {
+        root: added.planets,
+        solarWiki: added['planets/solar-system.md'],
+        mercuryDir: added['planets/mercury'],
+        mercuryWiki: added['planets/mercury/wiki.md']
+      }
     })
 
     after(() => common.clean())

@@ -154,7 +154,7 @@ module.exports = (common, options) => {
       expect(hashesAfterRmAndGc).includes(dataCid.toString())
 
       // Unpin the data
-      await ipfs.pin.rm(dataCid)
+      await drain(ipfs.pin.rm(dataCid))
 
       // Run garbage collection
       await drain(ipfs.repo.gc())
@@ -175,7 +175,7 @@ module.exports = (common, options) => {
       const dataCid = addRes[0].cid
 
       // Unpin the data
-      await ipfs.pin.rm(dataCid)
+      await drain(ipfs.pin.rm(dataCid))
 
       // Create a link to the data from an object
       const obj = await new DAGNode(Buffer.from('fruit'), [{
@@ -199,7 +199,7 @@ module.exports = (common, options) => {
       expect(hashesAfterAdd).includes(dataCid.toString())
 
       // Recursively pin the object
-      await ipfs.pin.add(objCid, { recursive: true })
+      await drain(ipfs.pin.add(objCid, { recursive: true }))
 
       // The data should now be indirectly pinned
       const pins = await all(ipfs.pin.ls())
