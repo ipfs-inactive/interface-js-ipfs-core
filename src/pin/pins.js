@@ -8,6 +8,7 @@ const {
 } = require('ipld-dag-pb')
 const all = require('it-all')
 const last = require('it-last')
+const drain = require('it-drain')
 const CID = require('cids')
 const path = require('path')
 
@@ -74,17 +75,17 @@ module.exports = (common, options) => {
 
     async function clearPins () {
       for await (const { cid } of ipfs.pin.ls({ type: pinTypes.recursive })) {
-        await last(ipfs.pin.rm(cid))
+        await drain(ipfs.pin.rm(cid))
       }
 
       for await (const { cid } of ipfs.pin.ls({ type: pinTypes.direct })) {
-        await last(ipfs.pin.rm(cid))
+        await drain(ipfs.pin.rm(cid))
       }
     }
 
     before(async () => {
       ipfs = (await common.spawn()).api
-      await last(ipfs.add(fixtures))
+      await drain(ipfs.add(fixtures))
     })
 
     after(() => common.clean())
@@ -92,11 +93,11 @@ module.exports = (common, options) => {
     describe('pinned status', function () {
       beforeEach(async () => {
         await clearPins()
-        await last(ipfs.pin.add(pins.root))
+        await drain(ipfs.pin.add(pins.root))
       })
 
       it('should be pinned when added', async () => {
-        await last(ipfs.pin.add(pins.solarWiki))
+        await drain(ipfs.pin.add(pins.solarWiki))
         return expectPinned(pins.solarWiki)
       })
 
@@ -106,7 +107,7 @@ module.exports = (common, options) => {
       })
 
       it('should not be pinned when in datastore but not added', async () => {
-        await last(ipfs.pin.rm(pins.root))
+        await drain(ipfs.pin.rm(pins.root))
         return expectPinned(pins.root, false)
       })
 
@@ -119,7 +120,7 @@ module.exports = (common, options) => {
       })
 
       it('should be pinned directly', async () => {
-        await last(ipfs.pin.add(pins.mercuryDir, { recursive: false }))
+        await drain(ipfs.pin.add(pins.mercuryDir, { recursive: false }))
         return expectPinned(pins.mercuryDir, pinTypes.direct)
       })
 
@@ -135,7 +136,7 @@ module.exports = (common, options) => {
       })
 
       it('should add recursively', async () => {
-        await last(ipfs.pin.add(pins.root))
+        await drain(ipfs.pin.add(pins.root))
         await expectPinned(pins.root, pinTypes.recursive)
 
         const pinChecks = Object.values(pins).map(hash => expectPinned(hash))
@@ -143,7 +144,7 @@ module.exports = (common, options) => {
       })
 
       it('should add directly', async () => {
-        await last(ipfs.pin.add(pins.root, { recursive: false }))
+        await drain(ipfs.pin.add(pins.root, { recursive: false }))
         await Promise.all([
           expectPinned(pins.root, pinTypes.direct),
           expectPinned(pins.solarWiki, false)
@@ -151,8 +152,8 @@ module.exports = (common, options) => {
       })
 
       it('should recursively pin parent of direct pin', async () => {
-        await last(ipfs.pin.add(pins.solarWiki, { recursive: false }))
-        await last(ipfs.pin.add(pins.root))
+        await drain(ipfs.pin.add(pins.solarWiki, { recursive: false }))
+        await drain(ipfs.pin.add(pins.root))
         await Promise.all([
           // solarWiki is pinned both directly and indirectly o.O
           expectPinned(pins.solarWiki, pinTypes.direct),
@@ -161,7 +162,7 @@ module.exports = (common, options) => {
       })
 
       it('should fail to directly pin a recursive pin', async () => {
-        await last(ipfs.pin.add(pins.root))
+        await drain(ipfs.pin.add(pins.root))
         return expect(last(ipfs.pin.add(pins.root, { recursive: false })))
           .to.eventually.be.rejected()
           .with(/already pinned recursively/)
@@ -186,8 +187,8 @@ module.exports = (common, options) => {
     describe('ls', function () {
       before(async () => {
         await clearPins()
-        await last(ipfs.pin.add(pins.root))
-        await last(ipfs.pin.add(pins.mercuryDir, { recursive: false }))
+        await drain(ipfs.pin.add(pins.root))
+        await drain(ipfs.pin.add(pins.mercuryDir, { recursive: false }))
       })
 
       it('should list pins of a particular CID', async () => {
@@ -335,11 +336,11 @@ module.exports = (common, options) => {
     describe('rm', function () {
       beforeEach(async () => {
         await clearPins()
-        await last(ipfs.pin.add(pins.root))
+        await drain(ipfs.pin.add(pins.root))
       })
 
       it('should remove a recursive pin', async () => {
-        await last(ipfs.pin.rm(pins.root))
+        await drain(ipfs.pin.rm(pins.root))
         await Promise.all([
           expectPinned(pins.root, false),
           expectPinned(pins.mercuryWiki, false)
@@ -348,8 +349,8 @@ module.exports = (common, options) => {
 
       it('should remove a direct pin', async () => {
         await clearPins()
-        await last(ipfs.pin.add(pins.mercuryDir, { recursive: false }))
-        await last(ipfs.pin.rm(pins.mercuryDir))
+        await drain(ipfs.pin.add(pins.mercuryDir, { recursive: false }))
+        await drain(ipfs.pin.rm(pins.mercuryDir))
         await expectPinned(pins.mercuryDir, false)
       })
 
@@ -361,7 +362,7 @@ module.exports = (common, options) => {
       })
 
       it('should fail when an item is not pinned', async () => {
-        await last(ipfs.pin.rm(pins.root))
+        await drain(ipfs.pin.rm(pins.root))
         await expect(last(ipfs.pin.rm(pins.root)))
           .to.eventually.be.rejected()
           .with(/is not pinned/)
@@ -375,7 +376,7 @@ module.exports = (common, options) => {
           hashAlg: 'sha2-256'
         })
 
-        await last(ipfs.pin.add(cid))
+        await drain(ipfs.pin.add(cid))
 
         const pins = await all(ipfs.pin.ls())
 
@@ -391,7 +392,7 @@ module.exports = (common, options) => {
           hashAlg: 'sha2-256'
         })
 
-        await last(ipfs.pin.add(cid))
+        await drain(ipfs.pin.add(cid))
 
         const pins = await all(ipfs.pin.ls())
 
@@ -413,7 +414,7 @@ module.exports = (common, options) => {
           hashAlg: 'sha2-256'
         })
 
-        await last(ipfs.pin.add(parent, {
+        await drain(ipfs.pin.add(parent, {
           recursive: true
         }))
 

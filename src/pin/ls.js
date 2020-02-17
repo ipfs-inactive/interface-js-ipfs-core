@@ -5,6 +5,7 @@ const { fixtures } = require('./utils')
 const { getDescribe, getIt, expect } = require('../utils/mocha')
 const all = require('it-all')
 const last = require('it-last')
+const drain = require('it-drain')
 
 /** @typedef { import("ipfsd-ctl/src/factory") } Factory */
 /**
@@ -24,14 +25,14 @@ module.exports = (common, options) => {
       ipfs = (await common.spawn()).api
       // two files wrapped in directories, only root CID pinned recursively
       const dir = fixtures.directory.files.map((file) => ({ path: file.path, content: file.data }))
-      await last(ipfs.add(dir, { pin: false, cidVersion: 0 }))
-      await last(ipfs.pin.add(fixtures.directory.cid, { recursive: true }))
+      await drain(ipfs.add(dir, { pin: false, cidVersion: 0 }))
+      await drain(ipfs.pin.add(fixtures.directory.cid, { recursive: true }))
       // a file (CID pinned recursively)
-      await last(ipfs.add(fixtures.files[0].data, { pin: false, cidVersion: 0 }))
-      await last(ipfs.pin.add(fixtures.files[0].cid, { recursive: true }))
+      await drain(ipfs.add(fixtures.files[0].data, { pin: false, cidVersion: 0 }))
+      await drain(ipfs.pin.add(fixtures.files[0].cid, { recursive: true }))
       // a single CID (pinned directly)
-      await last(ipfs.add(fixtures.files[1].data, { pin: false, cidVersion: 0 }))
-      await last(ipfs.pin.add(fixtures.files[1].cid, { recursive: false }))
+      await drain(ipfs.add(fixtures.files[1].data, { pin: false, cidVersion: 0 }))
+      await drain(ipfs.pin.add(fixtures.files[1].cid, { recursive: false }))
     })
 
     after(() => common.clean())

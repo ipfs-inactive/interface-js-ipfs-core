@@ -5,6 +5,7 @@ const { getDescribe, getIt, expect } = require('../utils/mocha')
 const hat = require('hat')
 const all = require('it-all')
 const last = require('it-last')
+const drain = require('it-drain')
 
 /** @typedef { import("ipfsd-ctl/src/factory") } Factory */
 /**
@@ -143,7 +144,7 @@ module.exports = (common, options) => {
         format: 'raw',
         hashAlg: 'sha2-256'
       })
-      await last(ipfs.pin.add(cid))
+      await drain(ipfs.pin.add(cid))
 
       const result = await last(ipfs.block.rm(cid))
 
