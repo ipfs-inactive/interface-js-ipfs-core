@@ -63,7 +63,7 @@
     "readable-stream": "^3.4.0"
   },
   "devDependencies": {
-    "aegir": "^20.3.2",
+    "aegir": "^21.3.0",
     "ipfsd-ctl": "^2.1.0"
   },
   "contributors": [
