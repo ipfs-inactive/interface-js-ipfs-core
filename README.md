@@ -1,3 +1,9 @@
+# 🔒 Archived <!-- omit in toc -->
+
+The contents of this repo have been merged into [ipfs/js-ipfs](https://github.com/ipfs/js-ipfs).
+
+Please open [issues](https://github.com/ipfs/js-ipfs/issues) or submit [PRs](https://github.com/ipfs/js-ipfs/pulls) there.
+
 # interface-ipfs-core
 
 [![](https://img.shields.io/badge/made%20by-Protocol%20Labs-blue.svg?style=flat-square)](http://ipn.io)
@@ -13,17 +19,23 @@
 
 ## Table of Contents
 
-- [Background](#background)
-  - [Modules that implement the interface](#modules-that-implement-the-interface)
-  - [Badge](#badge)
-- [Install](#install)
-- [Usage](#usage)
-  - [JavaScript](#javascript)
-  - [Go](#go)
-- [API](#api)
-- [Contribute](#contribute)
-  - [Want to hack on IPFS?](#want-to-hack-on-ipfs)
-- [License](#license)
+- [interface-ipfs-core](#interface-ipfs-core)
+  - [Lead Maintainer](#lead-maintainer)
+  - [Table of Contents](#table-of-contents)
+  - [Background](#background)
+    - [Modules that implement the interface](#modules-that-implement-the-interface)
+    - [Badge](#badge)
+  - [Install](#install)
+  - [Usage](#usage)
+      - [Running tests by command](#running-tests-by-command)
+      - [Skipping tests](#skipping-tests)
+        - [Skipping specific tests](#skipping-specific-tests)
+      - [Running only some tests](#running-only-some-tests)
+        - [Running only specific tests](#running-only-specific-tests)
+  - [API](#api)
+  - [Contribute](#contribute)
+    - [Want to hack on IPFS?](#want-to-hack-on-ipfs)
+  - [License](#license)
 
 ## Background
 
