@@ -129,7 +129,7 @@ const files = [{
   content: 'ABC'
 }]
 
-for await (const result of ipfs.add(content)) {
+for await (const result of ipfs.add(files)) {
   console.log(result)
 }
 
