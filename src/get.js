@@ -196,5 +196,27 @@ module.exports = (common, options) => {
           break
       }
     })
+
+    it('should get file with mode', async () => {
+      const mode = 0o777
+      const content = String(Math.random() + Date.now())
+      const [{ cid }] = await all(ipfs.add({ content, mode }))
+
+      const res = await all(ipfs.get(cid))
+
+      expect(res).to.have.length(1)
+      expect(res[0]).to.have.property('mode').that.equals(mode)
+    })
+
+    it('should get file with mtime', async () => {
+      const mtime = { secs: Math.floor((Date.now() - (Math.random() * 1000)) / 1000) }
+      const content = String(Math.random() + Date.now())
+      const [{ cid }] = await all(ipfs.add({ content, mtime }))
+
+      const res = await all(ipfs.get(cid))
+
+      expect(res).to.have.length(1)
+      expect(res).to.have.nested.property('0.mtime.secs').that.deep.equals(mtime.secs)
+    })
   })
 }
