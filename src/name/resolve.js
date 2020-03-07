@@ -6,6 +6,7 @@ const delay = require('delay')
 const CID = require('cids')
 const all = require('it-all')
 const last = require('it-last')
+const drain = require('it-drain')
 
 /** @typedef { import("ipfsd-ctl/src/factory") } Factory */
 /**
@@ -121,7 +122,7 @@ module.exports = (common, options) => {
       // go only has 1 possible error https://github.com/ipfs/go-ipfs/blob/master/namesys/interface.go#L51
       // so here we just expect an Error and don't match the error type to expiration
       try {
-        await last(ipfs.name.resolve(nodeId))
+        await drain(ipfs.name.resolve(nodeId))
       } catch (error) {
         expect(error).to.exist()
       }
@@ -170,7 +171,7 @@ module.exports = (common, options) => {
 
     it('should fail to resolve /ipns/ipfs.a', async () => {
       try {
-        await last(ipfs.name.resolve('ipfs.a'))
+        await drain(ipfs.name.resolve('ipfs.a'))
       } catch (error) {
         expect(error).to.exist()
       }
